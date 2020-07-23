@@ -1,0 +1,12 @@
+cmake_minimum_required(VERSION 3.10)
+
+project(swarm_net_sim)
+set (CMAKE_CXX_STANDARD 11)
+
+add_definitions(-DCMAKE_ROOT_DIR="${CMAKE_SOURCE_DIR}")
+add_definitions(-DBUILD_DIR="${CMAKE_SOURCE_DIR}/build/")
+
+# add_definitions(-DSIM_NAMESPACE=robo_sim)
+
+add_subdirectory(src)
+add_subdirectory(external)

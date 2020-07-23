@@ -1,0 +1,4 @@
+add_subdirectory(core)
+add_subdirectory(util)
+add_subdirectory(plugin)
+add_subdirectory(experiment)
