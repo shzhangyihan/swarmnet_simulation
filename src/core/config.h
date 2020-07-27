@@ -4,15 +4,15 @@
 namespace swarmnet_sim {
 class Sim_config {
    public:
-    int get_num_robots();
-    int get_arena_max_x();
-    int get_arena_max_y();
-    int get_rand_seed();
-    int get_ticks_per_second();
-    int get_duration();
-    void *get_robot_placement_dl_handle();
-    void *get_robot_program_dl_handle();
-    void *get_physics_engine_dl_handle();
+    int get_num_robots() const;
+    int get_arena_max_x() const;
+    int get_arena_max_y() const;
+    int get_rand_seed() const;
+    int get_ticks_per_second() const;
+    int get_duration() const;
+    void *get_robot_placement_dl_handle() const;
+    void *get_robot_program_dl_handle() const;
+    void *get_physics_engine_dl_handle() const;
 
     void set_num_robots(int val);
     void set_arena_max_x(int val);

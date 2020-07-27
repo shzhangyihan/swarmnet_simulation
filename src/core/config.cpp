@@ -1,27 +1,27 @@
 #include "config.h"
 
 namespace swarmnet_sim {
-int Sim_config::get_num_robots() { return num_robots; }
+int Sim_config::get_num_robots() const { return num_robots; }
 
-int Sim_config::get_arena_max_x() { return arena_max_x; }
+int Sim_config::get_arena_max_x() const { return arena_max_x; }
 
-int Sim_config::get_arena_max_y() { return arena_max_y; }
+int Sim_config::get_arena_max_y() const { return arena_max_y; }
 
-int Sim_config::get_rand_seed() { return rand_seed; }
+int Sim_config::get_rand_seed() const { return rand_seed; }
 
-int Sim_config::get_ticks_per_second() { return ticks_per_second; }
+int Sim_config::get_ticks_per_second() const { return ticks_per_second; }
 
-int Sim_config::get_duration() { return duration; }
+int Sim_config::get_duration() const { return duration; }
 
-void *Sim_config::get_robot_placement_dl_handle() {
+void *Sim_config::get_robot_placement_dl_handle() const {
     return robot_placement_dl_handle;
 }
 
-void *Sim_config::get_robot_program_dl_handle() {
+void *Sim_config::get_robot_program_dl_handle() const {
     return robot_program_dl_handle;
 }
 
-void *Sim_config::get_physics_engine_dl_handle() {
+void *Sim_config::get_physics_engine_dl_handle() const {
     return physics_engine_dl_handle;
 }
 

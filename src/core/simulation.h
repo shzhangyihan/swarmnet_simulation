@@ -4,9 +4,8 @@
 #include <JsonCpp/json/json.h>
 
 #include "../util/lib_loader.h"
+#include "arena.h"
 #include "config.h"
-
-// #include "arena.h"
 
 namespace swarmnet_sim {
 void start_simulation(char* config_file);

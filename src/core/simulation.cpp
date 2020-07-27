@@ -61,26 +61,8 @@ void start_simulation(char* config_file) {
     conf.set_robot_program_dl_handle(robot_program_dl_handle);
     conf.set_physics_engine_dl_handle(physics_engine_dl_handle);
 
-    // Arena arena(conf);
-
-    // std::cout << num_robot << std::endl;
-
-    // SIM_NAMESPACE::Event_queue EQ;
-    // SIM_NAMESPACE::Arena arena(&EQ, num_robot, 700, 700, log_file_name,
-    //                            rand_seed, ticks_per_second,
-    //                            experiment_duration);
-
-    // SIM_NAMESPACE::position_t start_1;
-    // start_1.x = 0;
-    // start_1.y = 0;
-    // SIM_NAMESPACE::position_t start_2;
-    // start_2.x = 70;
-    // start_2.y = 0;
-    // SIM_NAMESPACE::position_t end_1 = calculate_end_pos(start_1, 45, 1, 100);
-    // SIM_NAMESPACE::position_t end_2 = calculate_end_pos(start_2, 135, 1,
-    // 100); double t_1, t_2; check_collision(start_1, end_1, start_2, end_2,
-    // &t_1, &t_2); std::cout << t_1 << std::endl; std::cout << t_2 <<
-    // std::endl;
+    Arena arena(conf);
+    arena.run();
 }
 
 }  // namespace swarmnet_sim
