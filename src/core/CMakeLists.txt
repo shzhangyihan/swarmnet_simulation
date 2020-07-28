@@ -11,4 +11,4 @@ add_library(node node.cpp)
 add_library(physics_2d physics_2d.cpp)
 add_executable(simulation main.cpp simulation.cpp)
 
-target_link_libraries(simulation JsonCpp util arena config event_queue event node physics_2d)
+target_link_libraries(simulation JsonCpp util arena config event_queue event node physics_2d dl)

@@ -17,7 +17,6 @@ class Event {
     int exec_tick;
     int from_id;
     int to_id;
-    // std::function<void(void)> event_fn;
 };
 
 struct CmpEventPtrs {
