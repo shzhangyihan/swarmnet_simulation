@@ -1,2 +1,3 @@
 add_library(default_placement SHARED default_placement.cpp)
 add_library(default_program SHARED default_program.cpp)
+target_link_libraries(default_program kilobot)

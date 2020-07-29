@@ -1,6 +1,8 @@
 #ifndef __SIM_CONFIG_H__
 #define __SIM_CONFIG_H__
 
+#include <string>
+
 namespace swarmnet_sim {
 class Sim_config {
    public:
@@ -34,6 +36,7 @@ class Sim_config {
     void *robot_placement_dl_handle;
     void *robot_program_dl_handle;
     void *physics_engine_dl_handle;
+    // void *robot_plugin_dl_handle;
 };
 
 }  // namespace swarmnet_sim

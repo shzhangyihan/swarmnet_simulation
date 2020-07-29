@@ -11,6 +11,8 @@ namespace swarmnet_sim {
 extern "C" {
 std::vector<position2d_t>* robot_placement(int arena_max_x, int arena_max_y,
                                            int num_nodes) {
+    // Heap allocation is used for the vector.
+    // The caller will free the memory.
     std::vector<position2d_t>* pos_vector = new std::vector<position2d_t>;
     int xpos = 20;
     int ypos = 100;

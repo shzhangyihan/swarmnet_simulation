@@ -1,1 +1,2 @@
-add_library(kilobot SHARED kilobot.cpp)
+add_library(kilobot kilobot.cpp)
+target_link_libraries(kilobot node)

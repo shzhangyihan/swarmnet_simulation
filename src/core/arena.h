@@ -16,6 +16,8 @@ class Arena {
     Arena(Sim_config conf);
 
    private:
+    void init_nodes();
+
     Sim_config conf;
     int current_tick;
     std::vector<Node *> node_vector;

@@ -43,9 +43,6 @@ void start_simulation(char* config_file) {
             .get("robot_placement", "./src/plugin/engine/libdefault_engine.so")
             .asString();
     void* physics_engine_dl_handle = get_dl_handle(physics_engine_dl.c_str());
-    // std::string log_file_name =
-    //     CMAKE_ROOT_DIR "/" +
-    //     json_config.get("log_file", "default.txt").asString();
 
     std::cout << "Starting simulation with " << num_robot << " robots for "
               << duration << " seconds." << std::endl;

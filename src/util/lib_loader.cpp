@@ -6,20 +6,17 @@
 #include <iostream>
 
 namespace swarmnet_sim {
-void* get_dl_handle(const char* dl) {
+void* get_dl_handle(const char* dl_string) {
     char dl_path[PATH_MAX];
-    char* ret = realpath(dl, dl_path);
-    // if (ret != NULL) {
-    //     std::cerr << "Can't resolve dl path: " << dl << std::endl;
-    //     exit(-1);
-    // }
+    char* ret = realpath(dl_string, dl_path);
     std::cout << "Try to load dynamic library: \"" << dl_path << "\""
               << std::endl;
-    void* hndl = dlopen(dl, RTLD_NOW);
+    void* hndl = dlopen(dl_path, RTLD_NOW);
     if (hndl == NULL) {
         std::cerr << dlerror() << std::endl;
         exit(-1);
     }
     return hndl;
 }
+
 }  // namespace swarmnet_sim

@@ -24,12 +24,7 @@ void Arena::run() {
     }
 }
 
-Arena::Arena(Sim_config conf) {
-    std::cout << "init" << std::endl;
-    this->conf = conf;
-    this->current_tick = 0;
-    srand(this->conf.get_rand_seed());
-
+void Arena::init_nodes() {
     void* placement_handle = this->conf.get_robot_placement_dl_handle();
     typedef std::vector<position2d_t>* (*placement_fn_t)(
         int arena_max_x, int arena_max_y, int num_nodes);
@@ -40,11 +35,26 @@ Arena::Arena(Sim_config conf) {
     std::vector<position2d_t>* placement =
         placement_fn(this->conf.get_arena_max_x(), this->conf.get_arena_max_y(),
                      this->conf.get_num_robots());
+
+    typedef Node* (*robot_builder_t)(void*, int, position2d_t);
+    robot_builder_t robot_builder = (robot_builder_t)dlsym(
+        this->conf.get_robot_program_dl_handle(), "robot_builder");
+
     for (int i = 0; i < this->conf.get_num_robots(); i++) {
-        std::cout << i << " " << placement->at(i).x << ", "
-                  << placement->at(i).y << std::endl;
+        Node* new_node = robot_builder(this, i, placement->at(i));
+        new_node->init();
+        node_vector.push_back(new_node);
     }
     delete placement;
+}
+
+Arena::Arena(Sim_config conf) {
+    std::cout << "init" << std::endl;
+    this->conf = conf;
+    this->current_tick = 0;
+    srand(this->conf.get_rand_seed());
+
+    init_nodes();
 }
 
 }  // namespace swarmnet_sim
