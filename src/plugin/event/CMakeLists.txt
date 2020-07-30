@@ -1,0 +1,4 @@
+# add_library(tx_event tx_start_event.cpp tx_end_event.cpp)
+# add_library(rx_event rx_start_event.cpp rx_end_event.cpp)
+add_library(collision_event collision_event.cpp)
+target_link_libraries(collision_event event)

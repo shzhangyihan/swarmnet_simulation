@@ -9,6 +9,12 @@ class Default_program : public Kilobot {
     using Kilobot::Kilobot;
 
    public:
+    void collision() {
+        std::cout << node_id << " collision theta from " << pos.theta;
+        change_theta(rand() % 360);
+        std::cout << " to " << pos.theta << std::endl;
+    }
+
     void message_rx(packet_t packet, situated_sensing_t sensing) {
         std::cout << "tx" << std::endl;
     }
@@ -17,7 +23,11 @@ class Default_program : public Kilobot {
 
     void message_tx_success() { std::cout << "tx_s" << std::endl; }
 
-    void init() { std::cout << "init " << node_id << std::endl; }
+    void init() {
+        std::cout << "init " << node_id << " at " << pos.x << ", " << pos.y
+                  << std::endl;
+        velocity = 1;
+    }
 };
 
 // Make sure to include this line, with the argument the same as the class name

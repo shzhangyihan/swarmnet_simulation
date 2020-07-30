@@ -11,9 +11,10 @@ class Event {
     int get_from_id() const;
     int get_to_id() const;
     virtual void exec();
-    Event(int exec_tick, int from_id, int to_id);
+    Event(void* arena, int exec_tick, int from_id, int to_id);
 
    protected:
+    void* arena;
     int exec_tick;
     int from_id;
     int to_id;

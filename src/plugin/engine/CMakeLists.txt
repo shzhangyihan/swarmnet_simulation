@@ -1,1 +1,2 @@
 add_library(default_engine SHARED default_engine.cpp)
+target_link_libraries(default_engine collision_event node config arena event_queue physics_2d)

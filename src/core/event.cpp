@@ -9,11 +9,11 @@ int Event::get_to_id() const { return this->to_id; }
 
 void Event::exec() {}
 
-Event::Event(int exec_tick, int from_id, int to_id) {
+Event::Event(void* arena, int exec_tick, int from_id, int to_id) {
+    this->arena = arena;
     this->exec_tick = exec_tick;
     this->from_id = from_id;
     this->to_id = to_id;
-    // this->event_fn = event_fn;
 }
 
 bool CmpEventPtrs::operator()(const Event* lhs, const Event* rhs) const {
