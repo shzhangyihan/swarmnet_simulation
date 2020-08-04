@@ -1,13 +1,12 @@
-#include "simulation.h"
+#include "config_parser.h"
 
 #include <fstream>
 #include <iostream>
 
 namespace swarmnet_sim {
 
-void start_simulation(char* config_file) {
+Sim_config parse_config(char* config_file) {
     std::ifstream config_doc;
-    // const char * config_dir = CMAKE_ROOT_DIR "/config.json";
     std::string config_dir =
         std::string(CMAKE_ROOT_DIR) + "/" + std::string(config_file);
     config_doc.open(config_dir, std::ifstream::in);
@@ -21,6 +20,11 @@ void start_simulation(char* config_file) {
     int arena_max_y = json_config.get("arena_max_y", 700).asInt();
     int duration = json_config.get("experiment_duration", 60).asInt();
     int ticks_per_second = json_config.get("ticks_per_second", 1000).asInt();
+    int log_buf_size = json_config.get("log_buf_size", 10).asInt();
+    std::string motion_log_name =
+        json_config.get("motion_log", "./motion_log/default_log.txt")
+            .asString();
+
     std::string robot_placement_dl =
         BUILD_DIR "/" +
         json_config
@@ -54,12 +58,13 @@ void start_simulation(char* config_file) {
     conf.set_duration(duration);
     conf.set_ticks_per_second(ticks_per_second);
     conf.set_rand_seed(rand_seed);
+    conf.set_log_buf_size(log_buf_size);
     conf.set_robot_placement_dl_handle(robot_placement_dl_handle);
     conf.set_robot_program_dl_handle(robot_program_dl_handle);
     conf.set_physics_engine_dl_handle(physics_engine_dl_handle);
+    conf.set_motion_log_name(motion_log_name);
 
-    Arena arena(conf);
-    arena.run();
+    return conf;
 }
 
 }  // namespace swarmnet_sim

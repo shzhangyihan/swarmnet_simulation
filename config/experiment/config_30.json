@@ -1,5 +1,5 @@
 {
-    "robots": 1,
+    "robots": 30,
     "log_file": "test.txt",
     "experiment_duration": 1800,
     "arena_max_x": 700,

@@ -10,9 +10,12 @@ class Default_program : public Kilobot {
 
    public:
     void collision() {
-        std::cout << node_id << " collision theta from " << pos.theta;
+        float old_theta = pos.theta;
         change_theta(rand() % 360);
-        std::cout << " to " << pos.theta << std::endl;
+        // std::cout << node_id << " collision theta from " << old_theta << " to
+        // "
+        //           << pos.theta << std::endl
+        //           << std::flush;
     }
 
     void message_rx(packet_t packet, situated_sensing_t sensing) {

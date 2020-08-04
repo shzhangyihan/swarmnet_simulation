@@ -22,7 +22,11 @@ float Node::get_radius() const { return this->radius; }
 
 void Node::set_velocity(float velocity) { this->velocity = velocity; }
 
-void Node::set_position(position2d_t pos) { this->pos = pos; }
+void Node::set_position(position2d_t pos) {
+    // std::cout << node_id << " set pos from " << this->pos.x << ", "
+    //   << this->pos.y << " to " << pos.x << ", " << pos.y << std::endl;
+    this->pos = pos;
+}
 
 void Node::change_theta(float theta_delta) {
     position2d_t new_pos;

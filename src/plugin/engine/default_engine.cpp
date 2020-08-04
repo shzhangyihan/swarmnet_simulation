@@ -29,6 +29,13 @@ bool check_collision(Arena *arena, int future_ticks) {
                 Collision_event *new_event = new Collision_event(
                     arena, arena->get_current_tick() + t - 1, -1, i);
                 arena->add_event(new_event);
+                // std::cout << i << ": from "
+                //           << arena->get_node(i)->get_position().x << ", "
+                //           << arena->get_node(i)->get_position().y << " to "
+                //           << future_pos[i].x << ", " << future_pos[i].y << "
+                //           | "
+                //           << arena->get_node(i)->get_position().theta
+                //           << std::endl;
             }
         }
 
@@ -37,6 +44,8 @@ bool check_collision(Arena *arena, int future_ticks) {
                 if (check_robot_collision(future_pos[i], future_pos[j],
                                           arena->get_node(i)->get_radius())) {
                     violated = true;
+                    std::cout << "collision between " << i << " and " << j
+                              << std::endl;
                     Collision_event *new_event = new Collision_event(
                         arena, arena->get_current_tick() + t - 1, i, j);
                     arena->add_event(new_event);

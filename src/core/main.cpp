@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "simulation.h"
+#include "swarmnet_sim.h"
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
@@ -8,5 +8,7 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    swarmnet_sim::start_simulation(argv[1]);
+    swarmnet_sim::Sim_config conf = swarmnet_sim::parse_config(argv[1]);
+    swarmnet_sim::Arena arena(conf);
+    arena.run();
 }

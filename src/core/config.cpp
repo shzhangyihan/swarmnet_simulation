@@ -13,6 +13,8 @@ int Sim_config::get_ticks_per_second() const { return ticks_per_second; }
 
 int Sim_config::get_duration() const { return duration; }
 
+int Sim_config::get_log_buf_size() const { return log_buf_size; }
+
 void *Sim_config::get_robot_placement_dl_handle() const {
     return robot_placement_dl_handle;
 }
@@ -24,6 +26,8 @@ void *Sim_config::get_robot_program_dl_handle() const {
 void *Sim_config::get_physics_engine_dl_handle() const {
     return physics_engine_dl_handle;
 }
+
+std::string Sim_config::get_motion_log_name() const { return motion_log_name; }
 
 void Sim_config::set_num_robots(int val) { num_robots = val; }
 
@@ -37,6 +41,8 @@ void Sim_config::set_ticks_per_second(int val) { ticks_per_second = val; }
 
 void Sim_config::set_duration(int val) { duration = val; }
 
+void Sim_config::set_log_buf_size(int val) { log_buf_size = val; }
+
 void Sim_config::set_robot_placement_dl_handle(void *val) {
     robot_placement_dl_handle = val;
 }
@@ -48,5 +54,7 @@ void Sim_config::set_robot_program_dl_handle(void *val) {
 void Sim_config::set_physics_engine_dl_handle(void *val) {
     physics_engine_dl_handle = val;
 }
+
+void Sim_config::set_motion_log_name(std::string val) { motion_log_name = val; }
 
 }  // namespace swarmnet_sim

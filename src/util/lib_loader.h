@@ -1,5 +1,5 @@
-#ifndef __LIB_LOADER_H__
-#define __LIB_LOADER_H__
+#ifndef __SIM_LIB_LOADER_H__
+#define __SIM_LIB_LOADER_H__
 
 #include <dlfcn.h>
 

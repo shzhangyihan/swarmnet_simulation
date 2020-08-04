@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include "../util/motion_log.h"
 #include "config.h"
 #include "event_queue.h"
 #include "node.h"
@@ -17,6 +18,7 @@ class Arena {
     void add_event(Event* event);
     void update_simulation(int ticks);
     Arena(Sim_config conf);
+    ~Arena();
 
    private:
     void init_nodes();
@@ -25,6 +27,7 @@ class Arena {
     int current_tick;
     std::vector<Node*> node_vector;
     Event_queue event_queue;
+    Motion_log* motion_log;
     typedef bool (*collision_checker_t)(Arena*, int);
     collision_checker_t check_collision;
 };

@@ -38,16 +38,16 @@ void Arena::run() {
         }
         Event* next_event = this->event_queue.top();
         int next_event_tick = next_event->get_exec_tick();
-        std::cout << current_tick << " to " << next_event_tick << std::endl;
+        // std::cout << current_tick << " to " << next_event_tick << std::endl;
         if (this->check_collision(this, next_event_tick - current_tick)) {
             // collision happened, loop again
             continue;
         } else {
             // no collision, execuate current event
             this->event_queue.pop();
+            update_simulation(next_event_tick - current_tick);
             next_event->exec();
             delete next_event;
-            update_simulation(next_event_tick - current_tick);
             current_tick = next_event_tick;
         }
     }
@@ -81,11 +81,15 @@ Arena::Arena(Sim_config conf) {
     this->conf = conf;
     this->current_tick = 0;
     srand(this->conf.get_rand_seed());
+    // setup motion log
+    motion_log = new Motion_log(this->conf.get_log_buf_size(),
+                                this->conf.get_motion_log_name());
     // get the physics engine function from handle
     check_collision = (collision_checker_t)dlsym(
         this->conf.get_physics_engine_dl_handle(), "check_collision");
-
     init_nodes();
 }
+
+Arena::~Arena() { delete motion_log; }
 
 }  // namespace swarmnet_sim
