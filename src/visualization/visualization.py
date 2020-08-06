@@ -168,33 +168,6 @@ def drawRobots():
         paused = True
         finished = True
         return
-    
-    # prev_time_diff = time_diff
-    # next_event_tick = None
-    # flag = False
-    # while len(events) > 0:
-    #     next_event_tick = min(events.keys())
-    #     if cur_tick >= next_event_tick:
-    #         next_event = events.pop(next_event_tick)
-    #         for id in next_event:
-    #             log = next_event[id]
-    #             robot_list[id].set_attributes(log[2], log[3], log[4], log[5], log[6], log[7], log[8])
-    #         time_diff = (cur_tick - next_event_tick) / tick_per_second
-    #         flag = True
-    #     else:
-    #         break
-    # if flag:
-    #     print(prev_time_diff, time_diff, cur_tick, next_event_tick)
-    # if len(events) > 0:
-    #     next_event_tick = min(events.keys())
-    #     if cur_tick >= next_event_tick:
-    #         next_event = events.pop(next_event_tick)
-    #         for id in next_event:
-    #             log = next_event[id]
-    #             robot_list[id].set_attributes(log[2], log[3], log[4], log[5], log[6], log[7], log[8])
-    #         prev_time_diff = time_diff
-    #         time_diff = (cur_tick - next_event_tick) / tick_per_second
-            # print(prev_time_diff, time_diff, cur_tick, next_event_tick)
 
     for robot in robot_list:
         xmov, ymov = calcUnitMovement(robot.theta, robot.v)
@@ -215,9 +188,6 @@ def drawRobots():
         elif robot.y > arena_height:
             robot.y = arena_height
 
-    # prev_time_diff = time_diff
-    # next_event_tick = None
-    # flag = False
     while len(events) > 0:
         next_event_tick = min(events.keys())
         if cur_tick >= next_event_tick:
@@ -225,8 +195,6 @@ def drawRobots():
             for id in next_event:
                 log = next_event[id]
                 robot_list[id].set_attributes(log[2], log[3], log[4], log[5], log[6], log[7], log[8])
-            # time_diff = (cur_tick - next_event_tick) / tick_per_second
-            # flag = True
         else:
             break
     
