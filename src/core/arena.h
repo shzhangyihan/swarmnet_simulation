@@ -16,6 +16,7 @@ class Arena {
     Node* get_node(int id) const;
     int get_current_tick() const;
     void add_event(Event* event);
+    void log_node(int id);
     void update_simulation(int ticks);
     Arena(Sim_config conf);
     ~Arena();

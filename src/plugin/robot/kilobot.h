@@ -5,7 +5,7 @@
 
 namespace swarmnet_sim {
 
-#define ROBOT_RADIUS 8
+#define ROBOT_RADIUS 7
 
 typedef struct packet {
     unsigned char payload[9];

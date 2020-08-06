@@ -20,7 +20,7 @@ Sim_config parse_config(char* config_file) {
     int arena_max_y = json_config.get("arena_max_y", 700).asInt();
     int duration = json_config.get("experiment_duration", 60).asInt();
     int ticks_per_second = json_config.get("ticks_per_second", 1000).asInt();
-    int log_buf_size = json_config.get("log_buf_size", 10).asInt();
+    int log_buf_size = json_config.get("log_buf_size", 50).asInt();
     std::string motion_log_name =
         json_config.get("motion_log", "./motion_log/default_log.txt")
             .asString();
