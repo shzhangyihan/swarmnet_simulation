@@ -19,6 +19,7 @@ finished = False
 prev_time = 0
 cur_tick = 0
 max_tick = 0
+RADIUS = 7
 
 class Robot:
     def set_attributes(self, x, y, theta, v, r, g, b):
@@ -125,12 +126,12 @@ def calcUnitMovement(theta, v):
     ymov = v * np.sin(np.deg2rad(theta))
     return (xmov, ymov)
 
-def drawSingleRobot(x, y, R, G, B):
+def drawSingleRobot(x, y, R, G, B, radius):
     glBegin(GL_POLYGON)
     glColor3f(R,G,B)  
     for vertex in range(0, 8):
         angle  = float(vertex) * 2.0 * np.pi / 8
-        glVertex2f(x + np.cos(angle)*7, y + np.sin(angle)*7)
+        glVertex2f(x + np.cos(angle) * radius, y + np.sin(angle) * radius)
     glEnd()
 
 def drawRobots():
@@ -146,6 +147,7 @@ def drawRobots():
     global finished
     global arena_width
     global arena_height
+    global RADIUS
 
     cur_time = time.time()
     time_diff = (cur_time - prev_time) * speed_options[speed_index]
@@ -173,7 +175,7 @@ def drawRobots():
         xmov, ymov = calcUnitMovement(robot.theta, robot.v)
         xpos = robot.x
         ypos = robot.y
-        drawSingleRobot(xpos, ypos, robot.r, robot.g, robot.b)
+        drawSingleRobot(xpos, ypos, robot.r, robot.g, robot.b, RADIUS)
 
         robot.x = xpos + xmov * time_diff
         robot.y = ypos + ymov * time_diff

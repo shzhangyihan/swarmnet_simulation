@@ -20,7 +20,7 @@ void Kilobot::init() {}
 
 Kilobot::Kilobot(void* arena, int node_id, position2d_t pos)
     : Node(arena, node_id, pos) {
-    this->radius = 8;
+    this->radius = ROBOT_RADIUS;
 }
 
 }  // namespace swarmnet_sim

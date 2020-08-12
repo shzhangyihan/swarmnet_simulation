@@ -17,7 +17,9 @@ class Arena {
     int get_current_tick() const;
     void add_event(Event* event);
     void log_node(int id);
+    void log_metadata();
     void update_simulation(int ticks);
+    void move_robot(int id, position2d_t pos);
     Arena(Sim_config conf);
     ~Arena();
 
@@ -29,7 +31,7 @@ class Arena {
     std::vector<Node*> node_vector;
     Event_queue event_queue;
     Motion_log* motion_log;
-    typedef bool (*collision_checker_t)(Arena*, int);
+    typedef int (*collision_checker_t)(Arena*, int);
     collision_checker_t check_collision;
 };
 }  // namespace swarmnet_sim

@@ -27,6 +27,10 @@ void Arena::update_simulation(int ticks) {
     }
 }
 
+void Arena::move_robot(int id, position2d_t pos) {
+    this->node_vector[id]->set_position(pos);
+}
+
 void Arena::log_node(int id) {
     std::string log = "";
     Node* node = node_vector[id];
@@ -50,6 +54,7 @@ void Arena::log_node(int id) {
 
 void Arena::run() {
     // start the sim
+    // int counter = 0;
     int max_tick =
         this->conf.get_ticks_per_second() * this->conf.get_duration();
 
@@ -60,13 +65,23 @@ void Arena::run() {
         }
         Event* next_event = this->event_queue.top();
         int next_event_tick = next_event->get_exec_tick();
-        if (this->check_collision(this, next_event_tick - current_tick)) {
+        // std::cout << "current tick " << current_tick << " next tick "
+        //           << next_event_tick << std::endl;
+
+        int collision_tick =
+            this->check_collision(this, next_event_tick - current_tick);
+        // std::cout << "check return " << collision_tick << std::endl;
+        if (collision_tick != -1) {
             // collision happened, loop again
+            // update tick
+            current_tick = current_tick + collision_tick;
+            // counter++;
+            // if (counter == 10) break;
             continue;
         } else {
             // no collision, execuate current event
             this->event_queue.pop();
-            update_simulation(next_event_tick - current_tick);
+            // update_simulation(next_event_tick - current_tick);
             next_event->exec();
             int exec_node_id = next_event->get_to_id();
             delete next_event;
@@ -104,13 +119,7 @@ void Arena::init_nodes() {
 
 void Arena::add_event(Event* event) { this->event_queue.push(event); }
 
-Arena::Arena(Sim_config conf) {
-    this->conf = conf;
-    this->current_tick = 0;
-    srand(this->conf.get_rand_seed());
-    // setup motion log
-    motion_log = new Motion_log(this->conf.get_log_buf_size(),
-                                this->conf.get_motion_log_name());
+void Arena::log_metadata() {
     std::string metadata = "";
     metadata = metadata + std::to_string(this->conf.get_arena_max_x()) + " ";
     metadata = metadata + std::to_string(this->conf.get_arena_max_y()) + " ";
@@ -119,6 +128,16 @@ Arena::Arena(Sim_config conf) {
         metadata + std::to_string(this->conf.get_ticks_per_second()) + " ";
     metadata = metadata + std::to_string(this->conf.get_duration()) + "\n";
     motion_log->log(metadata);
+}
+
+Arena::Arena(Sim_config conf) {
+    this->conf = conf;
+    this->current_tick = 0;
+    srand(this->conf.get_rand_seed());
+    // setup motion log
+    motion_log = new Motion_log(this->conf.get_log_buf_size(),
+                                this->conf.get_motion_log_name());
+    log_metadata();
     // get the physics engine function from handle
     check_collision = (collision_checker_t)dlsym(
         this->conf.get_physics_engine_dl_handle(), "check_collision");
