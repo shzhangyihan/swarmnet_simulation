@@ -27,6 +27,8 @@ void *Sim_config::get_physics_engine_dl_handle() const {
     return physics_engine_dl_handle;
 }
 
+void *Sim_config::get_medium_dl_handle() const { return medium_dl_handle; }
+
 std::string Sim_config::get_motion_log_name() const { return motion_log_name; }
 
 void Sim_config::set_num_robots(int val) { num_robots = val; }
@@ -54,6 +56,8 @@ void Sim_config::set_robot_program_dl_handle(void *val) {
 void Sim_config::set_physics_engine_dl_handle(void *val) {
     physics_engine_dl_handle = val;
 }
+
+void Sim_config::set_medium_dl_handle(void *val) { medium_dl_handle = val; }
 
 void Sim_config::set_motion_log_name(std::string val) { motion_log_name = val; }
 

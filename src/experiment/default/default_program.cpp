@@ -22,10 +22,14 @@ class Default_program : public Kilobot {
     }
 
     void message_rx(packet_t packet, situated_sensing_t sensing) {
-        std::cout << "tx" << std::endl;
+        std::cout << node_id << " rx " << int(packet.payload[0]) << std::endl;
     }
 
-    bool message_tx(packet_t* packet) { std::cout << "tx" << std::endl; }
+    bool message_tx(packet_t* packet) {
+        std::cout << node_id << " tx" << std::endl;
+        packet->payload[0] = node_id;
+        return true;
+    }
 
     void message_tx_success() { std::cout << "tx_s" << std::endl; }
 
@@ -40,7 +44,7 @@ class Default_program : public Kilobot {
             c.green = 0;
             set_color(c);
         }
-        velocity = 1;
+        velocity = 0;
     }
 };
 

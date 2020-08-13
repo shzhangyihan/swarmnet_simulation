@@ -6,6 +6,8 @@
 namespace swarmnet_sim {
 
 #define ROBOT_RADIUS 7
+#define COMM_RADIUS 50
+#define TX_PERIOD_SECOND 0.5
 
 typedef struct packet {
     unsigned char payload[9];
@@ -23,6 +25,7 @@ class Kilobot : public Node {
     virtual bool message_tx(packet_t* packet);
     virtual void message_tx_success();
     virtual void init();
+    void start();
 
     Kilobot(void* arena, int node_id, position2d_t pos);
 };

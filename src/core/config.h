@@ -16,6 +16,7 @@ class Sim_config {
     void *get_robot_placement_dl_handle() const;
     void *get_robot_program_dl_handle() const;
     void *get_physics_engine_dl_handle() const;
+    void *get_medium_dl_handle() const;
     std::string get_motion_log_name() const;
 
     void set_num_robots(int val);
@@ -28,6 +29,7 @@ class Sim_config {
     void set_robot_placement_dl_handle(void *val);
     void set_robot_program_dl_handle(void *val);
     void set_physics_engine_dl_handle(void *val);
+    void set_medium_dl_handle(void *val);
     void set_motion_log_name(std::string val);
 
    private:
@@ -41,6 +43,7 @@ class Sim_config {
     void *robot_placement_dl_handle;
     void *robot_program_dl_handle;
     void *physics_engine_dl_handle;
+    void *medium_dl_handle;
     std::string motion_log_name;
     // void *robot_plugin_dl_handle;
 };

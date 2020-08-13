@@ -37,8 +37,10 @@ void Node::change_theta(float theta_delta) {
     set_position(new_pos);
 }
 
+void Node::add_event(Event* event) { ((Arena*)this->arena)->add_event(event); }
+
 void Node::collision() {}
 
-void Node::init() {}
+void Node::start() {}
 
 }  // namespace swarmnet_sim

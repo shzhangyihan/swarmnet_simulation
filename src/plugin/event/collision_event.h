@@ -1,7 +1,6 @@
 #ifndef __SIM_COLLISION_EVENT_H__
 #define __SIM_COLLISION_EVENT_H__
 
-#include "../../core/arena.h"
 #include "../../core/event.h"
 
 namespace swarmnet_sim {

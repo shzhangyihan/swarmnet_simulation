@@ -48,6 +48,14 @@ Sim_config parse_config(char* config_file) {
             .asString();
     void* physics_engine_dl_handle = get_dl_handle(physics_engine_dl.c_str());
 
+    std::string medium_dl =
+        BUILD_DIR "/" +
+        json_config
+            .get("comm_medium",
+                 "./src/plugin/medium/kilobot_CSMA/libkilobot_medium.so")
+            .asString();
+    void* medium_dl_handle = get_dl_handle(medium_dl.c_str());
+
     std::cout << "Starting simulation with " << num_robot << " robots for "
               << duration << " seconds." << std::endl;
 
@@ -62,6 +70,7 @@ Sim_config parse_config(char* config_file) {
     conf.set_robot_placement_dl_handle(robot_placement_dl_handle);
     conf.set_robot_program_dl_handle(robot_program_dl_handle);
     conf.set_physics_engine_dl_handle(physics_engine_dl_handle);
+    conf.set_medium_dl_handle(medium_dl_handle);
     conf.set_motion_log_name(motion_log_name);
 
     return conf;

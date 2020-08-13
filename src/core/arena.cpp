@@ -12,6 +12,8 @@ int Arena::get_current_tick() const { return this->current_tick; }
 
 Node* Arena::get_node(int id) const { return this->node_vector[id]; }
 
+Medium* Arena::get_medium() const { return this->comm_medium; }
+
 void Arena::update_simulation(int ticks) {
     int num_robots = this->conf.get_num_robots();
     for (int i = 0; i < num_robots; i++) {
@@ -110,7 +112,7 @@ void Arena::init_nodes() {
 
     for (int i = 0; i < this->conf.get_num_robots(); i++) {
         Node* new_node = robot_builder(this, i, placement->at(i));
-        new_node->init();
+        new_node->start();
         node_vector.push_back(new_node);
         log_node(i);
     }
@@ -141,6 +143,11 @@ Arena::Arena(Sim_config conf) {
     // get the physics engine function from handle
     check_collision = (collision_checker_t)dlsym(
         this->conf.get_physics_engine_dl_handle(), "check_collision");
+    // get the medium from handle
+    typedef Medium* (*medium_builder_t)(void*);
+    medium_builder_t medium_builder = (medium_builder_t)dlsym(
+        this->conf.get_medium_dl_handle(), "medium_builder");
+    this->comm_medium = medium_builder(this);
     init_nodes();
 }
 

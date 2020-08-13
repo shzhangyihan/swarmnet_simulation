@@ -103,9 +103,7 @@ int check_collision(Arena *arena, int future_ticks) {
 }
 
 bool check_robot_collision(position2d_t pos_1, position2d_t pos_2, int radius) {
-    float dist;
-    dist = sqrt((pos_1.x - pos_2.x) * (pos_1.x - pos_2.x) +
-                (pos_1.y - pos_2.y) * (pos_1.y - pos_2.y));
+    float dist = calculate_dist(pos_1, pos_2);
     if (dist > radius * 2) {
         return false;
     } else {

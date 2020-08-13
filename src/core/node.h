@@ -3,6 +3,7 @@
 
 #include <string>
 
+#include "event.h"
 #include "physics_2d.h"
 
 #define REGISTER_PROGRAM(NAME)                                        \
@@ -13,10 +14,10 @@
     }                                                                 \
     }
 
+namespace swarmnet_sim {
+
 typedef struct packet packet_t;
 typedef struct situated_sensing situated_sensing_t;
-
-namespace swarmnet_sim {
 
 class Node {
    public:
@@ -29,7 +30,8 @@ class Node {
     void set_position(position2d_t pos);
     void set_color(color_t color);
     void change_theta(float theta_delta);
-    virtual void init();
+    void add_event(Event* event);
+    virtual void start();
     virtual void collision();
 
     Node(void* arena, int node_id, position2d_t pos);

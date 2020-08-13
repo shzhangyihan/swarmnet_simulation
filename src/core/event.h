@@ -1,8 +1,6 @@
 #ifndef __SIM_EVENT_H__
 #define __SIM_EVENT_H__
 
-#include <functional>
-
 namespace swarmnet_sim {
 
 class Event {
@@ -12,6 +10,7 @@ class Event {
     int get_to_id() const;
     virtual void exec();
     Event(void* arena, int exec_tick, int from_id, int to_id);
+    Event();
 
    protected:
     void* arena;

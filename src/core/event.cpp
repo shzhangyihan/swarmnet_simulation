@@ -16,6 +16,8 @@ Event::Event(void* arena, int exec_tick, int from_id, int to_id) {
     this->to_id = to_id;
 }
 
+Event::Event() {}
+
 bool CmpEventPtrs::operator()(const Event* lhs, const Event* rhs) const {
     return lhs->get_exec_tick() > rhs->get_exec_tick();
 }
