@@ -6,5 +6,6 @@ add_library(node node.cpp)
 add_library(physics_2d physics_2d.cpp)
 add_executable(simulation main.cpp)
 
-target_link_libraries(arena util)
-target_link_libraries(simulation util arena config event_queue event node physics_2d dl)
+target_link_libraries(arena util config event_queue event node physics_2d)
+target_link_libraries(event arena)
+target_link_libraries(simulation util arena dl)

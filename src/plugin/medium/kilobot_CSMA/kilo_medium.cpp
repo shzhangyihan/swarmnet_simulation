@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "../../../core/arena.h"
-#include "../../event/kilobot_CSMA/rx_event.h"
+#include "../../event/kilobot/rx_event.h"
 
 namespace swarmnet_sim {
 

@@ -31,6 +31,7 @@ class Node {
     void set_color(color_t color);
     void change_theta(float theta_delta);
     void add_event(Event* event);
+    void stop();
     virtual void start();
     virtual void collision();
 

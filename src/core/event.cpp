@@ -1,5 +1,7 @@
 #include "event.h"
 
+#include "arena.h"
+
 namespace swarmnet_sim {
 int Event::get_exec_tick() const { return this->exec_tick; }
 
@@ -8,6 +10,10 @@ int Event::get_from_id() const { return this->from_id; }
 int Event::get_to_id() const { return this->to_id; }
 
 void Event::exec() {}
+
+void Event::log_node(int id) {
+    ((Arena*)this->arena)->log_node(this->exec_tick, id);
+}
 
 Event::Event(void* arena, int exec_tick, int from_id, int to_id) {
     this->arena = arena;

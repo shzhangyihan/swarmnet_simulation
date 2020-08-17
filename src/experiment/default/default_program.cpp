@@ -11,14 +11,20 @@ class Default_program : public Kilobot {
 
    public:
     void collision() {
-        counter++;
-        if (counter == 50000) {
-            counter = 0;
-            float old_theta = pos.theta;
-            // std::cout << node_id << " collision" << std::endl << std::flush;
-            // if (node_id == 1) change_theta(rand() % 360);
-            change_theta(rand() % 360);
+        // counter++;
+        // if (counter == 50000) {
+        //     counter = 0;
+        // float old_theta = pos.theta;
+        std::cout << node_id << " collision" << std::endl << std::flush;
+        if (node_id == 1) {
+            turn(rand() % 360 - 180);
+        } else {
+            counter++;
+            if (counter == 50000) {
+                turn(rand() % 360 - 180);
+            }
         }
+        // go_forward();
     }
 
     void message_rx(packet_t packet, situated_sensing_t sensing) {
@@ -37,14 +43,15 @@ class Default_program : public Kilobot {
         counter = 0;
         std::cout << "init " << node_id << " at " << pos.x << ", " << pos.y
                   << std::endl;
-        if (node_id == 1) {
-            color_t c;
-            c.blue = 0;
-            c.red = 255;
-            c.green = 0;
-            set_color(c);
-        }
-        velocity = 0;
+        // if (node_id == 1) {
+        color_t c;
+        c.blue = 0;
+        c.red = 255;
+        c.green = 0;
+        change_color(c);
+        go_forward();
+        // }
+        // velocity = 1;
     }
 };
 

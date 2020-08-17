@@ -39,6 +39,8 @@ void Node::change_theta(float theta_delta) {
 
 void Node::add_event(Event* event) { ((Arena*)this->arena)->add_event(event); }
 
+void Node::stop() { this->velocity = 0; }
+
 void Node::collision() {}
 
 void Node::start() {}

@@ -24,4 +24,18 @@ float calculate_dist(position2d_t pos1, position2d_t pos2) {
     return dist;
 }
 
+bool operator==(const position2d_t& lhs, const position2d_t& rhs) {
+    if (lhs.x == rhs.x && lhs.y == rhs.y && lhs.theta == rhs.theta)
+        return true;
+    else
+        return false;
+}
+
+bool operator==(const color_t& lhs, const color_t& rhs) {
+    if (lhs.red == rhs.red && lhs.green == rhs.green && lhs.blue == rhs.blue)
+        return true;
+    else
+        return false;
+}
+
 }  // namespace swarmnet_sim

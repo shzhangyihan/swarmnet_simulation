@@ -54,9 +54,30 @@ void Arena::log_node(int id) {
     motion_log->log(log);
 }
 
+void Arena::log_node(int tick, int id) {
+    std::string log = "";
+    Node* node = node_vector[id];
+    position2d_t pos = node->get_position();
+    color_t color = node->get_color();
+    // add time
+    log = log + std::to_string(tick) + " ";
+    // add id
+    log = log + std::to_string(id) + " ";
+    // add position
+    log = log + std::to_string(pos.x) + " " + std::to_string(pos.y) + " " +
+          std::to_string(pos.theta) + " ";
+    // add speed
+    log = log + std::to_string(node->get_velocity()) + " ";
+    // add color
+    log = log + std::to_string(color.red) + " " + std::to_string(color.green) +
+          " " + std::to_string(color.blue) + "\n";
+
+    motion_log->log(log);
+}
+
 void Arena::run() {
     // start the sim
-    // int counter = 0;
+    int counter = 0;
     int max_tick =
         this->conf.get_ticks_per_second() * this->conf.get_duration();
 
@@ -67,8 +88,8 @@ void Arena::run() {
         }
         Event* next_event = this->event_queue.top();
         int next_event_tick = next_event->get_exec_tick();
-        // std::cout << "current tick " << current_tick << " next tick "
-        //           << next_event_tick << std::endl;
+        std::cout << "current tick " << current_tick << " next tick "
+                  << next_event_tick << std::endl;
 
         int collision_tick =
             this->check_collision(this, next_event_tick - current_tick);
@@ -88,9 +109,11 @@ void Arena::run() {
             int exec_node_id = next_event->get_to_id();
             delete next_event;
             current_tick = next_event_tick;
-            if (exec_node_id != -1) log_node(exec_node_id);
+            // if (exec_node_id != -1) log_node(exec_node_id);
         }
         // std::cout << current_tick << std::endl;
+        counter++;
+        // if (counter > 10) break;
     }
     // std::cout << "finished" << std::endl;
     motion_log->flush();
@@ -112,8 +135,8 @@ void Arena::init_nodes() {
 
     for (int i = 0; i < this->conf.get_num_robots(); i++) {
         Node* new_node = robot_builder(this, i, placement->at(i));
-        new_node->start();
         node_vector.push_back(new_node);
+        new_node->start();
         log_node(i);
     }
     delete placement;

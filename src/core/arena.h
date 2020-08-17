@@ -6,8 +6,8 @@
 #include "../util/motion_log.h"
 #include "config.h"
 #include "event_queue.h"
-#include "node.h"
 #include "medium.h"
+#include "node.h"
 
 namespace swarmnet_sim {
 class Arena {
@@ -19,6 +19,7 @@ class Arena {
     int get_current_tick() const;
     void add_event(Event* event);
     void log_node(int id);
+    void log_node(int tick, int id);
     void log_metadata();
     void update_simulation(int ticks);
     void move_robot(int id, position2d_t pos);

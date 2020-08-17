@@ -8,6 +8,7 @@ class Event {
     int get_exec_tick() const;
     int get_from_id() const;
     int get_to_id() const;
+    void log_node(int id);
     virtual void exec();
     Event(void* arena, int exec_tick, int from_id, int to_id);
     Event();
