@@ -15,16 +15,55 @@ class Default_program : public Kilobot {
         // if (counter == 50000) {
         //     counter = 0;
         // float old_theta = pos.theta;
-        std::cout << node_id << " collision" << std::endl << std::flush;
-        if (node_id == 1) {
-            turn(rand() % 360 - 180);
-        } else {
-            counter++;
-            if (counter == 50000) {
-                turn(rand() % 360 - 180);
+        // std::cout << node_id << " collision" << std::endl << std::flush;
+        // if (node_id == 1) {
+        //     turn(rand() % 360 - 180);
+        // } else {
+        //     counter++;
+        //     if (counter == 50000) {
+        //         turn(rand() % 360 - 180);
+        //     }
+        // }
+        // go_forward();
+        turn(rand() % 360 - 180);
+        int select_color;
+        color_t cur_color = this->get_color();
+        while (true) {
+            select_color = rand() % 3;
+            color_t next_color;
+
+            switch (select_color) {
+                case 0:
+                    next_color.red = 0;
+                    next_color.blue = 0;
+                    next_color.green = 255;
+                    break;
+                case 1:
+                    next_color.red = 0;
+                    next_color.blue = 255;
+                    next_color.green = 0;
+                    break;
+                case 2:
+                    next_color.red = 255;
+                    next_color.blue = 0;
+                    next_color.green = 0;
+                    break;
+            }
+
+            if (next_color == cur_color)
+                continue;
+            else {
+                this->change_color(next_color);
+                // std::cout << "change color to " << int(next_color.red) << " "
+                //           << int(next_color.green) << " "
+                //           << int(next_color.blue) << " from "
+                //           << int(cur_color.red) << " " <<
+                //           int(cur_color.green)
+                //           << " " << int(cur_color.blue) << std::endl
+                //           << std::flush;
+                break;
             }
         }
-        // go_forward();
     }
 
     void message_rx(packet_t packet, situated_sensing_t sensing) {

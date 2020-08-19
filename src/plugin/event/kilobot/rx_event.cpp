@@ -8,7 +8,7 @@ namespace swarmnet_sim {
 
 void RX_start_event::exec() {
     ((Kilobot*)((Arena*)this->arena)->get_node(to_id))
-        ->message_rx(pkt, sensing);
+        ->message_rx_wrapper(pkt, sensing);
 }
 
 RX_start_event::RX_start_event(void* arena, int exec_tick, int to_id,

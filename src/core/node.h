@@ -32,8 +32,8 @@ class Node {
     void change_theta(float theta_delta);
     void add_event(Event* event);
     void stop();
-    virtual void start();
-    virtual void collision();
+    virtual void init_wrapper();
+    virtual void collision_wrapper();
 
     Node(void* arena, int node_id, position2d_t pos);
 

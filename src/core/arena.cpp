@@ -88,8 +88,8 @@ void Arena::run() {
         }
         Event* next_event = this->event_queue.top();
         int next_event_tick = next_event->get_exec_tick();
-        std::cout << "current tick " << current_tick << " next tick "
-                  << next_event_tick << std::endl;
+        // std::cout << "current tick " << current_tick << " next tick "
+        //           << next_event_tick << std::endl;
 
         int collision_tick =
             this->check_collision(this, next_event_tick - current_tick);
@@ -136,7 +136,7 @@ void Arena::init_nodes() {
     for (int i = 0; i < this->conf.get_num_robots(); i++) {
         Node* new_node = robot_builder(this, i, placement->at(i));
         node_vector.push_back(new_node);
-        new_node->start();
+        new_node->init_wrapper();
         log_node(i);
     }
     delete placement;

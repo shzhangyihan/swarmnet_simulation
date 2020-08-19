@@ -11,7 +11,7 @@ void TX_start_event::exec() {
     Arena* arena_ptr = (Arena*)arena;
     Node* tx_node = arena_ptr->get_node(from_id);
     packet_t tx_packet;
-    bool tx_state = ((Kilobot*)tx_node)->message_tx(&tx_packet);
+    bool tx_state = ((Kilobot*)tx_node)->message_tx_wrapper(&tx_packet);
     if (tx_state) {
         // packet ready to send
         arena_ptr->get_medium()->send_packet(from_id, tx_packet, COMM_RADIUS);

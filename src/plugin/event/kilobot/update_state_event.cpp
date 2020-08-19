@@ -9,43 +9,31 @@ namespace swarmnet_sim {
 
 void Update_state_event::exec() {
     Arena* arena_ptr = (Arena*)arena;
-    // std::cout << "update state ";
 
     Node* target_node = arena_ptr->get_node(to_id);
-    // if (updated[Position]) {
     target_node->set_position(pos);
-    //     std::cout << "pos ";
-    // }
-    // if (updated[Color]) {
     target_node->set_color(color);
-    std::cout << "color ";
-    // }
-    // if (updated[Velocity]) {
     target_node->set_velocity(velocity);
-    //     std::cout << "velo ";
-    // }
-    std::cout << std::endl << std::flush;
+
+    if (velocity == 0) {
+        std::cout << to_id << ": update state ";
+        std::cout << "pos " << pos.x << " " << pos.y << " " << pos.theta << " ";
+        std::cout << "color " << int(color.red) << " " << int(color.green)
+                  << " " << int(color.blue) << " ";
+        std::cout << "velocity " << velocity;
+        std::cout << std::endl << std::flush;
+    } else {
+        std::cout << to_id << " resume" << std::endl << std::flush;
+    }
+
     this->log_node(to_id);
 }
 
-void Update_state_event::update_position(position2d_t pos) {
-    // std::cout << "try pos" << std::endl << std::flush;
+void Update_state_event::update_position(position2d_t pos) { this->pos = pos; }
 
-    // this->updated[Position] = true;
-    this->pos = pos;
-}
-
-void Update_state_event::update_color(color_t color) {
-    std::cout << "try color" << std::endl << std::flush;
-
-    // this->updated[Color] = true;
-    this->color = color;
-}
+void Update_state_event::update_color(color_t color) { this->color = color; }
 
 void Update_state_event::update_velocity(float velocity) {
-    // std::cout << "try velo" << std::endl << std::flush;
-
-    // this->updated[Velocity] = true;
     this->velocity = velocity;
 }
 

@@ -39,10 +39,13 @@ void Node::change_theta(float theta_delta) {
 
 void Node::add_event(Event* event) { ((Arena*)this->arena)->add_event(event); }
 
-void Node::stop() { this->velocity = 0; }
+void Node::stop() {
+    std::cout << node_id << " stop" << std::endl << std::flush;
+    this->velocity = 0;
+}
 
-void Node::collision() {}
+void Node::collision_wrapper() {}
 
-void Node::start() {}
+void Node::init_wrapper() {}
 
 }  // namespace swarmnet_sim
