@@ -26,33 +26,30 @@ Sim_config parse_config(char* config_file) {
             .asString();
 
     std::string robot_placement_dl =
-        BUILD_DIR "/" +
         json_config
             .get("robot_placement",
-                 "./src/experiment/default/libdefault_placement.so")
+                 BUILD_DIR "/src/experiment/default/libdefault_placement.so")
             .asString();
     void* robot_placement_dl_handle = get_dl_handle(robot_placement_dl.c_str());
 
     std::string robot_program_dl =
-        BUILD_DIR "/" +
         json_config
-            .get("robot_placement",
-                 "./src/experiment/default/libdefault_program.so")
+            .get("robot_program",
+                 BUILD_DIR "/src/experiment/default/libdefault_program.so")
             .asString();
     void* robot_program_dl_handle = get_dl_handle(robot_program_dl.c_str());
 
     std::string physics_engine_dl =
-        BUILD_DIR "/" +
         json_config
-            .get("robot_placement", "./src/plugin/engine/libdefault_engine.so")
+            .get("physics_engine",
+                 BUILD_DIR "/src/plugin/engine/libdefault_engine.so")
             .asString();
     void* physics_engine_dl_handle = get_dl_handle(physics_engine_dl.c_str());
 
     std::string medium_dl =
-        BUILD_DIR "/" +
         json_config
-            .get("comm_medium",
-                 "./src/plugin/medium/kilobot_CSMA/libkilobot_medium.so")
+            .get("comm_medium", BUILD_DIR
+                 "/src/plugin/medium/kilobot_CSMA/libkilobot_medium.so")
             .asString();
     void* medium_dl_handle = get_dl_handle(medium_dl.c_str());
 

@@ -1,7 +1,0 @@
-{
-    "robots": 1,
-    "log_file": "test.txt",
-    "experiment_duration": 10000,
-    "arena_max_x": 300,
-    "arena_max_y": 300
-}

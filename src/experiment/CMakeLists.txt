@@ -1,2 +1,3 @@
+add_subdirectory(motion_test)
 add_subdirectory(default)
-# add_subdirectory(test_comm)
+# add_subdirectory(comm_test)
