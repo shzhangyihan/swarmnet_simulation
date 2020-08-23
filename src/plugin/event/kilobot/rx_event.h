@@ -18,6 +18,16 @@ class RX_start_event : public Event {
     situated_sensing_t sensing;
 };
 
+class RX_end_event : public Event {
+   public:
+    void exec();
+    RX_end_event(void* arena, int exec_tick, int to_id);
+
+   private:
+    packet_t pkt;
+    situated_sensing_t sensing;
+};
+
 }  // namespace swarmnet_sim
 
 #endif

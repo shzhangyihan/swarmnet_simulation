@@ -105,10 +105,10 @@ void Arena::run() {
             // no collision, execuate current event
             this->event_queue.pop();
             // update_simulation(next_event_tick - current_tick);
-            next_event->exec();
-            int exec_node_id = next_event->get_to_id();
-            delete next_event;
             current_tick = next_event_tick;
+            next_event->exec();
+            // int exec_node_id = next_event->get_to_id();
+            delete next_event;
             // if (exec_node_id != -1) log_node(exec_node_id);
         }
         // std::cout << current_tick << std::endl;
@@ -174,6 +174,12 @@ Arena::Arena(Sim_config conf) {
     init_nodes();
 }
 
-Arena::~Arena() { delete motion_log; }
+Arena::~Arena() {
+    delete motion_log;
+    for (int i = 0; i < this->conf.get_num_robots(); i++) {
+        delete node_vector[i];
+    }
+    node_vector.clear();
+}
 
 }  // namespace swarmnet_sim

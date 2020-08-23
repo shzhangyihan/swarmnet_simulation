@@ -43,6 +43,8 @@ class Node {
     int node_id;
     float velocity;
     float radius;
+    bool collision_flag;
+    bool skip_logging_flag;
     void* arena;
 };
 

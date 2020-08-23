@@ -43,6 +43,7 @@ class Kilobot : public Node {
     void go_forward(float seconds);
     void change_color(color_t color);
     void turn(float angle);
+    int get_global_tick();
     physical_state_t init_user_state();
     bool check_state_change(physical_state_t old_state);
     void add_state_change_event();

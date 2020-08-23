@@ -11,6 +11,8 @@ Node::Node(void* arena, int node_id, position2d_t pos) {
     this->pos = pos;
     this->velocity = 0;
     this->color = {.red = 255, .green = 255, .blue = 255};
+    this->collision_flag = false;
+    this->skip_logging_flag = false;
 }
 
 position2d_t Node::get_position() const { return this->pos; }

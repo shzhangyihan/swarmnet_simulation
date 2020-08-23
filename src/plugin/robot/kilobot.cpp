@@ -35,10 +35,11 @@ void Kilobot::message_rx_wrapper(packet_t packet, situated_sensing_t sensing) {
 
 bool Kilobot::message_tx_wrapper(packet_t* packet) {
     physical_state_t old_state = this->init_user_state();
-    this->message_tx(packet);
+    bool ret = this->message_tx(packet);
     if (this->check_state_change(old_state)) {
         this->add_state_change_event();
     }
+    return ret;
 }
 
 void Kilobot::message_tx_success_wrapper() {
@@ -58,7 +59,7 @@ void Kilobot::init_wrapper() {
                      arena_ptr->get_config().get_ticks_per_second();
     TX_start_event* tx_start_event = new TX_start_event(
         arena_ptr, arena_ptr->get_current_tick() + tx_delay, node_id);
-    // this->add_event(tx_start_event);
+    this->add_event(tx_start_event);
 }
 physical_state_t Kilobot::init_user_state() {
     physical_state_t state;
@@ -122,6 +123,8 @@ void Kilobot::change_color(color_t color) {
     // this->add_event(event);
     this->user_state.color = color;
 }
+
+int Kilobot::get_global_tick() { return ((Arena*)arena)->get_current_tick(); }
 
 Kilobot::Kilobot(void* arena, int node_id, position2d_t pos)
     : Node(arena, node_id, pos) {

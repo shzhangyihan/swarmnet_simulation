@@ -12,7 +12,16 @@ class TX_start_event : public Event {
    public:
     void exec();
     TX_start_event(void* arena, int exec_tick, int from_id);
-    // using Event::Event;
+};
+
+class TX_end_event : public Event {
+   public:
+    void exec();
+    void set_success(bool success);
+    TX_end_event(void* arena, int exec_tick, int from_id);
+
+   private:
+    bool success;
 };
 
 }  // namespace swarmnet_sim
