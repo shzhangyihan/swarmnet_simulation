@@ -25,7 +25,14 @@ class Default_program : public Kilobot {
         //     }
         // }
         // go_forward();
-        if (node_id == 0) return;
+        if (node_id == 0) {
+            counter++;
+            if (counter == 100000) {
+                counter = 0;
+            } else {
+                return;
+            }
+        }
         turn(rand() % 360 - 180);
         int select_color;
         color_t cur_color = this->get_color();
@@ -83,15 +90,12 @@ class Default_program : public Kilobot {
         counter = 0;
         std::cout << "init " << node_id << " at " << pos.x << ", " << pos.y
                   << std::endl;
-        // if (node_id == 1) {
         color_t c;
         c.blue = 0;
         c.red = 255;
         c.green = 0;
         change_color(c);
         go_forward();
-        // }
-        // velocity = 1;
     }
 };
 
