@@ -26,9 +26,13 @@ class Node {
     int get_node_id() const;
     float get_velocity() const;
     float get_radius() const;
+    bool get_collision_flag() const;
+    bool get_skip_logging_flag() const;
     void set_velocity(float velocity);
     void set_position(position2d_t pos);
     void set_color(color_t color);
+    void set_collision_flag(bool collision_flag);
+    void set_skip_logging_flag(bool skip_logging_flag);
     void change_theta(float theta_delta);
     void add_event(Event* event);
     void stop();

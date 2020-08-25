@@ -18,6 +18,17 @@ int check_collision(Arena *arena, int future_ticks) {
     std::vector<int> collided_node;
     bool violated = false;
     for (int t = 1; t <= future_ticks; t++) {
+        if (t > 1) {
+            // no collision up front, update the flags
+            for (int i = 0; i < num_robots; i++) {
+                if (arena->get_node(i)->get_collision_flag()) {
+                    arena->log_node(i);
+                }
+                arena->get_node(i)->set_collision_flag(false);
+                arena->get_node(i)->set_skip_logging_flag(false);
+            }
+        }
+
         for (int i = 0; i < num_robots; i++) {
             // future_pos[i] = calculate_future_pos(
             //     arena->get_node(i)->get_position(),

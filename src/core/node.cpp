@@ -25,11 +25,23 @@ float Node::get_velocity() const { return this->velocity; }
 
 float Node::get_radius() const { return this->radius; }
 
+bool Node::get_collision_flag() const { return this->collision_flag; }
+
+bool Node::get_skip_logging_flag() const { return this->skip_logging_flag; }
+
 void Node::set_velocity(float velocity) { this->velocity = velocity; }
 
 void Node::set_position(position2d_t pos) { this->pos = pos; }
 
 void Node::set_color(color_t color) { this->color = color; }
+
+void Node::set_collision_flag(bool collision_flag) {
+    this->collision_flag = collision_flag;
+}
+
+void Node::set_skip_logging_flag(bool skip_logging_flag) {
+    this->skip_logging_flag = skip_logging_flag;
+}
 
 void Node::change_theta(float theta_delta) {
     position2d_t new_pos;

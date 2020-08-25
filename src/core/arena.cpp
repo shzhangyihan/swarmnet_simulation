@@ -59,6 +59,9 @@ void Arena::log_node(int tick, int id) {
     Node* node = node_vector[id];
     position2d_t pos = node->get_position();
     color_t color = node->get_color();
+
+    if (node->get_skip_logging_flag()) return;
+
     // add time
     log = log + std::to_string(tick) + " ";
     // add id
@@ -67,7 +70,9 @@ void Arena::log_node(int tick, int id) {
     log = log + std::to_string(pos.x) + " " + std::to_string(pos.y) + " " +
           std::to_string(pos.theta) + " ";
     // add speed
-    log = log + std::to_string(node->get_velocity()) + " ";
+    float velocity = node->get_velocity();
+    if (node->get_collision_flag()) velocity = 0;
+    log = log + std::to_string(velocity) + " ";
     // add color
     log = log + std::to_string(color.red) + " " + std::to_string(color.green) +
           " " + std::to_string(color.blue) + "\n";

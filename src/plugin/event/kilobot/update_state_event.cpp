@@ -15,16 +15,18 @@ void Update_state_event::exec() {
     target_node->set_color(color);
     target_node->set_velocity(velocity);
 
-    if (velocity == 0) {
-        std::cout << to_id << ": update state ";
-        std::cout << "pos " << pos.x << " " << pos.y << " " << pos.theta << " ";
-        std::cout << "color " << int(color.red) << " " << int(color.green)
-                  << " " << int(color.blue) << " ";
-        std::cout << "velocity " << velocity;
-        std::cout << std::endl << std::flush;
-    } else {
-        std::cout << to_id << " resume" << std::endl << std::flush;
-    }
+    // if (velocity == 0) {
+    //     std::cout << to_id << ": update state ";
+    //     std::cout << "pos " << pos.x << " " << pos.y << " " << pos.theta << "
+    //     "; std::cout << "color " << int(color.red) << " " << int(color.green)
+    //               << " " << int(color.blue) << " ";
+    //     std::cout << "velocity " << velocity;
+    //     std::cout << std::endl << std::flush;
+    // } else {
+    //     std::cout << to_id << " resume" << std::endl << std::flush;
+    // }
+    target_node->set_collision_flag(false);
+    target_node->set_skip_logging_flag(false);
 
     this->log_node(to_id);
 }
