@@ -75,16 +75,19 @@ class Default_program : public Kilobot {
     }
 
     void message_rx(packet_t packet, situated_sensing_t sensing) {
-        std::cout << node_id << " rx " << int(packet.payload[0]) << std::endl;
+        // std::cout << node_id << " rx " << int(packet.payload[0]) <<
+        // std::endl;
     }
 
     bool message_tx(packet_t* packet) {
-        std::cout << node_id << " tx" << std::endl;
+        // std::cout << node_id << " tx" << std::endl;
         packet->payload[0] = node_id;
-        return true;
+        return false;
     }
 
-    void message_tx_success() { std::cout << "tx_s" << std::endl; }
+    void message_tx_success() {
+        // std::cout << "tx_s" << std::endl;
+    }
 
     void init() {
         counter = 0;

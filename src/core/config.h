@@ -10,7 +10,7 @@ class Sim_config {
     int get_arena_max_x() const;
     int get_arena_max_y() const;
     int get_rand_seed() const;
-    int get_ticks_per_second() const;
+    // int get_ticks_per_second() const;
     int get_duration() const;
     int get_log_buf_size() const;
     void *get_robot_placement_dl_handle() const;
@@ -23,7 +23,7 @@ class Sim_config {
     void set_arena_max_x(int val);
     void set_arena_max_y(int val);
     void set_rand_seed(int val);
-    void set_ticks_per_second(int val);
+    // void set_ticks_per_second(int val);
     void set_duration(int val);
     void set_log_buf_size(int val);
     void set_robot_placement_dl_handle(void *val);
@@ -37,7 +37,7 @@ class Sim_config {
     int arena_max_x;
     int arena_max_y;
     int rand_seed;
-    int ticks_per_second;
+    // int ticks_per_second;
     int duration;
     int log_buf_size;
     void *robot_placement_dl_handle;

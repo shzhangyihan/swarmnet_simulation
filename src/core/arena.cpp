@@ -8,19 +8,18 @@ namespace swarmnet_sim {
 
 Sim_config Arena::get_config() const { return this->conf; }
 
-int Arena::get_current_tick() const { return this->current_tick; }
+float Arena::get_sim_time() const { return this->sim_time; }
 
 Node* Arena::get_node(int id) const { return this->node_vector[id]; }
 
 Medium* Arena::get_medium() const { return this->comm_medium; }
 
-void Arena::update_simulation(int ticks) {
+void Arena::update_simulation(float sim_time_diff) {
     int num_robots = this->conf.get_num_robots();
     for (int i = 0; i < num_robots; i++) {
         position2d_t cur_pos = this->node_vector[i]->get_position();
         position2d_t end_pos = calculate_future_pos(
-            cur_pos, this->node_vector[i]->get_velocity(),
-            (float)ticks / this->conf.get_ticks_per_second());
+            cur_pos, this->node_vector[i]->get_velocity(), sim_time_diff);
 
         this->node_vector[i]->set_position(end_pos);
         // std::cout << "Set robot " << i << " from (" << rob_pos.x << ", " <<
@@ -39,7 +38,7 @@ void Arena::log_node(int id) {
     position2d_t pos = node->get_position();
     color_t color = node->get_color();
     // add time
-    log = log + std::to_string(this->current_tick) + " ";
+    log = log + std::to_string(this->sim_time) + " ";
     // add id
     log = log + std::to_string(id) + " ";
     // add position
@@ -54,7 +53,7 @@ void Arena::log_node(int id) {
     motion_log->log(log);
 }
 
-void Arena::log_node(int tick, int id) {
+void Arena::log_node(float time, int id) {
     std::string log = "";
     Node* node = node_vector[id];
     position2d_t pos = node->get_position();
@@ -63,7 +62,7 @@ void Arena::log_node(int tick, int id) {
     if (node->get_skip_logging_flag()) return;
 
     // add time
-    log = log + std::to_string(tick) + " ";
+    log = log + std::to_string(time) + " ";
     // add id
     log = log + std::to_string(id) + " ";
     // add position
@@ -83,26 +82,25 @@ void Arena::log_node(int tick, int id) {
 void Arena::run() {
     // start the sim
     int counter = 0;
-    int max_tick =
-        this->conf.get_ticks_per_second() * this->conf.get_duration();
+    float max_time = this->conf.get_duration();
 
-    Event* end_event = new Event(this, max_tick, -1, -1);
-    while (this->current_tick < max_tick) {
+    Event* end_event = new Event(this, max_time, -1, -1);
+    while (this->sim_time < max_time) {
         if (this->event_queue.empty()) {
             this->event_queue.push(end_event);
         }
         Event* next_event = this->event_queue.top();
-        int next_event_tick = next_event->get_exec_tick();
-        // std::cout << "current tick " << current_tick << " next tick "
-        //           << next_event_tick << std::endl;
+        float next_event_time = next_event->get_exec_time();
+        // std::cout << "current time " << sim_time << " next event time "
+        //           << next_event_time << std::endl;
 
-        int collision_tick =
-            this->check_collision(this, next_event_tick - current_tick);
+        float collision_time =
+            this->check_collision(this, next_event_time - sim_time);
         // std::cout << "check return " << collision_tick << std::endl;
-        if (collision_tick != -1) {
+        if (collision_time != -1) {
             // collision happened, loop again
             // update tick
-            current_tick = current_tick + collision_tick;
+            sim_time = sim_time + collision_time;
             // counter++;
             // if (counter == 10) break;
             continue;
@@ -110,7 +108,7 @@ void Arena::run() {
             // no collision, execuate current event
             this->event_queue.pop();
             // update_simulation(next_event_tick - current_tick);
-            current_tick = next_event_tick;
+            sim_time = next_event_time;
             next_event->exec();
             // int exec_node_id = next_event->get_to_id();
             delete next_event;
@@ -154,15 +152,13 @@ void Arena::log_metadata() {
     metadata = metadata + std::to_string(this->conf.get_arena_max_x()) + " ";
     metadata = metadata + std::to_string(this->conf.get_arena_max_y()) + " ";
     metadata = metadata + std::to_string(this->conf.get_num_robots()) + " ";
-    metadata =
-        metadata + std::to_string(this->conf.get_ticks_per_second()) + " ";
     metadata = metadata + std::to_string(this->conf.get_duration()) + "\n";
     motion_log->log(metadata);
 }
 
 Arena::Arena(Sim_config conf) {
     this->conf = conf;
-    this->current_tick = 0;
+    this->sim_time = 0;
     srand(this->conf.get_rand_seed());
     // setup motion log
     motion_log = new Motion_log(this->conf.get_log_buf_size(),

@@ -6,9 +6,12 @@
 namespace swarmnet_sim {
 
 #define ROBOT_RADIUS 7
-#define COMM_RADIUS 50
+#define COMM_RADIUS 40
 #define TX_PERIOD_SECOND 0.5
 #define VELOCITY_PER_SECOND 1
+#define MAX_CLOCK_OFFSET_SECOND 20
+#define MAX_CLOCK_SKEW 0.1
+#define MIN_CLOCK_SKEW (-0.1)
 
 typedef struct packet {
     unsigned char payload[9];
@@ -43,7 +46,8 @@ class Kilobot : public Node {
     void go_forward(float seconds);
     void change_color(color_t color);
     void turn(float angle);
-    int get_global_tick();
+    float get_global_time();
+    float get_local_time();
     physical_state_t init_user_state();
     bool check_state_change(physical_state_t old_state);
     void add_state_change_event();
@@ -52,6 +56,8 @@ class Kilobot : public Node {
 
    private:
     physical_state_t user_state;
+    float local_clock_offset;
+    float local_clock_skew;
 };
 
 }  // namespace swarmnet_sim

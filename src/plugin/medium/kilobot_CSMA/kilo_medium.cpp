@@ -13,15 +13,15 @@ namespace swarmnet_sim {
 void Kilo_medium::start_tx(int tx_node_id, packet_t tx_packet,
                            float comm_radius) {
     Arena* arena_ptr = (Arena*)(this->arena);
-    int ticks_per_second = arena_ptr->get_config().get_ticks_per_second();
-    int tx_ticks = sizeof(packet_t) * SPEED_BYTE_PER_SECOND * ticks_per_second;
+    // int ticks_per_second = arena_ptr->get_config().get_ticks_per_second();
+    int tx_time = sizeof(packet_t) * SPEED_BYTE_PER_SECOND;
     // std::cout << "tx ticks " << tx_ticks << std::endl;
 
     // std::cout << "start tx for " << tx_node_id << std::endl << std::flush;
     if (this->rx_counter_vector[tx_node_id] != 0) {
         // rx busy, end_tx
         TX_end_event* tx_end_event = new TX_end_event(
-            arena_ptr, arena_ptr->get_current_tick() + tx_ticks, tx_node_id);
+            arena_ptr, arena_ptr->get_sim_time() + tx_time, tx_node_id);
         tx_end_event->set_success(false);
         arena_ptr->add_event(tx_end_event);
         return;
@@ -50,15 +50,15 @@ void Kilo_medium::start_tx(int tx_node_id, packet_t tx_packet,
                 sensing.bearing =
                     fmod(theta_diff - rx_node_pos.theta + 360, 360);
                 RX_start_event* rx_start_event =
-                    new RX_start_event(arena_ptr, arena_ptr->get_current_tick(),
-                                       i, tx_packet, sensing);
+                    new RX_start_event(arena_ptr, arena_ptr->get_sim_time(), i,
+                                       tx_packet, sensing);
                 arena_ptr->add_event(rx_start_event);
             }
         }
     }
 
     TX_end_event* tx_end_event = new TX_end_event(
-        arena_ptr, arena_ptr->get_current_tick() + tx_ticks, tx_node_id);
+        arena_ptr, arena_ptr->get_sim_time() + tx_time, tx_node_id);
     tx_end_event->set_success(true);
     arena_ptr->add_event(tx_end_event);
     return;
@@ -67,14 +67,13 @@ void Kilo_medium::start_tx(int tx_node_id, packet_t tx_packet,
 void Kilo_medium::end_tx(int tx_node_id, bool success) {
     // register the next tx
     Arena* arena_ptr = (Arena*)(this->arena);
-    int ticks_per_second = arena_ptr->get_config().get_ticks_per_second();
-    int tx_noise_max = TX_PERIOD_NOISE_RANGE_SECOND * ticks_per_second;
-    int next_tx_tick_noise = rand() % (tx_noise_max * 2) - tx_noise_max;
-    int next_tx_tick = TX_PERIOD_SECOND * ticks_per_second + next_tx_tick_noise;
-    // std::cout << "next_tx_tick " << next_tx_tick << std::endl;
+    float next_tx_time_noise = ((float)std::rand() / (float)RAND_MAX - 0.5) *
+                               TX_PERIOD_NOISE_RANGE_SECOND;
+    float next_tx_time = TX_PERIOD_SECOND + next_tx_time_noise;
+    // std::cout << "next_tx_time " << next_tx_time << std::endl;
 
     TX_start_event* tx_start_event = new TX_start_event(
-        arena_ptr, arena_ptr->get_current_tick() + next_tx_tick, tx_node_id);
+        arena_ptr, arena_ptr->get_sim_time() + next_tx_time, tx_node_id);
     arena_ptr->add_event(tx_start_event);
 
     if (success) {
@@ -97,12 +96,11 @@ void Kilo_medium::start_rx(int rx_node_id, packet_t rx_packet,
     }
 
     Arena* arena_ptr = (Arena*)(this->arena);
-    int ticks_per_second = arena_ptr->get_config().get_ticks_per_second();
-    int rx_ticks = sizeof(packet_t) * SPEED_BYTE_PER_SECOND * ticks_per_second;
+    int rx_time = sizeof(packet_t) * SPEED_BYTE_PER_SECOND;
     // std::cout << "rx ticks " << rx_ticks << std::endl;
 
     RX_end_event* rx_end_event = new RX_end_event(
-        arena_ptr, arena_ptr->get_current_tick() + rx_ticks, rx_node_id);
+        arena_ptr, arena_ptr->get_sim_time() + rx_time, rx_node_id);
     arena_ptr->add_event(rx_end_event);
 }
 
@@ -115,9 +113,7 @@ void Kilo_medium::end_rx(int rx_node_id) {
         // drop with probability
         float dice_roll = rand() / double(RAND_MAX);
         int distance = this->rx_buffer[rx_node_id].sensing.distance;
-        float threshold =
-            MIN_DIST_SUCCESS_RATE +
-            FALLOFF_SHARPNESS / (distance - (COMM_RADIUS + FALLOFF_SHARPNESS));
+        float threshold = MAX_SUCCESS_RATE * (1 + 1 / (distance - COMM_RADIUS));
         if (dice_roll <= threshold) {
             // no drop
             Node* rx_node = arena_ptr->get_node(rx_node_id);

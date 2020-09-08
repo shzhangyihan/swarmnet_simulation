@@ -12,16 +12,18 @@ robot_list = []
 arena_width = 0
 arena_height = 0
 num_robots = 0
-tick_per_second = 0
 speed_index = 0
 paused = False
 finished = False
 prev_time = 0
-cur_tick = 0
-max_tick = 0
+sim_time = 0
+max_time = 0
 RADIUS = 7
 
 class Robot:
+    def set_last_updated_time(self, time):
+        self.last_updated_time = time
+    
     def set_attributes(self, x, y, theta, v, r, g, b):
         self.x = x
         self.y = y
@@ -135,13 +137,12 @@ def drawSingleRobot(x, y, R, G, B, radius):
     glEnd()
 
 def drawRobots():
-    global tick_per_second
     global speed_options
     global speed_index
     global events
     global robot_list
-    global cur_tick
-    global max_tick
+    global sim_time
+    global max_time
     global prev_time
     global paused
     global finished
@@ -164,18 +165,19 @@ def drawRobots():
         # playing
         drawPause()
     
-    cur_tick = cur_tick + time_diff * tick_per_second
+    sim_time = sim_time + time_diff
 
-    if cur_tick >= max_tick:
+    if sim_time >= max_time:
         paused = True
         finished = True
         return
-
+    
+    """
     for robot in robot_list:
         xmov, ymov = calcUnitMovement(robot.theta, robot.v)
         xpos = robot.x
         ypos = robot.y
-        drawSingleRobot(xpos, ypos, robot.r, robot.g, robot.b, RADIUS)
+        #drawSingleRobot(xpos, ypos, robot.r, robot.g, robot.b, RADIUS)
 
         robot.x = xpos + xmov * time_diff
         robot.y = ypos + ymov * time_diff
@@ -189,20 +191,44 @@ def drawRobots():
             robot.y = 0
         elif robot.y > arena_height:
             robot.y = arena_height
+        
+        drawSingleRobot(xpos, ypos, robot.r, robot.g, robot.b, RADIUS)
+    """
 
     while len(events) > 0:
-        next_event_tick = min(events.keys())
-        if cur_tick >= next_event_tick:
-            next_event = events.pop(next_event_tick)
+        next_event_time = min(events.keys())
+        if sim_time >= next_event_time:
+            next_event = events.pop(next_event_time)
             for id in next_event:
                 log = next_event[id]
                 robot_list[id].set_attributes(log[2], log[3], log[4], log[5], log[6], log[7], log[8])
+                robot_list[id].set_last_updated_time(log[0])
         else:
             break
+
+    for robot in robot_list:
+        xmov, ymov = calcUnitMovement(robot.theta, robot.v)
+        time_change = sim_time - robot.last_updated_time
+
+        robot.x = robot.x + xmov * time_change
+        robot.y = robot.y + ymov * time_change
+
+        if robot.x < 0:
+            robot.x = 0
+        elif robot.x > arena_width:
+            robot.x = arena_width
+
+        if robot.y < 0:
+            robot.y = 0
+        elif robot.y > arena_height:
+            robot.y = arena_height
+        
+        drawSingleRobot(robot.x, robot.y, robot.r, robot.g, robot.b, RADIUS)
+        robot.set_last_updated_time(sim_time)
     
     sleep_time = 0.01 - (time.time() - cur_time)
     if sleep_time < 0:
-        print("slow")
+        # print("slow")
         sleep_time = 0
     time.sleep(sleep_time)
 
@@ -235,7 +261,7 @@ def init():
     global events
     global robot_list
     global prev_time
-    global cur_tick
+    global sim_time
     global log_file
 
     paused = True
@@ -247,33 +273,36 @@ def init():
     events = {}
     logs = np.loadtxt(log_file, delimiter=' ', dtype=np.float, skiprows=1)
     for log in logs:
-        tick = int(log[0])
+        #log_time = int(log[0])
+        log_time = round(log[0], 1)
         id = int(log[1])
-        if tick not in events:
-            events[tick] = {}
-        events[tick][id] = log
+        if log_time not in events:
+            events[log_time] = {}
+        events[log_time][id] = log
+    
+    print(len(events))
     
     init_event = events.pop(0)
     for id in init_event:
         log = init_event[id]
         robot_list[id].set_attributes(log[2], log[3], log[4], log[5], log[6], log[7], log[8])
+        robot_list[id].set_last_updated_time(0)
     
     prev_time = time.time()
-    cur_tick = 0
+    sim_time = 0
 
 def main():
     global arena_width
     global arena_height
     global num_robots
-    global tick_per_second
     global speed_index
     global paused
     global finished
     global events
     global robot_list
     global prev_time
-    global cur_tick
-    global max_tick
+    global sim_time
+    global max_time
     global log_file
 
     log_file = sys.argv[1]
@@ -281,8 +310,7 @@ def main():
     arena_width = metadata[0]
     arena_height = metadata[1]
     num_robots = metadata[2]
-    tick_per_second = metadata[3]
-    max_tick = metadata[4] * tick_per_second
+    max_time = metadata[3]
     speed_index = 3
 
     init()

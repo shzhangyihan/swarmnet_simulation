@@ -11,12 +11,13 @@
 namespace swarmnet_sim {
 
 extern "C" {
-int check_collision(Arena *arena, int future_ticks) {
+float check_collision(Arena *arena, float future_time) {
     Sim_config config = arena->get_config();
     int num_robots = config.get_num_robots();
     position2d_t future_pos[num_robots];
     std::vector<int> collided_node;
     bool violated = false;
+    int future_ticks = TICK_PER_SECOND * future_time;
     for (int t = 1; t <= future_ticks; t++) {
         if (t > 1) {
             // no collision up front, update the flags
@@ -39,8 +40,7 @@ int check_collision(Arena *arena, int future_ticks) {
             // else
             future_pos[i] = calculate_future_pos(
                 arena->get_node(i)->get_position(),
-                arena->get_node(i)->get_velocity(),
-                (float)1 / arena->get_config().get_ticks_per_second());
+                arena->get_node(i)->get_velocity(), (float)1 / TICK_PER_SECOND);
         }
 
         for (int i = 0; i < num_robots; i++) {
@@ -56,7 +56,8 @@ int check_collision(Arena *arena, int future_ticks) {
                 // need to add collison event
                 violated = true;
                 Collision_event *new_event = new Collision_event(
-                    arena, arena->get_current_tick() + t, -1, i);
+                    arena, arena->get_sim_time() + (float)t / TICK_PER_SECOND,
+                    -1, i);
                 arena->add_event(new_event);
                 // std::cout << "pos of ofb " << future_pos[i].x << ", "
                 //           << future_pos[i].y << std::endl
@@ -80,10 +81,14 @@ int check_collision(Arena *arena, int future_ticks) {
                     // need to add collison event
                     violated = true;
                     Collision_event *new_event = new Collision_event(
-                        arena, arena->get_current_tick() + t, i, j);
+                        arena,
+                        arena->get_sim_time() + (float)t / TICK_PER_SECOND, i,
+                        j);
                     arena->add_event(new_event);
                     new_event = new Collision_event(
-                        arena, arena->get_current_tick() + t, j, i);
+                        arena,
+                        arena->get_sim_time() + (float)t / TICK_PER_SECOND, j,
+                        i);
                     arena->add_event(new_event);
                     // }
                     collided_node.push_back(i);
@@ -105,7 +110,7 @@ int check_collision(Arena *arena, int future_ticks) {
 
         if (violated) {
             // std::cout << "violated at " << t << std::endl << std::flush;
-            return t;
+            return (float)t / TICK_PER_SECOND;
         }
     }
 

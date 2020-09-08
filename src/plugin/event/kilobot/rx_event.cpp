@@ -12,11 +12,11 @@ void RX_start_event::exec() {
     arena_ptr->get_medium()->start_rx(to_id, this->pkt, this->sensing);
 }
 
-RX_start_event::RX_start_event(void* arena, int exec_tick, int to_id,
+RX_start_event::RX_start_event(void* arena, float exec_time, int to_id,
                                packet_t pkt, situated_sensing_t sensing) {
     // std::cout << "RX event created" << std::endl;
     this->arena = arena;
-    this->exec_tick = exec_tick;
+    this->exec_time = exec_time;
     this->to_id = to_id;
     this->pkt = pkt;
     this->sensing = sensing;
@@ -27,9 +27,9 @@ void RX_end_event::exec() {
     arena_ptr->get_medium()->end_rx(to_id);
 }
 
-RX_end_event::RX_end_event(void* arena, int exec_tick, int to_id) {
+RX_end_event::RX_end_event(void* arena, float exec_time, int to_id) {
     this->arena = arena;
-    this->exec_tick = exec_tick;
+    this->exec_time = exec_time;
     this->to_id = to_id;
 }
 

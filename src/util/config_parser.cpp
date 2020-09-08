@@ -19,7 +19,7 @@ Sim_config parse_config(char* config_file) {
     int arena_max_x = json_config.get("arena_max_x", 700).asInt();
     int arena_max_y = json_config.get("arena_max_y", 700).asInt();
     int duration = json_config.get("experiment_duration", 60).asInt();
-    int ticks_per_second = json_config.get("ticks_per_second", 1000).asInt();
+    // int ticks_per_second = json_config.get("ticks_per_second", 1000).asInt();
     int log_buf_size = json_config.get("log_buf_size", 50).asInt();
     std::string motion_log_name =
         json_config.get("motion_log", "./motion_log/default_log.txt")
@@ -61,7 +61,7 @@ Sim_config parse_config(char* config_file) {
     conf.set_arena_max_x(arena_max_x);
     conf.set_arena_max_y(arena_max_y);
     conf.set_duration(duration);
-    conf.set_ticks_per_second(ticks_per_second);
+    // conf.set_ticks_per_second(ticks_per_second);
     conf.set_rand_seed(rand_seed);
     conf.set_log_buf_size(log_buf_size);
     conf.set_robot_placement_dl_handle(robot_placement_dl_handle);

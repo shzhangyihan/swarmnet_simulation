@@ -3,10 +3,11 @@
 namespace swarmnet_sim {
 
 void Motion_log::flush() {
-    for (int i = 0; i < buffer_size; i++) {
+    for (int i = 0; i < buffer_index; i++) {
         this->log_file << log_buff[i];
     }
     buffer_index = 0;
+    this->log_file.flush();
 }
 
 void Motion_log::log(const std::string& content) {
@@ -27,5 +28,7 @@ Motion_log::Motion_log(int buffer_size, std::string log_file_name) {
     this->log_file.open(log_file_name);
     this->buffer_index = 0;
 }
+
+Motion_log::~Motion_log() { this->log_file.close(); }
 
 }  // namespace swarmnet_sim

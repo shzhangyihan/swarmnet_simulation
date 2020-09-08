@@ -15,6 +15,7 @@ class Motion_log {
     void flush();
     void log(const std::string& content);
     Motion_log(int buffer_size, std::string log_file_name);
+    ~Motion_log();
 
    private:
     int buffer_size;

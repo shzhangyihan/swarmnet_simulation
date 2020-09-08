@@ -39,9 +39,10 @@ void Update_state_event::update_velocity(float velocity) {
     this->velocity = velocity;
 }
 
-Update_state_event::Update_state_event(void* arena, int exec_tick, int to_id) {
+Update_state_event::Update_state_event(void* arena, float exec_time,
+                                       int to_id) {
     this->arena = arena;
-    this->exec_tick = exec_tick;
+    this->exec_time = exec_time;
     this->from_id = -1;
     this->to_id = to_id;
     // for (int i = 0; i < ATTRIBUTES_MAX; i++) {

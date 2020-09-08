@@ -3,7 +3,6 @@
     "arena_max_x": 300,
     "arena_max_y": 300,
     "experiment_duration": 5000,
-    "ticks_per_second": 1000,
     "motion_log": "./motion_log/default_log.txt",
     "robot_placement": "./build/src/experiment/default/libdefault_placement.so",
     "robot_program": "./build/src/experiment/comm_test/libcomm_test.so",

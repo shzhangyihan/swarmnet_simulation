@@ -16,12 +16,14 @@ class Arena {
     Sim_config get_config() const;
     Node* get_node(int id) const;
     Medium* get_medium() const;
-    int get_current_tick() const;
+    float get_sim_time() const;
     void add_event(Event* event);
     void log_node(int id);
-    void log_node(int tick, int id);
+    // void log_node(int tick, int id);
+    void log_node(float time, int id);
     void log_metadata();
-    void update_simulation(int ticks);
+    // void update_simulation(int ticks);
+    void update_simulation(float sim_time_diff);
     void move_robot(int id, position2d_t pos);
     Arena(Sim_config conf);
     ~Arena();
@@ -30,12 +32,13 @@ class Arena {
     void init_nodes();
 
     Sim_config conf;
-    int current_tick;
+    // int current_tick;
+    float sim_time;
     std::vector<Node*> node_vector;
     Event_queue event_queue;
     Motion_log* motion_log;
     Medium* comm_medium;
-    typedef int (*collision_checker_t)(Arena*, int);
+    typedef float (*collision_checker_t)(Arena*, float);
     collision_checker_t check_collision;
 };
 }  // namespace swarmnet_sim

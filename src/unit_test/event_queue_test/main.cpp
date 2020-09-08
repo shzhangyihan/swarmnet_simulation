@@ -20,6 +20,6 @@ int main(int argc, char *argv[]) {
 
     while (!e.empty()) {
         swarmnet_sim::Event *ev = e.pop();
-        std::cout << ev->get_exec_tick() << std::endl;
+        std::cout << ev->get_exec_time() << std::endl;
     }
 }

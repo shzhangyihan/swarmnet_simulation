@@ -1,10 +1,11 @@
 #include "tx_event.h"
 
+#include <stdlib.h>
+
 #include <iostream>
 
 #include "../../medium/kilobot_CSMA/kilo_medium.h"
 #include "../../robot/kilobot.h"
-#include "stdlib.h"
 
 namespace swarmnet_sim {
 
@@ -25,12 +26,11 @@ void TX_start_event::exec() {
     }
 }
 
-TX_start_event::TX_start_event(void* arena, int exec_tick, int from_id) {
-    int ticks_per_second = ((Arena*)arena)->get_config().get_ticks_per_second();
-    int send_delay =
-        std::rand() % (int)(MAX_RANDOM_DELAY_SECOND * ticks_per_second);
+TX_start_event::TX_start_event(void* arena, float exec_time, int from_id) {
+    float send_delay =
+        (float)std::rand() / (float)RAND_MAX * MAX_RANDOM_DELAY_SECOND;
     this->arena = arena;
-    this->exec_tick = exec_tick + send_delay;
+    this->exec_time = exec_time + send_delay;
     this->from_id = from_id;
     this->to_id = -1;
 }
@@ -43,9 +43,9 @@ void TX_end_event::exec() {
 
 void TX_end_event::set_success(bool success) { this->success = success; }
 
-TX_end_event::TX_end_event(void* arena, int exec_tick, int from_id) {
+TX_end_event::TX_end_event(void* arena, float exec_time, int from_id) {
     this->arena = arena;
-    this->exec_tick = exec_tick;
+    this->exec_time = exec_time;
     this->from_id = from_id;
     this->to_id = -1;
     this->success = true;

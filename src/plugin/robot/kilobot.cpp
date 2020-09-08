@@ -55,10 +55,10 @@ void Kilobot::init_wrapper() {
     this->init();
     this->add_state_change_event();
     Arena* arena_ptr = (Arena*)arena;
-    float tx_delay = MAX_RANDOM_DELAY_SECOND *
-                     arena_ptr->get_config().get_ticks_per_second();
+    float tx_delay =
+        (float)std::rand() / (float)RAND_MAX * MAX_RANDOM_DELAY_SECOND;
     TX_start_event* tx_start_event = new TX_start_event(
-        arena_ptr, arena_ptr->get_current_tick() + tx_delay, node_id);
+        arena_ptr, arena_ptr->get_sim_time() + tx_delay, node_id);
     this->add_event(tx_start_event);
 }
 physical_state_t Kilobot::init_user_state() {
@@ -82,8 +82,8 @@ bool Kilobot::check_state_change(physical_state_t old_state) {
 void Kilobot::add_state_change_event() {
     physical_state_t cur_state = this->user_state;
     Arena* arena_ptr = (Arena*)this->arena;
-    Update_state_event* event = new Update_state_event(
-        arena_ptr, arena_ptr->get_current_tick(), node_id);
+    Update_state_event* event =
+        new Update_state_event(arena_ptr, arena_ptr->get_sim_time(), node_id);
     event->update_velocity(cur_state.velocity);
     event->update_position(cur_state.pos);
     event->update_color(cur_state.color);
@@ -124,11 +124,27 @@ void Kilobot::change_color(color_t color) {
     this->user_state.color = color;
 }
 
-int Kilobot::get_global_tick() { return ((Arena*)arena)->get_current_tick(); }
+float Kilobot::get_global_time() { return ((Arena*)arena)->get_sim_time(); }
+
+float Kilobot::get_local_time() {
+    float global_time = get_global_time();
+    float local_time =
+        this->local_clock_offset + global_time * (1 + this->local_clock_skew);
+    return local_time;
+}
 
 Kilobot::Kilobot(void* arena, int node_id, position2d_t pos)
     : Node(arena, node_id, pos) {
     this->radius = ROBOT_RADIUS;
+    this->local_clock_offset =
+        (float)std::rand() / (float)RAND_MAX * MAX_CLOCK_OFFSET_SECOND;
+    this->local_clock_skew = (float)std::rand() / (float)RAND_MAX *
+                                 (MAX_CLOCK_SKEW - MIN_CLOCK_SKEW) +
+                             MIN_CLOCK_SKEW;
+    // std::cout << "offset " << local_clock_offset << " skew " <<
+    // local_clock_skew
+    //           << std::endl
+    //           << std::flush;
 }
 
 void Kilobot::collision() {}

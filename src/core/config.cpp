@@ -9,7 +9,7 @@ int Sim_config::get_arena_max_y() const { return arena_max_y; }
 
 int Sim_config::get_rand_seed() const { return rand_seed; }
 
-int Sim_config::get_ticks_per_second() const { return ticks_per_second; }
+// int Sim_config::get_ticks_per_second() const { return ticks_per_second; }
 
 int Sim_config::get_duration() const { return duration; }
 
@@ -39,7 +39,7 @@ void Sim_config::set_arena_max_y(int val) { arena_max_y = val; }
 
 void Sim_config::set_rand_seed(int val) { rand_seed = val; }
 
-void Sim_config::set_ticks_per_second(int val) { ticks_per_second = val; }
+// void Sim_config::set_ticks_per_second(int val) { ticks_per_second = val; }
 
 void Sim_config::set_duration(int val) { duration = val; }
 
