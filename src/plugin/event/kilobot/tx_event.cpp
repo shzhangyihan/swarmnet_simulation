@@ -12,18 +12,19 @@ namespace swarmnet_sim {
 void TX_start_event::exec() {
     // retrive sending packet
     Arena* arena_ptr = (Arena*)arena;
-    Node* tx_node = arena_ptr->get_node(from_id);
-    packet_t tx_packet;
-    // std::cout << "tx start event for " << from_id;
-    bool tx_state = ((Kilobot*)tx_node)->message_tx_wrapper(&tx_packet);
-    // std::cout << " state " << tx_state << std::endl << std::flush;
-    if (tx_state) {
-        // packet ready to send
-        arena_ptr->get_medium()->start_tx(from_id, tx_packet, COMM_RADIUS);
-    } else {
-        // nothing to send
-        return;
-    }
+    arena_ptr->get_medium()->start_tx(from_id);
+    // Node* tx_node = arena_ptr->get_node(from_id);
+    // packet_t tx_packet;
+    // // std::cout << "tx start event for " << from_id;
+    // bool tx_state = ((Kilobot*)tx_node)->message_tx_wrapper(&tx_packet);
+    // // std::cout << " state " << tx_state << std::endl << std::flush;
+    // if (tx_state) {
+    //     // packet ready to send
+    //     arena_ptr->get_medium()->start_tx(from_id, tx_packet, COMM_RADIUS);
+    // } else {
+    //     // nothing to send
+    //     return;
+    // }
 }
 
 TX_start_event::TX_start_event(void* arena, float exec_time, int from_id) {

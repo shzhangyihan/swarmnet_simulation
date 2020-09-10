@@ -13,18 +13,23 @@ class Default_program : public Kilobot {
     void collision() {}
 
     void message_rx(packet_t packet, situated_sensing_t sensing) {
+        int rx_counter = packet.payload[1] * 255 + packet.payload[2];
         std::cout << node_id << ": rx " << get_global_time() << " "
-                  << int(packet.payload[0]) << " counter "
-                  << int(packet.payload[1]) << std::endl
+                  << int(packet.payload[0]) << " counter " << rx_counter
+                  << std::endl
                   << std::flush;
     }
 
     bool message_tx(packet_t* packet) {
         // std::cout << node_id << " tx" << std::endl;
         packet->payload[0] = node_id;
-        packet->payload[1] = tx_counter;
-
+        packet->payload[1] = (int)(tx_counter / 255);
+        packet->payload[2] = tx_counter % 255;
         return true;
+        // if (node_id == 0)
+        //     return true;
+        // else
+        //     return false;
     }
 
     void message_tx_success() {
@@ -32,7 +37,7 @@ class Default_program : public Kilobot {
                   << " with counter " << tx_counter << std::endl
                   << std::flush;
         tx_counter++;
-        tx_counter = tx_counter % 256;
+        // tx_counter = tx_counter % 256;
     }
 
     void init() {

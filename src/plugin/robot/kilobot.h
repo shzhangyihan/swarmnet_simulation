@@ -6,7 +6,7 @@
 namespace swarmnet_sim {
 
 #define ROBOT_RADIUS 7
-#define COMM_RADIUS 40
+#define COMM_RADIUS 75
 #define TX_PERIOD_SECOND 0.5
 #define VELOCITY_PER_SECOND 1
 #define MAX_CLOCK_OFFSET_SECOND 20

@@ -11,7 +11,8 @@ namespace swarmnet_sim {
 
 #define SPEED_BYTE_PER_SECOND 0.001
 #define TX_PERIOD_NOISE_RANGE_SECOND 0.02
-#define MAX_SUCCESS_RATE 0.3
+#define MAX_SUCCESS_RATE 1
+#define DROPPING_SHARPNESS 2 /* smaller, steeper */
 // #define MAX_DIST_SUCCESS_RATE 1.0
 // #define MIN_DIST_SUCCESS_RATE 0.05
 // #define FALLOFF_SHARPNESS 0.3
@@ -24,7 +25,7 @@ typedef struct {
 
 class Kilo_medium : public Medium {
    public:
-    void start_tx(int tx_node_id, packet_t tx_packet, float comm_radius);
+    void start_tx(int tx_node_id);
     void end_tx(int tx_node_id, bool success);
     void start_rx(int rx_node_id, packet_t rx_packet,
                   situated_sensing_t sensing);
