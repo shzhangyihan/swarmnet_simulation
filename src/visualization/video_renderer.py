@@ -167,7 +167,8 @@ def createFrames():
 def makeVideo():
     global fps
     global frame_folder
-    ffmpeg_command = "ffmpeg -y -r {} -i {}img%d.png -c:v libx264 -pix_fmt yuv420p out.mp4".format(fps, frame_folder)
+    pathlib.Path("./video/").mkdir(parents=True, exist_ok=True)
+    ffmpeg_command = "ffmpeg -y -r {} -i {}img%d.png -c:v libx264 -pix_fmt yuv420p ./video/out.mp4".format(fps, frame_folder)
     subprocess.call(ffmpeg_command, shell=True)
     rm_command = "rm -rf {}".format(frame_folder)
     subprocess.call(rm_command, shell=True)
