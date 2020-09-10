@@ -133,6 +133,10 @@ float Kilobot::get_local_time() {
     return local_time;
 }
 
+float Kilobot::local_time_to_global_time(float local_time) {
+    return local_time / (1 + this->local_clock_skew);
+}
+
 Kilobot::Kilobot(void* arena, int node_id, position2d_t pos)
     : Node(arena, node_id, pos) {
     this->radius = ROBOT_RADIUS;

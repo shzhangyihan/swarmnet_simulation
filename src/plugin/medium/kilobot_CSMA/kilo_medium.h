@@ -11,7 +11,7 @@ namespace swarmnet_sim {
 
 #define SPEED_BYTE_PER_SECOND 0.001
 #define TX_PERIOD_NOISE_RANGE_SECOND 0.02
-#define MAX_SUCCESS_RATE 0.5
+#define MAX_SUCCESS_RATE 0.3
 // #define MAX_DIST_SUCCESS_RATE 1.0
 // #define MIN_DIST_SUCCESS_RATE 0.05
 // #define FALLOFF_SHARPNESS 0.3

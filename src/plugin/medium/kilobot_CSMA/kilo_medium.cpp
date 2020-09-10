@@ -69,15 +69,18 @@ void Kilo_medium::end_tx(int tx_node_id, bool success) {
     Arena* arena_ptr = (Arena*)(this->arena);
     float next_tx_time_noise = ((float)std::rand() / (float)RAND_MAX - 0.5) *
                                TX_PERIOD_NOISE_RANGE_SECOND;
-    float next_tx_time = TX_PERIOD_SECOND + next_tx_time_noise;
-    // std::cout << "next_tx_time " << next_tx_time << std::endl;
+    float next_tx_time_local = TX_PERIOD_SECOND + next_tx_time_noise;
+    Node* tx_node = arena_ptr->get_node(tx_node_id);
+    float next_tx_time =
+        ((Kilobot*)tx_node)->local_time_to_global_time(next_tx_time_local);
+    // std::cout << "next_tx_time local " << next_tx_time_local << " global "
+    //           << next_tx_time << std::endl;
 
     TX_start_event* tx_start_event = new TX_start_event(
         arena_ptr, arena_ptr->get_sim_time() + next_tx_time, tx_node_id);
     arena_ptr->add_event(tx_start_event);
 
     if (success) {
-        Node* tx_node = arena_ptr->get_node(tx_node_id);
         ((Kilobot*)tx_node)->message_tx_success_wrapper();
     }
 }

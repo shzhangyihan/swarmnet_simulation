@@ -48,6 +48,7 @@ class Kilobot : public Node {
     void turn(float angle);
     float get_global_time();
     float get_local_time();
+    float local_time_to_global_time(float local_time);
     physical_state_t init_user_state();
     bool check_state_change(physical_state_t old_state);
     void add_state_change_event();
