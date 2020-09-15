@@ -173,6 +173,7 @@ Arena::Arena(Sim_config conf) {
         this->conf.get_medium_dl_handle(), "medium_builder");
     this->comm_medium = medium_builder(this);
     init_nodes();
+    this->comm_medium->init();
 }
 
 Arena::~Arena() {

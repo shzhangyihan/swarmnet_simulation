@@ -1,1 +1,2 @@
 add_subdirectory(kilobot_CSMA)
+add_subdirectory(kilobot_CSMA_fixed_topology)

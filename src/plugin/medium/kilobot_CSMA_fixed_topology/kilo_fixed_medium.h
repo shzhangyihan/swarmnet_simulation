@@ -1,5 +1,5 @@
-#ifndef __SIM_KILO_MEDIUM_H__
-#define __SIM_KILO_MEDIUM_H__
+#ifndef __SIM_KILO_FIXED_MEDIUM_H__
+#define __SIM_KILO_FIXED_MEDIUM_H__
 
 #include <tuple>
 #include <vector>
@@ -23,7 +23,7 @@ typedef struct {
     bool corrupted;
 } rx_buffer_t;
 
-class Kilo_medium : public Medium {
+class Kilo_fixed_medium : public Medium {
    public:
     void start_tx(int tx_node_id);
     void end_tx(int tx_node_id, bool success);
@@ -31,12 +31,13 @@ class Kilo_medium : public Medium {
                   situated_sensing_t sensing);
     void end_rx(int rx_node_id);
     void init();
-    Kilo_medium(void* arena);
+    Kilo_fixed_medium(void* arena);
 
    protected:
     void* arena;
     std::vector<int> rx_counter_vector;
     std::vector<rx_buffer_t> rx_buffer;
+    std::vector<std::vector<int>> topology;
 };
 
 extern "C" {

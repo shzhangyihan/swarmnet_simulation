@@ -1,4 +1,4 @@
-#include "kilo_medium.h"
+#include "kilo_fixed_medium.h"
 
 #include <math.h>
 
@@ -10,7 +10,7 @@
 
 namespace swarmnet_sim {
 
-void Kilo_medium::start_tx(int tx_node_id) {
+void Kilo_fixed_medium::start_tx(int tx_node_id) {
     // packet_t tx_packet;
     float comm_radius = COMM_RADIUS;
     Arena* arena_ptr = (Arena*)(this->arena);
@@ -42,33 +42,21 @@ void Kilo_medium::start_tx(int tx_node_id) {
         return;
     }
 
-    int num_node = arena_ptr->get_config().get_num_robots();
+    std::vector<int> neighbors = topology[tx_node_id];
     position2d_t tx_node_pos = tx_node->get_position();
-    // std::cout << "send!!" << std::endl;
-    for (int i = 0; i < num_node; i++) {
-        if (i != tx_node_id) {
-            // not self
-            Node* rx_node = arena_ptr->get_node(i);
-            position2d_t rx_node_pos = rx_node->get_position();
-            float dist = calculate_dist(tx_node_pos, rx_node_pos);
-            // std::cout << "dist " << dist << std::endl;
-            if (dist > comm_radius) {
-                // too far
-            } else {
-                // ok to send
-                situated_sensing_t sensing;
-                sensing.distance = dist;
-                int theta_diff = atan2(tx_node_pos.y - rx_node_pos.y,
-                                       tx_node_pos.x - rx_node_pos.x) *
-                                 180 / M_PI;
-                sensing.bearing =
-                    fmod(theta_diff - rx_node_pos.theta + 360, 360);
-                RX_start_event* rx_start_event =
-                    new RX_start_event(arena_ptr, arena_ptr->get_sim_time(), i,
-                                       tx_packet, sensing);
-                arena_ptr->add_event(rx_start_event);
-            }
-        }
+    for (auto& neighbor : neighbors) {
+        Node* rx_node = arena_ptr->get_node(neighbor);
+        position2d_t rx_node_pos = rx_node->get_position();
+        float dist = calculate_dist(tx_node_pos, rx_node_pos);
+        situated_sensing_t sensing;
+        sensing.distance = dist;
+        int theta_diff = atan2(tx_node_pos.y - rx_node_pos.y,
+                               tx_node_pos.x - rx_node_pos.x) *
+                         180 / M_PI;
+        sensing.bearing = fmod(theta_diff - rx_node_pos.theta + 360, 360);
+        RX_start_event* rx_start_event = new RX_start_event(
+            arena_ptr, arena_ptr->get_sim_time(), neighbor, tx_packet, sensing);
+        arena_ptr->add_event(rx_start_event);
     }
 
     TX_end_event* tx_end_event = new TX_end_event(
@@ -78,7 +66,7 @@ void Kilo_medium::start_tx(int tx_node_id) {
     return;
 }
 
-void Kilo_medium::end_tx(int tx_node_id, bool success) {
+void Kilo_fixed_medium::end_tx(int tx_node_id, bool success) {
     // register the next tx
     Arena* arena_ptr = (Arena*)(this->arena);
     float next_tx_time_noise = ((float)std::rand() / (float)RAND_MAX - 0.5) *
@@ -99,8 +87,8 @@ void Kilo_medium::end_tx(int tx_node_id, bool success) {
     }
 }
 
-void Kilo_medium::start_rx(int rx_node_id, packet_t rx_packet,
-                           situated_sensing_t sensing) {
+void Kilo_fixed_medium::start_rx(int rx_node_id, packet_t rx_packet,
+                                 situated_sensing_t sensing) {
     this->rx_counter_vector[rx_node_id]++;
     // check if rx already in use
     if (this->rx_counter_vector[rx_node_id] > 1) {
@@ -123,7 +111,7 @@ void Kilo_medium::start_rx(int rx_node_id, packet_t rx_packet,
     arena_ptr->add_event(rx_end_event);
 }
 
-void Kilo_medium::end_rx(int rx_node_id) {
+void Kilo_fixed_medium::end_rx(int rx_node_id) {
     Arena* arena_ptr = (Arena*)(this->arena);
     this->rx_counter_vector[rx_node_id]--;
 
@@ -150,10 +138,38 @@ void Kilo_medium::end_rx(int rx_node_id) {
     }
 }
 
-void Kilo_medium::init() {}
+void Kilo_fixed_medium::init() {
+    // compute the fixed topology up front
 
-Kilo_medium::Kilo_medium(void* arena) {
-    std::cout << "MEDIUM" << std::endl;
+    float comm_radius = COMM_RADIUS;
+    Arena* arena_ptr = (Arena*)(this->arena);
+
+    int num_node = arena_ptr->get_config().get_num_robots();
+    for (int i = 0; i < num_node; i++) {
+        Node* tx_node = arena_ptr->get_node(i);
+        position2d_t tx_node_pos = tx_node->get_position();
+        std::vector<int> neighbors;
+        for (int j = 0; j < num_node; j++) {
+            if (j != i) {
+                // not self
+                Node* rx_node = arena_ptr->get_node(j);
+                position2d_t rx_node_pos = rx_node->get_position();
+                float dist = calculate_dist(tx_node_pos, rx_node_pos);
+                // std::cout << "dist " << dist << std::endl;
+                if (dist > comm_radius) {
+                    // too far
+                } else {
+                    // add to topology
+                    neighbors.push_back(j);
+                }
+            }
+        }
+        topology.push_back(neighbors);
+    }
+}
+
+Kilo_fixed_medium::Kilo_fixed_medium(void* arena) {
+    // std::cout << "MEDIUM" << std::endl;
     this->arena = arena;
     for (int i = 0; i < ((Arena*)arena)->get_config().get_num_robots(); i++) {
         rx_buffer_t empty_entry;
@@ -165,7 +181,7 @@ Kilo_medium::Kilo_medium(void* arena) {
 
 extern "C" {
 Medium* medium_builder(void* arena) {
-    Medium* medium = new Kilo_medium(arena);
+    Medium* medium = new Kilo_fixed_medium(arena);
     return medium;
 }
 }

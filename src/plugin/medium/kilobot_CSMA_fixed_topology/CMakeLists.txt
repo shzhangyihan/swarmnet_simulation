@@ -1,0 +1,2 @@
+add_library(kilobot_fixed_medium SHARED kilo_fixed_medium.cpp)
+target_link_libraries(kilobot_fixed_medium arena kilobot physics_2d)

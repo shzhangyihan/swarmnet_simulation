@@ -28,23 +28,23 @@ class Default_program : public Kilobot {
                 next_color.blue = 0;
                 break;
             case 1:
-                next_color.red = 255;
-                next_color.green = 0;
-                next_color.blue = 123;
+                next_color.red = 0;
+                next_color.green = 255;
+                next_color.blue = 0;
                 break;
             case 2:
-                next_color.red = 229;
-                next_color.green = 84;
-                next_color.blue = 209;
-                break;
-            case 3:
-                next_color.red = 144;
-                next_color.green = 138;
+                next_color.red = 0;
+                next_color.green = 0;
                 next_color.blue = 255;
                 break;
+            case 3:
+                next_color.red = 255;
+                next_color.green = 255;
+                next_color.blue = 0;
+                break;
             case 4:
-                next_color.red = 0;
-                next_color.green = 168;
+                next_color.red = 255;
+                next_color.green = 255;
                 next_color.blue = 255;
                 break;
         }
