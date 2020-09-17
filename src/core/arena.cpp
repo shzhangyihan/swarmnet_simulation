@@ -83,7 +83,7 @@ void Arena::run() {
     // start the sim
     int counter = 0;
     float max_time = this->conf.get_duration();
-
+    std::cout << "start run" << std::endl;
     Event* end_event = new Event(this, max_time, -1, -1);
     while (this->sim_time < max_time) {
         if (this->event_queue.empty()) {
@@ -92,7 +92,7 @@ void Arena::run() {
         Event* next_event = this->event_queue.top();
         float next_event_time = next_event->get_exec_time();
         // std::cout << "current time " << sim_time << " next event time "
-        //           << next_event_time << std::endl;
+        //   << next_event_time << std::endl;
 
         float collision_time =
             this->check_collision(this, next_event_time - sim_time);
@@ -143,6 +143,7 @@ void Arena::init_nodes() {
         log_node(i);
     }
     delete placement;
+    std::cout << "init finished" << std::endl << std::flush;
 }
 
 void Arena::add_event(Event* event) { this->event_queue.push(event); }

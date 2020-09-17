@@ -6,6 +6,7 @@ namespace swarmnet_sim {
 
 #define UPDATE_PERIOD 2
 #define NUM_COLOR 5
+#define SEED_ID 0
 
 class Default_program : public Kilobot {
     // Inherit the base constructures, make sure to include.
@@ -27,23 +28,23 @@ class Default_program : public Kilobot {
                 next_color.blue = 0;
                 break;
             case 1:
-                next_color.red = 255;
-                next_color.green = 0;
-                next_color.blue = 123;
+                next_color.red = 0;
+                next_color.green = 255;
+                next_color.blue = 0;
                 break;
             case 2:
-                next_color.red = 229;
-                next_color.green = 84;
-                next_color.blue = 209;
-                break;
-            case 3:
-                next_color.red = 144;
-                next_color.green = 138;
+                next_color.red = 0;
+                next_color.green = 0;
                 next_color.blue = 255;
                 break;
+            case 3:
+                next_color.red = 255;
+                next_color.green = 255;
+                next_color.blue = 0;
+                break;
             case 4:
-                next_color.red = 0;
-                next_color.green = 168;
+                next_color.red = 255;
+                next_color.green = 255;
                 next_color.blue = 255;
                 break;
         }
@@ -51,10 +52,10 @@ class Default_program : public Kilobot {
     }
 
     void message_rx(packet_t packet, situated_sensing_t sensing) {
-        if (node_id == 0) return;
+        if (node_id == SEED_ID) return;
         int in_hop = packet.payload[0];
-        float global_time = get_global_time();
-        if (global_time - last_update_time > UPDATE_PERIOD) {
+        float local_time = get_local_time();
+        if (local_time - last_update_time > UPDATE_PERIOD) {
             if (min_hop != 0) {
                 hop_count = min_hop + 1;
                 // std::cout << node_id << ": " << hop_count << std::endl
@@ -62,7 +63,7 @@ class Default_program : public Kilobot {
                 display_color_on_hop(hop_count);
                 min_hop = 0;
             }
-            last_update_time = global_time;
+            last_update_time = local_time;
         }
 
         if (in_hop == 0) return;
@@ -86,7 +87,7 @@ class Default_program : public Kilobot {
     }
 
     void message_tx_success() {
-        if (node_id == 0) return;
+        // if (node_id == 0) return;
         // std::cout << node_id << std::endl << std::flush;
     }
 
@@ -95,7 +96,8 @@ class Default_program : public Kilobot {
 
         hop_count = 0;
         min_hop = 0;
-        if (node_id == 0) {
+        if (node_id == SEED_ID) {
+            // std::cout << node_id << std::endl;
             hop_count = 1;
             c.blue = 255;
             c.red = 255;
@@ -105,7 +107,7 @@ class Default_program : public Kilobot {
         c.red = 0;
         c.green = 0;
         change_color(c);
-        last_update_time = get_global_time();
+        last_update_time = get_local_time();
     }
 };
 

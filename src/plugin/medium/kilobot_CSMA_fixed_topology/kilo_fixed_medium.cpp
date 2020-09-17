@@ -143,7 +143,8 @@ void Kilo_fixed_medium::init() {
 
     float comm_radius = COMM_RADIUS;
     Arena* arena_ptr = (Arena*)(this->arena);
-
+    std::cout << "medium init" << std::endl << std::flush;
+    const clock_t begin_time = clock();
     int num_node = arena_ptr->get_config().get_num_robots();
     for (int i = 0; i < num_node; i++) {
         Node* tx_node = arena_ptr->get_node(i);
@@ -166,6 +167,9 @@ void Kilo_fixed_medium::init() {
         }
         topology.push_back(neighbors);
     }
+    std::cout << "medium init finish "
+              << float(clock() - begin_time) / CLOCKS_PER_SEC << std::endl
+              << std::flush;
 }
 
 Kilo_fixed_medium::Kilo_fixed_medium(void* arena) {
