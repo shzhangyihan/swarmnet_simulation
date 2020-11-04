@@ -9,12 +9,15 @@ namespace swarmnet_sim {
 #define COMM_RADIUS 75
 #define TX_PERIOD_SECOND 0.5
 #define VELOCITY_PER_SECOND 1
+// #define VELOCITY_PER_SECOND 5
 #define MAX_CLOCK_OFFSET_SECOND 20
 #define MAX_CLOCK_SKEW 0.1
 #define MIN_CLOCK_SKEW (-0.1)
+// #define MAX_PACKET_BYTE 9
+#define MAX_PACKET_BYTE 20
 
 typedef struct packet {
-    unsigned char payload[9];
+    unsigned char payload[MAX_PACKET_BYTE];
 } packet_t;
 
 typedef struct situated_sensing {

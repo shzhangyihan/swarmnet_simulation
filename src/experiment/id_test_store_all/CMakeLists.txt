@@ -1,0 +1,3 @@
+add_library(id_test_store_all SHARED id_test_store_all.cpp)
+
+target_link_libraries(id_test_store_all kilobot)

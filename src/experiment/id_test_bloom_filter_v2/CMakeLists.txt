@@ -1,0 +1,5 @@
+add_library(id_test_bloom_v2 SHARED id_test_bloom.cpp)
+add_library(id_test_bloom_v3 SHARED id_test_bloom_replace_my_filter.cpp)
+
+target_link_libraries(id_test_bloom_v2 kilobot)
+target_link_libraries(id_test_bloom_v3 kilobot)

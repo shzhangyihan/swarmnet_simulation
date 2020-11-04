@@ -17,6 +17,10 @@ void Kilo_medium::start_tx(int tx_node_id) {
 
     Node* tx_node = arena_ptr->get_node(tx_node_id);
     packet_t tx_packet;
+    // empty the packet for undefined behavior
+    for (int i = 0; i < MAX_PACKET_BYTE; i++) {
+        tx_packet.payload[i] = 0;
+    }
     bool tx_state = ((Kilobot*)tx_node)->message_tx_wrapper(&tx_packet);
     if (!tx_state) {
         // nothing to send

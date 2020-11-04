@@ -1,0 +1,3 @@
+add_library(pass_through_engine SHARED pass_through_engine.cpp)
+target_link_libraries(pass_through_engine collision_event node config arena event_queue physics_2d)
+
