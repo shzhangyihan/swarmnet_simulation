@@ -14,7 +14,7 @@ namespace swarmnet_sim {
 #define MAX_CLOCK_SKEW 0.1
 #define MIN_CLOCK_SKEW (-0.1)
 // #define MAX_PACKET_BYTE 9
-#define MAX_PACKET_BYTE 20
+#define MAX_PACKET_BYTE 100
 
 typedef struct packet {
     unsigned char payload[MAX_PACKET_BYTE];

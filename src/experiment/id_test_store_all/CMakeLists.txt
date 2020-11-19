@@ -1,3 +1,16 @@
 add_library(id_test_store_all SHARED id_test_store_all.cpp)
 
 target_link_libraries(id_test_store_all kilobot)
+
+add_library(id_test_store_bloom SHARED id_test_store_bloom.cpp)
+
+target_link_libraries(id_test_store_bloom kilobot)
+
+add_library(id_test_bloom_send_all SHARED id_test_bloom_send_all.cpp)
+
+target_link_libraries(id_test_bloom_send_all kilobot)
+
+add_library(id_test_store_bloom_no_wait SHARED id_test_store_bloom_no_wait.cpp)
+
+target_link_libraries(id_test_store_bloom_no_wait kilobot)
+

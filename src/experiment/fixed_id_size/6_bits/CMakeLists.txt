@@ -1,0 +1,14 @@
+add_library(fixed_id_size_6 SHARED id_test.cpp)
+target_link_libraries(fixed_id_size_6 kilobot)
+
+add_library(fixed_id_size_store_all_6 SHARED id_test_store_all.cpp)
+target_link_libraries(fixed_id_size_store_all_6 kilobot)
+
+add_library(fixed_id_size_store_bloom_6 SHARED id_test_store_bloom.cpp)
+target_link_libraries(fixed_id_size_store_bloom_6 kilobot)
+
+add_library(fixed_id_size_store_bloom_no_wait_6 SHARED id_test_store_bloom_no_wait.cpp)
+target_link_libraries(fixed_id_size_store_bloom_no_wait_6 kilobot)
+
+add_library(fixed_id_size_store_bloom_send_all_6 SHARED id_test_store_bloom_send_all.cpp)
+target_link_libraries(fixed_id_size_store_bloom_send_all_6 kilobot)
