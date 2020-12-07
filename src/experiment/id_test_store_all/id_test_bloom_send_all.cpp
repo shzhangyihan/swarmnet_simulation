@@ -6,6 +6,10 @@
 #include "../../plugin/robot/kilobot.h"
 #include "math.h"
 
+#define LOG_ID()                                                            \
+    std::cout << get_global_time() << "|" << node_id << ": " << id << " - " \
+              << id_size << " - " << 0 << std::endl;
+
 namespace swarmnet_sim {
 
 // #define MY_PKT_SIZE 11
@@ -45,8 +49,8 @@ typedef struct {
     int index;
 } Bloom_filter_buf_t;
 
-#define MAX_TX_BUF_SIZE 5
-#define MAX_CACHE_SIZE 10
+#define MAX_TX_BUF_SIZE 100
+#define MAX_CACHE_SIZE 100
 
 typedef struct {
     packet_t cache[MAX_CACHE_SIZE];
@@ -270,6 +274,7 @@ class Default_program : public Kilobot {
 
                 if (id_size < src_id_size) {
                     id_size = src_id_size;
+                    LOG_ID();
                 }
             }
         }
@@ -346,6 +351,7 @@ class Default_program : public Kilobot {
             id_size = id_size + 1;
         }
         id = this->new_sample_id(id_size);
+        LOG_ID();
     }
 
     bool diminish_function(int cur_id_size) {
@@ -391,12 +397,12 @@ class Default_program : public Kilobot {
                 break;
             }
         }
-        std::cout << get_global_time() << "|" << node_id << ": " << new_id
-                  << " - " << id_size << " - " << 0 << std::endl
-                  << std::flush;
-        std::cout << get_global_time() << "|" << node_id << " true count "
-                  << filter_true_count << std::endl
-                  << std::flush;
+        // std::cout << get_global_time() << "|" << node_id << ": " << new_id
+        //           << " - " << id_size << " - " << 0 << std::endl
+        //           << std::flush;
+        // std::cout << get_global_time() << "|" << node_id << " true count "
+        //           << filter_true_count << std::endl
+        //           << std::flush;
         return new_id;
     }
 

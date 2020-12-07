@@ -3,6 +3,10 @@
 #include "../../plugin/robot/kilobot.h"
 #include "math.h"
 
+#define LOG_ID()                                                            \
+    std::cout << get_global_time() << "|" << node_id << ": " << id << " - " \
+              << id_size << " - " << collide_checker << std::endl;
+
 namespace swarmnet_sim {
 
 #define MAX_TX_BUF_SIZE 5
@@ -70,6 +74,7 @@ class Default_program : public Kilobot {
 
         if (id_size < src_id_size) {
             id_size = src_id_size;
+            LOG_ID();
             // id = this->new_sample_id(id_size);
         }
     }
@@ -97,6 +102,7 @@ class Default_program : public Kilobot {
             id_size = id_size + 1;
         }
         id = this->new_sample_id(id_size);
+        LOG_ID();
     }
 
     bool diminish_function(int cur_id_size) {
@@ -116,8 +122,9 @@ class Default_program : public Kilobot {
         }
         collide_checker = (rand()) % (int)pow(2, 32);
 
-        std::cout << get_global_time() << "|" << node_id << ": " << new_id
-                  << " - " << id_size << " - " << collide_checker << std::endl;
+        // std::cout << get_global_time() << "|" << node_id << ": " << new_id
+        //           << " - " << id_size << " - " << collide_checker <<
+        //           std::endl;
 
         // clear_msg();
         // set_id(&msg, new_id, src);

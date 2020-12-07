@@ -2,6 +2,7 @@
 
 #include <dlfcn.h>
 
+#include <chrono>
 #include <iostream>
 
 namespace swarmnet_sim {
@@ -86,6 +87,7 @@ void Arena::run() {
     std::cout << "start run" << std::endl;
     Event* end_event = new Event(this, max_time, -1, -1);
     while (this->sim_time < max_time) {
+        event_counter++;
         if (this->event_queue.empty()) {
             this->event_queue.push(end_event);
         }
@@ -94,8 +96,13 @@ void Arena::run() {
         // std::cout << "current time " << sim_time << " next event time "
         //   << next_event_time << std::endl;
 
+        auto start = std::chrono::high_resolution_clock::now();
         float collision_time =
             this->check_collision(this, next_event_time - sim_time);
+        auto end = std::chrono::high_resolution_clock::now();
+        physics_checking_time +=
+            std::chrono::duration_cast<std::chrono::milliseconds>(end - start)
+                .count();
         // std::cout << "check return " << collision_tick << std::endl;
         if (collision_time != -1) {
             // collision happened, loop again
@@ -119,6 +126,9 @@ void Arena::run() {
         // if (counter > 10) break;
     }
     // std::cout << "finished" << std::endl;
+    std::cout << "Time spent in physics checking: " << physics_checking_time
+              << "ms" << std::endl;
+    std::cout << "Main event loop count: " << event_counter << std::endl;
     motion_log->flush();
 }
 
@@ -159,6 +169,8 @@ void Arena::log_metadata() {
 
 Arena::Arena(Sim_config conf) {
     this->conf = conf;
+    this->physics_checking_time = 0;
+    this->event_counter = 0;
     this->sim_time = 0;
     srand(this->conf.get_rand_seed());
     // setup motion log
