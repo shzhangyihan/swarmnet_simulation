@@ -41,6 +41,7 @@ class Arena {
     typedef float (*collision_checker_t)(Arena*, float);
     collision_checker_t check_collision;
     long physics_checking_time;
+    long event_exec_time;
     long event_counter;
 };
 }  // namespace swarmnet_sim

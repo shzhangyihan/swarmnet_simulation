@@ -1,7 +1,7 @@
 #ifndef __SIM_DEFAULT_ENGINE_H__
 #define __SIM_DEFAULT_ENGINE_H__
 
-#include "../../core/arena.h"
+#include "../../../core/arena.h"
 
 namespace swarmnet_sim {
 

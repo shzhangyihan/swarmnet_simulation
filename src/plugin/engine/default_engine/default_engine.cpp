@@ -6,7 +6,7 @@
 #include <iostream>
 #include <vector>
 
-#include "../event/collision_event.h"
+#include "../../event/collision_event.h"
 
 namespace swarmnet_sim {
 

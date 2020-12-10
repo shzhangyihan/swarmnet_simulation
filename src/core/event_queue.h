@@ -13,10 +13,12 @@ class Event_queue {
     void push(Event *e);
     Event *pop();
     Event *top();
-    bool empty();
+    bool empty() const;
+    long get_queue_operation_time() const;
 
    private:
     std::priority_queue<Event *, std::vector<Event *>, CmpEventPtrs> queue;
+    long queue_operation_time = 0;
 };
 
 }  // namespace swarmnet_sim

@@ -59,7 +59,7 @@ def init():
     logs = np.loadtxt(log_file, delimiter=' ', dtype=np.float, skiprows=1)
     for log in logs:
         #log_time = int(log[0])
-        log_time = round(log[0], 1)
+        log_time = round(log[0], 2)
         id = int(log[1])
         if log_time not in events:
             events[log_time] = {}
@@ -95,6 +95,20 @@ def calcUnitMovement(theta, v):
     xmov = v * np.cos(np.deg2rad(theta))
     ymov = v * np.sin(np.deg2rad(theta))
     return (xmov, ymov)
+
+def glut_print(x, y, font, text, r, g, b, a):
+    blending = False 
+    if glIsEnabled(GL_BLEND) :
+        blending = True
+
+    #glEnable(GL_BLEND)
+    glColor3f(1,1,1)
+    glRasterPos2f(x,y)
+    for ch in text :
+        glutBitmapCharacter(font, ctypes.c_int(ord(ch)))
+
+    if not blending :
+        glDisable(GL_BLEND)
 
 def createFrames():
     global max_time
@@ -152,10 +166,11 @@ def createFrames():
                 robot.y = arena_height
             
             drawSingleRobot(robot.x, robot.y, robot.r, robot.g, robot.b, RADIUS)
+            glut_print(robot.x - RADIUS / 2, robot.y - RADIUS / 2, GLUT_BITMAP_8_BY_13, str(robot.id), 1.0, 1.0, 1.0, 1.0)
             robot.set_last_updated_time(sim_time)
         
         # glFlush()
-
+        glut_print(10, 10, GLUT_BITMAP_9_BY_15, format(sim_time, '.2f'), 1.0, 1.0, 1.0, 1.0)
         glPixelStorei(GL_PACK_ALIGNMENT, 1)
         data = glReadPixels(0, 0, arena_width, arena_height, GL_RGBA, GL_UNSIGNED_BYTE)
         image = Image.frombytes("RGBA", (arena_width, arena_height), data)

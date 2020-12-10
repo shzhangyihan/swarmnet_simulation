@@ -82,12 +82,12 @@ void Arena::log_node(float time, int id) {
 
 void Arena::run() {
     // start the sim
-    int counter = 0;
+    // int counter = 0;
+    auto sim_start_time = std::chrono::high_resolution_clock::now();
     float max_time = this->conf.get_duration();
     std::cout << "start run" << std::endl;
     Event* end_event = new Event(this, max_time, -1, -1);
     while (this->sim_time < max_time) {
-        event_counter++;
         if (this->event_queue.empty()) {
             this->event_queue.push(end_event);
         }
@@ -101,9 +101,10 @@ void Arena::run() {
             this->check_collision(this, next_event_time - sim_time);
         auto end = std::chrono::high_resolution_clock::now();
         physics_checking_time +=
-            std::chrono::duration_cast<std::chrono::milliseconds>(end - start)
+            std::chrono::duration_cast<std::chrono::microseconds>(end - start)
                 .count();
-        // std::cout << "check return " << collision_tick << std::endl;
+        // std::cout << sim_time << " check " << collision_time << std::endl;
+        if (this->sim_time < 0) exit(-1);
         if (collision_time != -1) {
             // collision happened, loop again
             // update tick
@@ -116,19 +117,37 @@ void Arena::run() {
             this->event_queue.pop();
             // update_simulation(next_event_tick - current_tick);
             sim_time = next_event_time;
+            auto start = std::chrono::high_resolution_clock::now();
             next_event->exec();
+            auto end = std::chrono::high_resolution_clock::now();
+            event_exec_time +=
+                std::chrono::duration_cast<std::chrono::microseconds>(end -
+                                                                      start)
+                    .count();
+            event_counter++;
             // int exec_node_id = next_event->get_to_id();
             delete next_event;
             // if (exec_node_id != -1) log_node(exec_node_id);
         }
         // std::cout << current_tick << std::endl;
-        counter++;
+        // counter++;
         // if (counter > 10) break;
     }
     // std::cout << "finished" << std::endl;
+    auto sim_end_time = std::chrono::high_resolution_clock::now();
+    std::cout << "Sim end with: "
+              << std::chrono::duration_cast<std::chrono::microseconds>(
+                     sim_end_time - sim_start_time)
+                     .count()
+              << " μs" << std::endl;
     std::cout << "Time spent in physics checking: " << physics_checking_time
-              << "ms" << std::endl;
-    std::cout << "Main event loop count: " << event_counter << std::endl;
+              << " μs" << std::endl;
+    std::cout << "Time spent in event execution: " << event_exec_time << " μs"
+              << std::endl;
+    std::cout << "Time spent in queue operation: "
+              << event_queue.get_queue_operation_time() << " μs" << std::endl;
+    std::cout << "Event count: " << event_counter << std::endl;
+
     motion_log->flush();
 }
 
@@ -171,6 +190,7 @@ Arena::Arena(Sim_config conf) {
     this->conf = conf;
     this->physics_checking_time = 0;
     this->event_counter = 0;
+    this->event_exec_time = 0;
     this->sim_time = 0;
     srand(this->conf.get_rand_seed());
     // setup motion log
