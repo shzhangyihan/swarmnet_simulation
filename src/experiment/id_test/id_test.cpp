@@ -3,10 +3,10 @@
 #include "../../plugin/robot/kilobot.h"
 #include "math.h"
 
-// #define LOG_ID()                                                            \
-//     std::cout << get_global_time() << "|" << node_id << ": " << id << " - " \
-//               << id_size << " - " << 0 << std::endl;
-#define LOG_ID()
+#define LOG_ID()                                                            \
+    std::cout << get_global_time() << "|" << node_id << ": " << id << " - " \
+              << id_size << " - " << 0 << std::endl;
+// #define LOG_ID()
 
 namespace swarmnet_sim {
 

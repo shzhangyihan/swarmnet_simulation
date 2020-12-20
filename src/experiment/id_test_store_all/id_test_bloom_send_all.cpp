@@ -290,8 +290,9 @@ class Default_program : public Kilobot {
     }
 
     bool message_tx(packet_t* packet) {
-        // std::cout << node_id << " send " << f_buf.size << std::endl
-        //           << std::flush;
+        std::cout << node_id << " send buf size: " << f_buf.size
+                  << " cache size: " << f_cache.size << std::endl
+                  << std::flush;
         int buf_size = f_buf.size;
         packet->payload[0] = 1 + f_buf.size;
         int pkt_offset = 1;

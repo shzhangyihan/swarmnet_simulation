@@ -199,7 +199,7 @@ float time_to_collide(position2d_t pos_1, float v_1, position2d_t pos_2,
     float delta_v_x = v_1_x - v_2_x;
     float delta_v_y = v_1_y - v_2_y;
     float delta_x = pos_1.x - pos_2.x;
-    // Vieta's formula for the quadratic inequation
+    // Vieta's formula for the quadratic inequality
     float delta_y = pos_1.y - pos_2.y;
     // in the form of a*t^2 + b*t + c <= 0
     float a = delta_v_x * delta_v_x + delta_v_y * delta_v_y;
