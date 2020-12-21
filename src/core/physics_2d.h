@@ -23,6 +23,17 @@ float calculate_dist(position2d_t pos1, position2d_t pos2);
 bool operator==(const position2d_t& lhs, const position2d_t& rhs);
 bool operator==(const color_t& lhs, const color_t& rhs);
 
+class Physics_engine {
+   public:
+    virtual float check_collision(float future_time) = 0;
+    virtual void init() = 0;
+    Physics_engine(void* arena) { this->arena = arena; };
+    Physics_engine(){};
+
+   protected:
+    void* arena;
+};
+
 }  // namespace swarmnet_sim
 
 #endif

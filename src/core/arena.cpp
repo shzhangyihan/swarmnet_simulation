@@ -98,7 +98,7 @@ void Arena::run() {
 
         auto start = std::chrono::high_resolution_clock::now();
         float collision_time =
-            this->check_collision(this, next_event_time - sim_time);
+            this->physics_engine->check_collision(next_event_time - sim_time);
         auto end = std::chrono::high_resolution_clock::now();
         physics_checking_time +=
             std::chrono::duration_cast<std::chrono::microseconds>(end - start)
@@ -197,9 +197,11 @@ Arena::Arena(Sim_config conf) {
     motion_log = new Motion_log(this->conf.get_log_buf_size(),
                                 this->conf.get_motion_log_name());
     log_metadata();
-    // get the physics engine function from handle
-    check_collision = (collision_checker_t)dlsym(
-        this->conf.get_physics_engine_dl_handle(), "check_collision");
+    // get the physics engine from handle
+    typedef Physics_engine* (*engine_builder_t)(void*);
+    engine_builder_t engine_builder = (engine_builder_t)dlsym(
+        this->conf.get_physics_engine_dl_handle(), "engine_builder");
+    this->physics_engine = engine_builder(this);
     // get the medium from handle
     typedef Medium* (*medium_builder_t)(void*);
     medium_builder_t medium_builder = (medium_builder_t)dlsym(
@@ -207,6 +209,7 @@ Arena::Arena(Sim_config conf) {
     this->comm_medium = medium_builder(this);
     init_nodes();
     this->comm_medium->init();
+    this->physics_engine->init();
 }
 
 Arena::~Arena() {

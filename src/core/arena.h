@@ -38,8 +38,7 @@ class Arena {
     Event_queue event_queue;
     Motion_log* motion_log;
     Medium* comm_medium;
-    typedef float (*collision_checker_t)(Arena*, float);
-    collision_checker_t check_collision;
+    Physics_engine* physics_engine;
     long physics_checking_time;
     long event_exec_time;
     long event_counter;

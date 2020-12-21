@@ -8,8 +8,16 @@ namespace swarmnet_sim {
 #define TICK_PER_SECOND 1000
 
 extern "C" {
-float check_collision(Arena* arena, float future_time);
+Physics_engine* engine_builder(void* arena);
 }
+
+class Null_engine : public Physics_engine {
+   public:
+    float check_collision(float future_time);
+    void init();
+    Null_engine(void* arena);
+};
+
 }  // namespace swarmnet_sim
 
 #endif
