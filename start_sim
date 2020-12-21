@@ -7,7 +7,6 @@ def prRed(skk): print("\n\033[91m{}\033[00m\n" .format(skk))
 def prGreen(skk): print("\n\033[92m{}\033[00m\n" .format(skk))
 def prYellow(skk): print("\n\033[93m{}\033[00m\n" .format(skk)) 
 
-
 def clean_build():
     error_flag = 0
     prYellow("Cleaning the current build ...")
@@ -56,12 +55,24 @@ def run_unit_test(test_name):
     else:
         prGreen("Unit test " + test_name + " finished!")
 
+def run_visualization(speed, motion_file, video_file):
+    error_flag = 0
+    prYellow("Rendering video from motion file \"" + motion_file + "\" with x" + speed + " speed to \"" + video_file + "\" ...")
+    if os.system("python3 ./src/visualization/video_renderer.py " + motion_file + " " + speed + " " + video_file) != 0: error_flag = 1
+    if error_flag:
+        prRed("Visualization failed!")
+        return -1
+    else:
+        prGreen("Visualization finished!")
+        return 0
+
 def main():
     parser = argparse.ArgumentParser(description='Default entry for simulation')
     parser.add_argument("-c", "--clean", action="store_true", help="Clean the build")
     parser.add_argument("-b", "--build", action="store_true", help="Build simulation")
-    parser.add_argument("-r", "--run", action="store", help="Run simulation")
+    parser.add_argument("-r", "--run", action="store", help="Run simulation with the input json config file")
     parser.add_argument("-u", "--unit_test", action="store", help="Run unit test")
+    parser.add_argument("-v", "--visualization", action="store", nargs='+', help="Render the visualization with the input speedup, to the output file (Optional)")
 
     args = parser.parse_args()
 
@@ -82,6 +93,13 @@ def main():
         if run_unit_test(args.unit_test) != 0:
             return
 
+    if args.visualization:
+        speed = args.visualization[0]
+        motion_file = args.visualization[1]
+        video_file = args.visualization[2]
+        if run_visualization(speed, motion_file, video_file) != 0:
+            return
+    
 if __name__ == "__main__":
     main()
 

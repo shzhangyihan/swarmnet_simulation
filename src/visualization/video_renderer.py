@@ -179,26 +179,26 @@ def createFrames():
         sim_time += speed / fps
         counter += 1
 
-def makeVideo():
+def makeVideo(output_file):
     global fps
     global frame_folder
     pathlib.Path("./video/").mkdir(parents=True, exist_ok=True)
-    ffmpeg_command = "ffmpeg -y -r {} -i {}img%d.png -c:v libx264 -pix_fmt yuv420p ./video/out.mp4".format(fps, frame_folder)
+    ffmpeg_command = "ffmpeg -y -r {} -i {}img%d.png -c:v libx264 -pix_fmt yuv420p ./video/".format(fps, frame_folder) + output_file
     subprocess.call(ffmpeg_command, shell=True)
     rm_command = "rm -rf {}".format(frame_folder)
     subprocess.call(rm_command, shell=True)
 
 
-def main():
+def renderer(in_log_file="./motion_log/default_log.txt", in_speed=1, in_outfile="out.mp4"):
     global speed
     global log_file
 
-    log_file = sys.argv[1]
-    speed = float(sys.argv[2])
+    log_file = in_log_file
+    speed = in_speed
 
     init()
     createFrames()
-    makeVideo()
+    makeVideo(in_outfile)
 
 if __name__ == "__main__":
-    main()
+    renderer(sys.argv[1], float(sys.argv[2]), sys.argv[3])

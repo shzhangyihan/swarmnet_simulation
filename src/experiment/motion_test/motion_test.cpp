@@ -25,14 +25,14 @@ class Default_program : public Kilobot {
         //     }
         // }
         // go_forward();
-        if (node_id == 0) {
-            counter++;
-            if (counter == 100000) {
-                counter = 0;
-            } else {
-                return;
-            }
-        }
+        // if (node_id == 0) {
+        //     counter++;
+        //     if (counter == 100000) {
+        //         counter = 0;
+        //     } else {
+        //         return;
+        //     }
+        // }
         turn(rand() % 360 - 180);
         int select_color;
         color_t cur_color = this->get_color();
