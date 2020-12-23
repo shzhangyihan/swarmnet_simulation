@@ -2,7 +2,7 @@
 
 namespace swarmnet_sim {
 
-float Null_engine::check_collision(float future_time) { return -1; }
+double Null_engine::check_collision(double future_time) { return -1; }
 
 void Null_engine::init() {}
 

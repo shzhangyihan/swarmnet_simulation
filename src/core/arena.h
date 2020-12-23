@@ -16,14 +16,14 @@ class Arena {
     Sim_config get_config() const;
     Node* get_node(int id) const;
     Medium* get_medium() const;
-    float get_sim_time() const;
+    double get_sim_time() const;
     void add_event(Event* event);
     void log_node(int id);
     // void log_node(int tick, int id);
-    void log_node(float time, int id);
+    void log_node(double time, int id);
     void log_metadata();
     // void update_simulation(int ticks);
-    void update_simulation(float sim_time_diff);
+    void update_simulation(double sim_time_diff);
     void move_robot(int id, position2d_t pos);
     Arena(Sim_config conf);
     ~Arena();
@@ -33,7 +33,7 @@ class Arena {
 
     Sim_config conf;
     // int current_tick;
-    float sim_time;
+    double sim_time;
     std::vector<Node*> node_vector;
     Event_queue event_queue;
     Motion_log* motion_log;

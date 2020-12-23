@@ -55,8 +55,8 @@ void Kilobot::init_wrapper() {
     this->init();
     this->add_state_change_event();
     Arena* arena_ptr = (Arena*)arena;
-    float tx_delay =
-        (float)std::rand() / (float)RAND_MAX * MAX_RANDOM_DELAY_SECOND;
+    double tx_delay =
+        (double)std::rand() / (double)RAND_MAX * MAX_RANDOM_DELAY_SECOND;
     TX_start_event* tx_start_event = new TX_start_event(
         arena_ptr, arena_ptr->get_sim_time() + tx_delay, node_id);
     this->add_event(tx_start_event);
@@ -99,16 +99,16 @@ void Kilobot::go_forward() {
     this->user_state.velocity = VELOCITY_PER_SECOND;
 }
 
-void Kilobot::go_forward(float seconds) {}
+void Kilobot::go_forward(double seconds) {}
 
-void Kilobot::turn(float angle) {
+void Kilobot::turn(double angle) {
     // Arena* arena_ptr = (Arena*)this->arena;
     // Update_state_event* event = new Update_state_event(
     //     arena_ptr, arena_ptr->get_current_tick(), node_id);
     // position2d_t new_pos;
     // new_pos.x = this->pos.x;
     // new_pos.y = this->pos.y;
-    // float new_theta = fmod(this->pos.theta + angle + 360, 360);
+    // double new_theta = fmod(this->pos.theta + angle + 360, 360);
     // new_pos.theta = new_theta;
     // event->update_position(new_pos);
     // this->add_event(event);
@@ -124,16 +124,16 @@ void Kilobot::change_color(color_t color) {
     this->user_state.color = color;
 }
 
-float Kilobot::get_global_time() { return ((Arena*)arena)->get_sim_time(); }
+double Kilobot::get_global_time() { return ((Arena*)arena)->get_sim_time(); }
 
-float Kilobot::get_local_time() {
-    float global_time = get_global_time();
-    float local_time =
+double Kilobot::get_local_time() {
+    double global_time = get_global_time();
+    double local_time =
         this->local_clock_offset + global_time * (1 + this->local_clock_skew);
     return local_time;
 }
 
-float Kilobot::local_time_to_global_time(float local_time) {
+double Kilobot::local_time_to_global_time(double local_time) {
     return local_time / (1 + this->local_clock_skew);
 }
 
@@ -141,8 +141,8 @@ Kilobot::Kilobot(void* arena, int node_id, position2d_t pos)
     : Node(arena, node_id, pos) {
     this->radius = ROBOT_RADIUS;
     this->local_clock_offset =
-        (float)std::rand() / (float)RAND_MAX * MAX_CLOCK_OFFSET_SECOND;
-    this->local_clock_skew = (float)std::rand() / (float)RAND_MAX *
+        (double)std::rand() / (double)RAND_MAX * MAX_CLOCK_OFFSET_SECOND;
+    this->local_clock_skew = (double)std::rand() / (double)RAND_MAX *
                                  (MAX_CLOCK_SKEW - MIN_CLOCK_SKEW) +
                              MIN_CLOCK_SKEW;
     // std::cout << "offset " << local_clock_offset << " skew " <<

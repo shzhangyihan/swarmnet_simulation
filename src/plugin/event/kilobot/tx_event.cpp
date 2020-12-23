@@ -27,9 +27,9 @@ void TX_start_event::exec() {
     // }
 }
 
-TX_start_event::TX_start_event(void* arena, float exec_time, int from_id) {
-    float send_delay =
-        (float)std::rand() / (float)RAND_MAX * MAX_RANDOM_DELAY_SECOND;
+TX_start_event::TX_start_event(void* arena, double exec_time, int from_id) {
+    double send_delay =
+        (double)std::rand() / (double)RAND_MAX * MAX_RANDOM_DELAY_SECOND;
     this->arena = arena;
     this->exec_time = exec_time + send_delay;
     this->from_id = from_id;
@@ -44,7 +44,7 @@ void TX_end_event::exec() {
 
 void TX_end_event::set_success(bool success) { this->success = success; }
 
-TX_end_event::TX_end_event(void* arena, float exec_time, int from_id) {
+TX_end_event::TX_end_event(void* arena, double exec_time, int from_id) {
     this->arena = arena;
     this->exec_time = exec_time;
     this->from_id = from_id;

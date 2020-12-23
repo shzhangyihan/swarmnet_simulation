@@ -10,7 +10,7 @@ namespace swarmnet_sim {
 class RX_start_event : public Event {
    public:
     void exec();
-    RX_start_event(void* arena, float exec_time, int to_id, packet_t pkt,
+    RX_start_event(void* arena, double exec_time, int to_id, packet_t pkt,
                    situated_sensing_t sensing);
 
    private:
@@ -21,7 +21,7 @@ class RX_start_event : public Event {
 class RX_end_event : public Event {
    public:
     void exec();
-    RX_end_event(void* arena, float exec_time, int to_id);
+    RX_end_event(void* arena, double exec_time, int to_id);
 
    private:
     packet_t pkt;

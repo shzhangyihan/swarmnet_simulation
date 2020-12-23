@@ -10,7 +10,7 @@
 
 namespace swarmnet_sim {
 
-float Default_engine::check_collision(float future_time) {
+double Default_engine::check_collision(double future_time) {
     Arena* arena_ptr = (Arena*)this->arena;
     Sim_config config = arena_ptr->get_config();
     int num_robots = config.get_num_robots();
@@ -34,14 +34,14 @@ float Default_engine::check_collision(float future_time) {
             // future_pos[i] = calculate_future_pos(
             //     arena_ptr->get_node(i)->get_position(),
             //     arena_ptr->get_node(i)->get_velocity(),
-            //     (float)t / arena_ptr->get_config().get_ticks_per_second());
+            //     (double)t / arena_ptr->get_config().get_ticks_per_second());
             // if (t == 0)
             //     future_pos[i] = arena_ptr->get_node(i)->get_position();
             // else
             future_pos[i] =
                 calculate_future_pos(arena_ptr->get_node(i)->get_position(),
                                      arena_ptr->get_node(i)->get_velocity(),
-                                     (float)1 / TICK_PER_SECOND);
+                                     (double)1 / TICK_PER_SECOND);
         }
 
         for (int i = 0; i < num_robots; i++) {
@@ -58,7 +58,7 @@ float Default_engine::check_collision(float future_time) {
                 violated = true;
                 Collision_event* new_event = new Collision_event(
                     arena_ptr,
-                    arena_ptr->get_sim_time() + (float)t / TICK_PER_SECOND, -1,
+                    arena_ptr->get_sim_time() + (double)t / TICK_PER_SECOND, -1,
                     i);
                 arena_ptr->add_event(new_event);
                 // std::cout << "pos of ofb " << future_pos[i].x << ", "
@@ -85,12 +85,12 @@ float Default_engine::check_collision(float future_time) {
                     violated = true;
                     Collision_event* new_event = new Collision_event(
                         arena_ptr,
-                        arena_ptr->get_sim_time() + (float)t / TICK_PER_SECOND,
+                        arena_ptr->get_sim_time() + (double)t / TICK_PER_SECOND,
                         i, j);
                     arena_ptr->add_event(new_event);
                     new_event = new Collision_event(
                         arena_ptr,
-                        arena_ptr->get_sim_time() + (float)t / TICK_PER_SECOND,
+                        arena_ptr->get_sim_time() + (double)t / TICK_PER_SECOND,
                         j, i);
                     arena_ptr->add_event(new_event);
                     // }
@@ -113,7 +113,7 @@ float Default_engine::check_collision(float future_time) {
 
         if (violated) {
             // std::cout << "violated at " << t << std::endl << std::flush;
-            return (float)t / TICK_PER_SECOND;
+            return (double)t / TICK_PER_SECOND;
         }
     }
 
@@ -122,7 +122,7 @@ float Default_engine::check_collision(float future_time) {
 
 bool Default_engine::check_robot_collision(position2d_t pos_1,
                                            position2d_t pos_2, int radius) {
-    float dist = calculate_dist(pos_1, pos_2);
+    double dist = calculate_dist(pos_1, pos_2);
     if (dist > radius * 2) {
         return false;
     } else {
@@ -132,8 +132,8 @@ bool Default_engine::check_robot_collision(position2d_t pos_1,
 
 bool Default_engine::check_out_of_bound(position2d_t pos, int radius, int x_max,
                                         int y_max) {
-    float x = pos.x;
-    float y = pos.y;
+    double x = pos.x;
+    double y = pos.y;
 
     if (x - radius < 0 || x + radius > x_max) {
         return true;

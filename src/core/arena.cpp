@@ -9,13 +9,13 @@ namespace swarmnet_sim {
 
 Sim_config Arena::get_config() const { return this->conf; }
 
-float Arena::get_sim_time() const { return this->sim_time; }
+double Arena::get_sim_time() const { return this->sim_time; }
 
 Node* Arena::get_node(int id) const { return this->node_vector[id]; }
 
 Medium* Arena::get_medium() const { return this->comm_medium; }
 
-void Arena::update_simulation(float sim_time_diff) {
+void Arena::update_simulation(double sim_time_diff) {
     int num_robots = this->conf.get_num_robots();
     for (int i = 0; i < num_robots; i++) {
         position2d_t cur_pos = this->node_vector[i]->get_position();
@@ -54,7 +54,7 @@ void Arena::log_node(int id) {
     motion_log->log(log);
 }
 
-void Arena::log_node(float time, int id) {
+void Arena::log_node(double time, int id) {
     std::string log = "";
     Node* node = node_vector[id];
     position2d_t pos = node->get_position();
@@ -70,7 +70,7 @@ void Arena::log_node(float time, int id) {
     log = log + std::to_string(pos.x) + " " + std::to_string(pos.y) + " " +
           std::to_string(pos.theta) + " ";
     // add speed
-    float velocity = node->get_velocity();
+    double velocity = node->get_velocity();
     if (node->get_collision_flag()) velocity = 0;
     log = log + std::to_string(velocity) + " ";
     // add color
@@ -84,20 +84,20 @@ void Arena::run() {
     // start the sim
     // int counter = 0;
     auto sim_start_time = std::chrono::high_resolution_clock::now();
-    float max_time = this->conf.get_duration();
-    std::cout << "start run" << std::endl;
+    double max_time = this->conf.get_duration();
+    // std::cout << "start run" << std::endl;
     Event* end_event = new Event(this, max_time, -1, -1);
     while (this->sim_time < max_time) {
         if (this->event_queue.empty()) {
             this->event_queue.push(end_event);
         }
         Event* next_event = this->event_queue.top();
-        float next_event_time = next_event->get_exec_time();
+        double next_event_time = next_event->get_exec_time();
         // std::cout << "current time " << sim_time << " next event time "
         //   << next_event_time << std::endl;
 
         auto start = std::chrono::high_resolution_clock::now();
-        float collision_time =
+        double collision_time =
             this->physics_engine->check_collision(next_event_time - sim_time);
         auto end = std::chrono::high_resolution_clock::now();
         physics_checking_time +=
@@ -135,7 +135,7 @@ void Arena::run() {
     }
     // std::cout << "finished" << std::endl;
     auto sim_end_time = std::chrono::high_resolution_clock::now();
-    std::cout << "Sim end with: "
+    std::cout << "Simulation runs for: "
               << std::chrono::duration_cast<std::chrono::microseconds>(
                      sim_end_time - sim_start_time)
                      .count()
@@ -172,7 +172,7 @@ void Arena::init_nodes() {
         log_node(i);
     }
     delete placement;
-    std::cout << "init finished" << std::endl << std::flush;
+    std::cout << "Init finished" << std::endl << std::flush;
 }
 
 void Arena::add_event(Event* event) { this->event_queue.push(event); }

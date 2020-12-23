@@ -28,7 +28,7 @@ typedef struct situated_sensing {
 typedef struct physical_state {
     position2d_t pos;
     color_t color;
-    float velocity;
+    double velocity;
 } physical_state_t;
 
 class Kilobot : public Node {
@@ -46,12 +46,12 @@ class Kilobot : public Node {
     virtual void init();
 
     void go_forward();
-    void go_forward(float seconds);
+    void go_forward(double seconds);
     void change_color(color_t color);
-    void turn(float angle);
-    float get_global_time();
-    float get_local_time();
-    float local_time_to_global_time(float local_time);
+    void turn(double angle);
+    double get_global_time();
+    double get_local_time();
+    double local_time_to_global_time(double local_time);
     physical_state_t init_user_state();
     bool check_state_change(physical_state_t old_state);
     void add_state_change_event();
@@ -60,8 +60,8 @@ class Kilobot : public Node {
 
    private:
     physical_state_t user_state;
-    float local_clock_offset;
-    float local_clock_skew;
+    double local_clock_offset;
+    double local_clock_skew;
 };
 
 }  // namespace swarmnet_sim

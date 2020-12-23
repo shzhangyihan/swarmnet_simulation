@@ -3,7 +3,7 @@
 #include "arena.h"
 
 namespace swarmnet_sim {
-float Event::get_exec_time() const { return this->exec_time; }
+double Event::get_exec_time() const { return this->exec_time; }
 
 int Event::get_from_id() const { return this->from_id; }
 
@@ -15,7 +15,7 @@ void Event::log_node(int id) {
     ((Arena*)this->arena)->log_node(this->exec_time, id);
 }
 
-Event::Event(void* arena, float exec_time, int from_id, int to_id) {
+Event::Event(void* arena, double exec_time, int from_id, int to_id) {
     this->arena = arena;
     this->exec_time = exec_time;
     this->from_id = from_id;

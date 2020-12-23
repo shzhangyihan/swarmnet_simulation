@@ -13,14 +13,14 @@ class Update_state_event : public Event {
     void exec();
     void update_position(position2d_t pos);
     void update_color(color_t color);
-    void update_velocity(float velocity);
-    Update_state_event(void* arena, float exec_time, int to_id);
+    void update_velocity(double velocity);
+    Update_state_event(void* arena, double exec_time, int to_id);
 
    private:
     // bool updated[ATTRIBUTES_MAX];
     position2d_t pos;
     color_t color;
-    float velocity;
+    double velocity;
 };
 
 }  // namespace swarmnet_sim

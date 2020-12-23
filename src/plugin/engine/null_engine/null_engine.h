@@ -13,7 +13,7 @@ Physics_engine* engine_builder(void* arena);
 
 class Null_engine : public Physics_engine {
    public:
-    float check_collision(float future_time);
+    double check_collision(double future_time);
     void init();
     Null_engine(void* arena);
 };

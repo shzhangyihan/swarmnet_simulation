@@ -11,14 +11,14 @@ namespace swarmnet_sim {
 class TX_start_event : public Event {
    public:
     void exec();
-    TX_start_event(void* arena, float exec_time, int from_id);
+    TX_start_event(void* arena, double exec_time, int from_id);
 };
 
 class TX_end_event : public Event {
    public:
     void exec();
     void set_success(bool success);
-    TX_end_event(void* arena, float exec_time, int from_id);
+    TX_end_event(void* arena, double exec_time, int from_id);
 
    private:
     bool success;

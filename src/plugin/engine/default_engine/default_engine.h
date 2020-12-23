@@ -14,7 +14,7 @@ Physics_engine* engine_builder(void* arena);
 
 class Default_engine : public Physics_engine {
    public:
-    float check_collision(float future_time);
+    double check_collision(double future_time);
     bool check_robot_collision(position2d_t pos_1, position2d_t pos_2,
                                int radius);
     bool check_out_of_bound(position2d_t pos, int radius, int x_max, int y_max);

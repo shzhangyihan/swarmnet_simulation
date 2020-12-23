@@ -35,11 +35,11 @@ void Update_state_event::update_position(position2d_t pos) { this->pos = pos; }
 
 void Update_state_event::update_color(color_t color) { this->color = color; }
 
-void Update_state_event::update_velocity(float velocity) {
+void Update_state_event::update_velocity(double velocity) {
     this->velocity = velocity;
 }
 
-Update_state_event::Update_state_event(void* arena, float exec_time,
+Update_state_event::Update_state_event(void* arena, double exec_time,
                                        int to_id) {
     this->arena = arena;
     this->exec_time = exec_time;

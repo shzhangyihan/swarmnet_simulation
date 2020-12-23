@@ -55,6 +55,7 @@ Sim_config parse_config(char* config_file) {
 
     std::cout << "Starting simulation with " << num_robot << " robots for "
               << duration << " seconds." << std::endl;
+    std::cout << "Random seed: " << rand_seed << std::endl;
 
     Sim_config conf;
     conf.set_num_robots(num_robot);

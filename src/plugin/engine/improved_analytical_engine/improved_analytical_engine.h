@@ -13,22 +13,22 @@ Physics_engine* engine_builder(void* arena);
 
 class Analytical_engine : public Physics_engine {
    public:
-    float check_collision(float future_time);
+    double check_collision(double future_time);
     bool check_robot_collision(position2d_t pos_1, position2d_t pos_2,
                                int radius);
-    float time_to_out_of_bound(position2d_t pos, float v, int radius, int x_max,
-                               int y_max);
-    float time_to_collide(position2d_t pos_1, float v_1, position2d_t pos_2,
-                          float v_2, int radius);
+    double time_to_out_of_bound(position2d_t pos, double v, int radius,
+                                int x_max, int y_max);
+    double time_to_collide(position2d_t pos_1, double v_1, position2d_t pos_2,
+                           double v_2, int radius);
     void init();
     Analytical_engine(void* arena);
 
    private:
     std::vector<bool> need_update;
     // pair of velocity and theta
-    std::vector<std::pair<float, float>> motion_state;
-    std::vector<float> out_of_bound_time;
-    std::vector<std::vector<float>> collision_time;
+    std::vector<std::pair<double, double>> motion_state;
+    std::vector<long long> out_of_bound_time;
+    std::vector<std::vector<long long>> collision_time;
 };
 }  // namespace swarmnet_sim
 

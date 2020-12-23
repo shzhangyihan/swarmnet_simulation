@@ -12,7 +12,7 @@ namespace swarmnet_sim {
 
 void Kilo_medium::start_tx(int tx_node_id) {
     // packet_t tx_packet;
-    float comm_radius = COMM_RADIUS;
+    double comm_radius = COMM_RADIUS;
     Arena* arena_ptr = (Arena*)(this->arena);
 
     Node* tx_node = arena_ptr->get_node(tx_node_id);
@@ -31,7 +31,7 @@ void Kilo_medium::start_tx(int tx_node_id) {
         return;
     }
 
-    float tx_time = sizeof(packet_t) * SPEED_BYTE_PER_SECOND;
+    double tx_time = sizeof(packet_t) * SPEED_BYTE_PER_SECOND;
     // std::cout << "tx time " << tx_time << std::endl;
 
     // std::cout << "start tx for " << tx_node_id << std::endl << std::flush;
@@ -54,7 +54,7 @@ void Kilo_medium::start_tx(int tx_node_id) {
             // not self
             Node* rx_node = arena_ptr->get_node(i);
             position2d_t rx_node_pos = rx_node->get_position();
-            float dist = calculate_dist(tx_node_pos, rx_node_pos);
+            double dist = calculate_dist(tx_node_pos, rx_node_pos);
             // std::cout << "dist " << dist << std::endl;
             if (dist > comm_radius) {
                 // too far
@@ -85,11 +85,11 @@ void Kilo_medium::start_tx(int tx_node_id) {
 void Kilo_medium::end_tx(int tx_node_id, bool success) {
     // register the next tx
     Arena* arena_ptr = (Arena*)(this->arena);
-    float next_tx_time_noise = ((float)std::rand() / (float)RAND_MAX - 0.5) *
-                               TX_PERIOD_NOISE_RANGE_SECOND;
-    float next_tx_time_local = TX_PERIOD_SECOND + next_tx_time_noise;
+    double next_tx_time_noise = ((double)std::rand() / (double)RAND_MAX - 0.5) *
+                                TX_PERIOD_NOISE_RANGE_SECOND;
+    double next_tx_time_local = TX_PERIOD_SECOND + next_tx_time_noise;
     Node* tx_node = arena_ptr->get_node(tx_node_id);
-    float next_tx_time =
+    double next_tx_time =
         ((Kilobot*)tx_node)->local_time_to_global_time(next_tx_time_local);
     // std::cout << "next_tx_time local " << next_tx_time_local << " global "
     //           << next_tx_time << std::endl;
@@ -119,7 +119,7 @@ void Kilo_medium::start_rx(int rx_node_id, packet_t rx_packet,
     }
 
     Arena* arena_ptr = (Arena*)(this->arena);
-    float rx_time = sizeof(packet_t) * SPEED_BYTE_PER_SECOND;
+    double rx_time = sizeof(packet_t) * SPEED_BYTE_PER_SECOND;
     // std::cout << "rx time " << rx_time << std::endl;
 
     RX_end_event* rx_end_event = new RX_end_event(
@@ -134,12 +134,12 @@ void Kilo_medium::end_rx(int rx_node_id) {
     if (this->rx_buffer[rx_node_id].corrupted == false) {
         // not corrupted
         // drop with probability
-        float dice_roll = rand() / float(RAND_MAX);
+        double dice_roll = rand() / double(RAND_MAX);
         int distance = this->rx_buffer[rx_node_id].sensing.distance;
-        float threshold =
-            (float)MAX_SUCCESS_RATE *
-            (1 + (float)DROPPING_SHARPNESS /
-                     (float)(distance - COMM_RADIUS - DROPPING_SHARPNESS));
+        double threshold =
+            (double)MAX_SUCCESS_RATE *
+            (1 + (double)DROPPING_SHARPNESS /
+                     (double)(distance - COMM_RADIUS - DROPPING_SHARPNESS));
         if (dice_roll <= threshold) {
             // no drop
             Node* rx_node = arena_ptr->get_node(rx_node_id);
@@ -157,7 +157,7 @@ void Kilo_medium::end_rx(int rx_node_id) {
 void Kilo_medium::init() {}
 
 Kilo_medium::Kilo_medium(void* arena) {
-    std::cout << "MEDIUM" << std::endl;
+    // std::cout << "MEDIUM" << std::endl;
     this->arena = arena;
     for (int i = 0; i < ((Arena*)arena)->get_config().get_num_robots(); i++) {
         rx_buffer_t empty_entry;
