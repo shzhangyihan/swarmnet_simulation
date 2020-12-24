@@ -10,8 +10,8 @@
 
 #include "../../event/collision_event.h"
 
-// 1 / PRECISION second precision
-#define PRECISION 10000000
+// 1 / SCALE second precision
+#define SCALE 10000000
 #define EPSILON 0.00001
 
 namespace swarmnet_sim {
@@ -20,6 +20,7 @@ namespace swarmnet_sim {
 bool double_are_same(double a, double b) { return a - b < EPSILON; }
 
 double Analytical_engine::check_collision(double future_time) {
+    std::cout.precision(10);
     Arena *arena_ptr = (Arena *)this->arena;
 
     if (double_are_same(future_time, 0)) return -1;
@@ -39,7 +40,7 @@ double Analytical_engine::check_collision(double future_time) {
     }
 
     double cur_time = arena_ptr->get_sim_time();
-    long long min_collision_time = future_time * PRECISION;
+    long long min_collision_time = future_time * SCALE;
     for (int i = 0; i < num_robots; i++) {
         if (need_update[i]) {
             Node *node = arena_ptr->get_node(i);
@@ -47,17 +48,28 @@ double Analytical_engine::check_collision(double future_time) {
                 time_to_out_of_bound(node->get_position(), node->get_velocity(),
                                      node->get_radius(), max_x, max_y);
             // std::cout << cur_time << " | " << t << std::endl;
+
             if (t == -1) {
                 out_of_bound_time[i] = -1;
+                std::cout << "GG " << i << " at " << std::fixed << cur_time
+                          << std::endl;
+                std::cout << node->get_position().x << ", "
+                          << node->get_position().y << std::endl;
+                std::cout << max_x << " " << max_y << " " << node->get_radius()
+                          << std::endl;
                 exit(-1);
             } else {
-                out_of_bound_time[i] = (long long)(cur_time * PRECISION) +
-                                       (long long)(t * PRECISION);
+                out_of_bound_time[i] =
+                    (long long)(cur_time * SCALE) + (long long)(t * SCALE);
             }
+            // if (i == 48) {
+            //     std::cout << std::fixed << cur_time << " -> "
+            //               << out_of_bound_time[i] << std::endl;
+            // }
         }
         if (out_of_bound_time[i] != -1) {
-            long long t = out_of_bound_time[i] - cur_time * PRECISION;
-            if (t >= 0 && t <= future_time * PRECISION) {
+            long long t = out_of_bound_time[i] - cur_time * SCALE;
+            if (t >= 0 && t <= future_time * SCALE) {
                 min_collision_time = std::min(min_collision_time, t);
             }
         }
@@ -77,13 +89,13 @@ double Analytical_engine::check_collision(double future_time) {
                 if (t == -1) {
                     collision_time[i][j] = -1;
                 } else {
-                    collision_time[i][j] = (long long)(cur_time * PRECISION) +
-                                           (long long)(t * PRECISION);
+                    collision_time[i][j] =
+                        (long long)(cur_time * SCALE) + (long long)(t * SCALE);
                 }
             }
             if (collision_time[i][j] != -1) {
-                long long t = collision_time[i][j] - cur_time * PRECISION;
-                if (t >= 0 && t <= future_time * PRECISION) {
+                long long t = collision_time[i][j] - cur_time * SCALE;
+                if (t >= 0 && t <= future_time * SCALE) {
                     min_collision_time = std::min(min_collision_time, t);
                 }
             }
@@ -91,44 +103,67 @@ double Analytical_engine::check_collision(double future_time) {
     }
 
     std::set<int> collided_node;
+    long long llong_cur_time = cur_time * SCALE;
+    long long allowed_error = SCALE * EPSILON;
 
     for (int i = 0; i < num_robots; i++) {
         if (out_of_bound_time[i] == -1) continue;
-        if (out_of_bound_time[i] - cur_time * PRECISION <=
-            min_collision_time + PRECISION * EPSILON) {
+        long long cur_oob_time = out_of_bound_time[i] - llong_cur_time;
+        if (cur_oob_time >= min_collision_time &&
+            cur_oob_time <= min_collision_time + SCALE * EPSILON) {
+            // if (out_of_bound_time[i] == min_collision_time + cur_time *
+            // SCALE) {
+            // std::cout << cur_oob_time - min_collision_time << std::endl;
             collided_node.insert(i);
         }
     }
+
     for (int i = 0; i < num_robots; i++) {
         for (int j = i + 1; j < num_robots; j++) {
             if (collision_time[i][j] == -1) continue;
-            if (collision_time[i][j] - cur_time * PRECISION <=
-                min_collision_time + PRECISION * EPSILON) {
+            long long cur_collision_time =
+                collision_time[i][j] - llong_cur_time;
+            if (cur_collision_time >= min_collision_time &&
+                cur_collision_time <= min_collision_time + allowed_error) {
+                // if (collision_time[i][j] == min_collision_time + cur_time *
+                // SCALE) {
+                // std::cout << cur_collision_time - min_collision_time
+                //           << std::endl;
                 collided_node.insert(i);
                 collided_node.insert(j);
             }
         }
     }
 
+    double forward_time = (double)min_collision_time / SCALE;
+    if (double_are_same(fabs(forward_time), 0)) forward_time = 0;
     for (int i = 0; i < num_robots; i++) {
         arena_ptr->move_robot(
             i, calculate_future_pos(arena_ptr->get_node(i)->get_position(),
                                     arena_ptr->get_node(i)->get_velocity(),
-                                    (double)min_collision_time / PRECISION));
+                                    forward_time));
     }
 
     for (int i : collided_node) {
-        Collision_event *new_event = new Collision_event(
-            arena_ptr, cur_time + (double)min_collision_time / PRECISION, -1,
-            i);
+        // std::cout << cur_time << " | " << i << " add event" << std::endl;
+        Collision_event *new_event =
+            new Collision_event(arena_ptr, cur_time + forward_time, -1, i);
         arena_ptr->add_event(new_event);
     }
 
     need_update = std::vector<bool>(num_robots, false);
+    // if (cur_time > 138.1) {
+    //     std::cout << "next diff " << std::fixed << cur_time << " "
+    //               << forward_time << std::endl;
+    //     for (int i : collided_node) {
+    //         std::cout << i << " ";
+    //     }
+    //     std::cout << std::endl;
+    // }
     if (collided_node.size() == 0) {
         return -1;
     } else {
-        return (double)min_collision_time / PRECISION;
+        return forward_time;
     }
 }
 
@@ -162,6 +197,7 @@ double Analytical_engine::time_to_out_of_bound(position2d_t pos, double v,
     if (min_time < DBL_MAX && min_time >= 0) {
         return min_time;
     } else {
+        std::cout << min_time << std::endl;
         return -1;
     }
 }
