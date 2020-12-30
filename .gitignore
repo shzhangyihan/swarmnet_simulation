@@ -31,9 +31,14 @@
 *.out
 *.app
 
+# Local folders
 build/
 motion_log/
 video/
 tmp_frames/
 error_frames/
 dumps/
+
+# pycache
+__pycache__/
+*.py[cod]
