@@ -1,4 +1,5 @@
 import os
+from . import video_renderer
 
 def prRed(skk): print("\n\033[91m{}\033[00m\n" .format(skk))
 def prGreen(skk): print("\n\033[92m{}\033[00m\n" .format(skk))
@@ -55,7 +56,8 @@ def run_unit_test(test_name):
 def run_visualization(speed, motion_file, video_file):
     error_flag = 0
     prYellow("Rendering video from motion file \"" + motion_file + "\" with x" + speed + " speed to \"" + video_file + "\" ...")
-    if os.system("python3 ./src/visualization/video_renderer.py " + motion_file + " " + speed + " " + video_file) != 0: error_flag = 1
+    # if os.system("python3 ./src/visualization/video_renderer.py " + motion_file + " " + speed + " " + video_file) != 0: error_flag = 1
+    if video_renderer.renderer(motion_file, float(speed), video_file) != 0: error_flag = 1
     if error_flag:
         prRed("Visualization failed!")
         return -1

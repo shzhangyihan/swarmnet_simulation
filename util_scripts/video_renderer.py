@@ -196,9 +196,14 @@ def renderer(in_log_file="./motion_log/default_log.txt", in_speed=1, in_outfile=
     log_file = in_log_file
     speed = in_speed
 
-    init()
-    createFrames()
-    makeVideo(in_outfile)
+    try:
+        init()
+        createFrames()
+        makeVideo(in_outfile)
+    except:
+        return -1
+    
+    return 0
 
 if __name__ == "__main__":
     renderer(sys.argv[1], float(sys.argv[2]), sys.argv[3])
