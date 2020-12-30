@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
-import util_scripts.start_util as start_util
+import script.core_util.start_util as start_util
 
 def main():
     parser = argparse.ArgumentParser(description='Default entry for simulation')
