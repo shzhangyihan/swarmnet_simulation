@@ -127,7 +127,6 @@ void Arena::run() {
             event_counter++;
             // int exec_node_id = next_event->get_to_id();
             delete next_event;
-            // if (exec_node_id != -1) log_node(exec_node_id);
         }
         // std::cout << current_tick << std::endl;
         // counter++;
@@ -182,7 +181,8 @@ void Arena::log_metadata() {
     metadata = metadata + std::to_string(this->conf.get_arena_max_x()) + " ";
     metadata = metadata + std::to_string(this->conf.get_arena_max_y()) + " ";
     metadata = metadata + std::to_string(this->conf.get_num_robots()) + " ";
-    metadata = metadata + std::to_string(this->conf.get_duration()) + "\n";
+    metadata = metadata + std::to_string(this->conf.get_duration()) + " ";
+    metadata = metadata + std::to_string(this->conf.get_rand_seed()) + "\n";
     motion_log->log(metadata);
 }
 

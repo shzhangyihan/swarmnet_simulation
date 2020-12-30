@@ -22,14 +22,12 @@ bool double_are_same(double a, double b) { return a - b < EPSILON; }
 double Analytical_engine::check_collision(double future_time) {
     std::cout.precision(10);
     Arena *arena_ptr = (Arena *)this->arena;
-
     if (double_are_same(future_time, 0)) return -1;
 
     Sim_config config = arena_ptr->get_config();
     int max_x = config.get_arena_max_x();
     int max_y = config.get_arena_max_y();
     int num_robots = config.get_num_robots();
-
     // std::cout << "engine start" << std::endl;
     for (int i = 0; i < num_robots; i++) {
         Node *node = arena_ptr->get_node(i);
@@ -62,10 +60,6 @@ double Analytical_engine::check_collision(double future_time) {
                 out_of_bound_time[i] =
                     (long long)(cur_time * SCALE) + (long long)(t * SCALE);
             }
-            // if (i == 48) {
-            //     std::cout << std::fixed << cur_time << " -> "
-            //               << out_of_bound_time[i] << std::endl;
-            // }
         }
         if (out_of_bound_time[i] != -1) {
             long long t = out_of_bound_time[i] - cur_time * SCALE;
@@ -74,8 +68,6 @@ double Analytical_engine::check_collision(double future_time) {
             }
         }
     }
-    // exit(-1);
-    // std::cout << "collision" << std::endl;
 
     for (int i = 0; i < num_robots; i++) {
         Node *node_1 = arena_ptr->get_node(i);
@@ -111,9 +103,6 @@ double Analytical_engine::check_collision(double future_time) {
         long long cur_oob_time = out_of_bound_time[i] - llong_cur_time;
         if (cur_oob_time >= min_collision_time &&
             cur_oob_time <= min_collision_time + SCALE * EPSILON) {
-            // if (out_of_bound_time[i] == min_collision_time + cur_time *
-            // SCALE) {
-            // std::cout << cur_oob_time - min_collision_time << std::endl;
             collided_node.insert(i);
         }
     }
@@ -125,10 +114,6 @@ double Analytical_engine::check_collision(double future_time) {
                 collision_time[i][j] - llong_cur_time;
             if (cur_collision_time >= min_collision_time &&
                 cur_collision_time <= min_collision_time + allowed_error) {
-                // if (collision_time[i][j] == min_collision_time + cur_time *
-                // SCALE) {
-                // std::cout << cur_collision_time - min_collision_time
-                //           << std::endl;
                 collided_node.insert(i);
                 collided_node.insert(j);
             }
@@ -145,12 +130,10 @@ double Analytical_engine::check_collision(double future_time) {
     }
 
     for (int i : collided_node) {
-        // std::cout << cur_time << " | " << i << " add event" << std::endl;
         Collision_event *new_event =
             new Collision_event(arena_ptr, cur_time + forward_time, -1, i);
         arena_ptr->add_event(new_event);
     }
-
     need_update = std::vector<bool>(num_robots, false);
     // if (cur_time > 138.1) {
     //     std::cout << "next diff " << std::fixed << cur_time << " "
@@ -197,21 +180,9 @@ double Analytical_engine::time_to_out_of_bound(position2d_t pos, double v,
     if (min_time < DBL_MAX && min_time >= 0) {
         return min_time;
     } else {
+        // std::cout << pos.x << ", " << pos.y << std::endl;
         std::cout << min_time << std::endl;
         return -1;
-    }
-}
-
-bool Analytical_engine::check_robot_collision(position2d_t pos_1,
-                                              position2d_t pos_2, int radius) {
-    double dist = calculate_dist(pos_1, pos_2);
-    std::cout << dist << std::endl;
-    if (dist >= radius * 2) {
-        return false;
-    } else {
-        std::cout << dist << " " << radius * 2 << std::endl;
-        // exit(-1);
-        return true;
     }
 }
 

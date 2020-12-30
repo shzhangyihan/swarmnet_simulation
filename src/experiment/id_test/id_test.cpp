@@ -3,10 +3,10 @@
 #include "../../plugin/robot/kilobot.h"
 #include "math.h"
 
-// #define LOG_ID()                                                            \
-//     std::cout << get_global_time() << "|" << node_id << ": " << id << " - " \
-//               << id_size << " - " << 0 << std::endl;
-#define LOG_ID()
+#define LOG_ID()                                                            \
+    std::cout << get_global_time() << "|" << node_id << ": " << id << " - " \
+              << id_size << " - " << 0 << std::endl;
+// #define LOG_ID()
 
 namespace swarmnet_sim {
 
@@ -36,13 +36,8 @@ class Default_program : public Kilobot {
 
    public:
     void collision() {
-        turn(rand() % 360 - 180);
-        // if (last_collide_time != 0) {
-        //     std::cout << "collide diff "
-        //               << get_global_time() - last_collide_time << std::endl
-        //               << std::flush;
-        // }
-        // last_collide_time = get_global_time();
+        float new_theta = rand() % 360 - 180;
+        turn(new_theta);
     }
 
     void message_rx(packet_t packet, situated_sensing_t sensing) {
