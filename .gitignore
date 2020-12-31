@@ -37,7 +37,7 @@ motion_log/
 video/
 tmp_frames/
 error_frames/
-dumps/
+log_dump/
 
 # pycache
 __pycache__/
