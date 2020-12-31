@@ -1,9 +1,8 @@
 {
-    "robots": 49,
+    "robots": 5,
     "arena_max_x": 260,
     "arena_max_y": 260,
     "experiment_duration": 10000,
-    // "rand_seed": 10,
     "motion_log": "./motion_log/default_log.txt",
     "robot_placement": "./build/src/experiment/comm_test/libcomm_test_placement.so",
     "robot_program": "./build/src/experiment/id_test/libid_test.so",

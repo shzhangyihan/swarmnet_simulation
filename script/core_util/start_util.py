@@ -1,5 +1,6 @@
 import os
 from . import video_renderer
+from . import batch_scheduler
 
 def prRed(skk): print("\n\033[91m{}\033[00m\n" .format(skk))
 def prGreen(skk): print("\n\033[92m{}\033[00m\n" .format(skk))
@@ -63,4 +64,16 @@ def run_visualization(speed, motion_file, video_file):
         return -1
     else:
         prGreen("Visualization finished!")
+        return 0
+
+def start_scheduler(config_file):
+    error_flag = 0
+    prYellow("Starting scheduler with config file \"" + config_file + "\"...")
+    scheduler = batch_scheduler.Scheduler(config_file)
+    if scheduler.start() != 0: error_flag = 1
+    if error_flag:
+        prRed("Scheduler failed!")
+        return -1
+    else:
+        prGreen("Scheduler finished!")
         return 0

@@ -1,0 +1,26 @@
+[
+    {
+        "experiment_config": "./config/experiment/short_test/config_49.json",
+        "end_checking_program": "script.usr.id_test_end_check",
+        "repetitions": 30,
+        "output_file": "./log_dump/49_",
+        "check_interval_seconds": 60,
+        "num_robots": 49
+    },
+    {
+        "experiment_config": "./config/experiment/short_test/config_49_middle.json",
+        "end_checking_program": "script.usr.id_test_end_check",
+        "repetitions": 30,
+        "output_file": "./log_dump/49_middle_",
+        "check_interval_seconds": 60,
+        "num_robots": 49
+    },
+    {
+        "experiment_config": "./config/experiment/short_test/config_49_sparse.json",
+        "end_checking_program": "script.usr.id_test_end_check",
+        "repetitions": 30,
+        "output_file": "./log_dump/49_sparse_",
+        "check_interval_seconds": 60,
+        "num_robots": 49
+    }
+]

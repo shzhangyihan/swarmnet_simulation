@@ -10,6 +10,7 @@ def main():
     parser.add_argument("-r", "--run", action="store", help="Run simulation with the input json config file")
     parser.add_argument("-u", "--unit_test", action="store", help="Run unit test")
     parser.add_argument("-v", "--visualization", action="store", nargs='+', help="Render the visualization with the input speedup, to the output file (Optional)")
+    parser.add_argument("-s", "--scheduler", action="store", help="Use scheduler with the input json config file to run simulations")
 
     args = parser.parse_args()
 
@@ -35,6 +36,10 @@ def main():
         motion_file = args.visualization[1]
         video_file = args.visualization[2]
         if start_util.run_visualization(speed, motion_file, video_file) != 0:
+            return
+    
+    if args.scheduler:
+        if start_util.start_scheduler(args.scheduler) != 0:
             return
     
 if __name__ == "__main__":
