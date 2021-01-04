@@ -7,7 +7,7 @@
 
 namespace swarmnet_sim {
 
-#define ROBOT_SPACING 16
+// #define ROBOT_SPACING 16
 
 extern "C" {
 std::vector<position2d_t>* robot_placement(int arena_max_x, int arena_max_y,
@@ -15,23 +15,27 @@ std::vector<position2d_t>* robot_placement(int arena_max_x, int arena_max_y,
     // Heap allocation is used for the vector.
     // The caller will free the memory.
     std::vector<position2d_t>* pos_vector = new std::vector<position2d_t>;
-    int xpos = 20;
-    int ypos = 100;
+
     int maxsize = int(sqrt(num_nodes));
+    int robot_spacing_x = arena_max_x / (maxsize + 1);
+    int robot_spacing_y = arena_max_y / (maxsize + 1);
     int counter = 0;
+    int xpos = robot_spacing_x;
+    int ypos = robot_spacing_y;
 
     for (int i = 0; i < num_nodes; i++) {
         position2d_t pos;
         pos.x = xpos;
         pos.y = ypos;
         pos.theta = 0;
-        xpos += ROBOT_SPACING;
+        xpos += robot_spacing_x;
         counter++;
         if (counter == maxsize) {
             counter = 0;
-            xpos = 20;
-            ypos += ROBOT_SPACING;
+            xpos = robot_spacing_x;
+            ypos += robot_spacing_y;
         }
+        // std::cout << pos.x << ", " << pos.y << std::endl;
         pos_vector->push_back(pos);
     }
 
