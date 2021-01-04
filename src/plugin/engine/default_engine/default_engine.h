@@ -17,7 +17,8 @@ class Default_engine : public Physics_engine {
     double check_collision(double future_time);
     bool check_robot_collision(position2d_t pos_1, position2d_t pos_2,
                                int radius);
-    bool check_out_of_bound(position2d_t pos, int radius, int x_max, int y_max);
+    bool check_out_of_bound(position2d_t pos, double radius, double x_max,
+                            double y_max);
     void init();
     Default_engine(void* arena);
 };

@@ -15,8 +15,9 @@ class Pass_through_engine : public Physics_engine {
    public:
     double check_collision(double future_time);
     bool check_robot_collision(position2d_t pos_1, position2d_t pos_2,
-                               int radius);
-    bool check_out_of_bound(position2d_t pos, int radius, int x_max, int y_max);
+                               double radius);
+    bool check_out_of_bound(position2d_t pos, double radius, double x_max,
+                            double y_max);
     void init();
     Pass_through_engine(void* arena);
 };

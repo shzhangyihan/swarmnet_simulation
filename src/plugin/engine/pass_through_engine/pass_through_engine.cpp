@@ -72,7 +72,7 @@ double Pass_through_engine::check_collision(double future_time) {
 
 bool Pass_through_engine::check_robot_collision(position2d_t pos_1,
                                                 position2d_t pos_2,
-                                                int radius) {
+                                                double radius) {
     double dist = calculate_dist(pos_1, pos_2);
     if (dist > radius * 2) {
         return false;
@@ -81,8 +81,8 @@ bool Pass_through_engine::check_robot_collision(position2d_t pos_1,
     }
 }
 
-bool Pass_through_engine::check_out_of_bound(position2d_t pos, int radius,
-                                             int x_max, int y_max) {
+bool Pass_through_engine::check_out_of_bound(position2d_t pos, double radius,
+                                             double x_max, double y_max) {
     double x = pos.x;
     double y = pos.y;
 

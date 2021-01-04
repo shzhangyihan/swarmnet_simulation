@@ -104,7 +104,11 @@ void Arena::run() {
             std::chrono::duration_cast<std::chrono::microseconds>(end - start)
                 .count();
         // std::cout << sim_time << " check " << collision_time << std::endl;
-        if (this->sim_time < 0) exit(-1);
+        if (this->sim_time < 0) {
+            std::cout << "Sim time going to negative. Abort!" << std::endl
+                      << std::flush;
+            exit(-1);
+        }
         if (collision_time != -1) {
             // collision happened, loop again
             // update tick
@@ -151,20 +155,49 @@ void Arena::run() {
 }
 
 void Arena::init_nodes() {
+    double arena_max_x = this->conf.get_arena_max_x();
+    double arena_max_y = this->conf.get_arena_max_y();
+    int num_robots = this->conf.get_num_robots();
+
     void* placement_handle = this->conf.get_robot_placement_dl_handle();
     typedef std::vector<position2d_t>* (*placement_fn_t)(
         int arena_max_x, int arena_max_y, int num_nodes);
     placement_fn_t placement_fn =
         (placement_fn_t)dlsym(placement_handle, "robot_placement");
     std::vector<position2d_t>* placement =
-        placement_fn(this->conf.get_arena_max_x(), this->conf.get_arena_max_y(),
-                     this->conf.get_num_robots());
+        placement_fn(arena_max_x, arena_max_y, num_robots);
 
     typedef Node* (*robot_builder_t)(void*, int, position2d_t);
     robot_builder_t robot_builder = (robot_builder_t)dlsym(
         this->conf.get_robot_program_dl_handle(), "robot_builder");
 
-    for (int i = 0; i < this->conf.get_num_robots(); i++) {
+    std::cout << "Validate robot placement" << std::endl << std::flush;
+    Node* tmp_node = robot_builder(this, 0, {0, 0, 0});
+    double robot_radius = tmp_node->get_radius();
+    delete tmp_node;
+    bool valid_placement = true;
+    for (int i = 0; i < num_robots; i++) {
+        position2d_t pos_1 = placement->at(i);
+        if (if_out_of_bound(pos_1, robot_radius, arena_max_x, arena_max_y)) {
+            valid_placement = false;
+            break;
+        }
+        for (int j = i + 1; j < num_robots; j++) {
+            position2d_t pos_2 = placement->at(j);
+            if (if_collision(pos_1, pos_2, robot_radius)) {
+                valid_placement = false;
+                break;
+            }
+        }
+        if (!valid_placement) break;
+    }
+    if (!valid_placement) {
+        std::cout << "Robot placement not valid. Abort!" << std::endl
+                  << std::flush;
+        exit(-1);
+    }
+
+    for (int i = 0; i < num_robots; i++) {
         Node* new_node = robot_builder(this, i, placement->at(i));
         node_vector.push_back(new_node);
         new_node->init_wrapper();

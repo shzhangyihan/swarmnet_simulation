@@ -7,12 +7,16 @@ import pathlib
 from PIL import Image
 from PIL import ImageOps
 import subprocess
+import traceback
+import math
 
 log_file = ""
 events = {}
 robot_list = []
 arena_width = 0
 arena_height = 0
+gl_width = 0
+gl_height = 0
 num_robots = 0
 speed = 1
 max_time = 0
@@ -43,13 +47,19 @@ def init():
     global log_file
     global arena_width
     global arena_height
+    global gl_width
+    global gl_height
     global max_time
 
-    metadata = np.loadtxt(log_file, delimiter=' ', max_rows=1, dtype=np.int)
+    metadata = np.loadtxt(log_file, delimiter=' ', max_rows=1, dtype=np.float)
+    # arena_width = math.ceil(metadata[0])
+    # arena_height = math.ceil(metadata[1])
     arena_width = metadata[0]
     arena_height = metadata[1]
-    num_robots = metadata[2]
+    num_robots = int(metadata[2])
     max_time = metadata[3]
+    gl_width = int((math.ceil(arena_width) + 1) / 2) * 2
+    gl_height = int((math.ceil(arena_height) + 1) / 2) * 2
 
     robot_list = []
     for i in range(num_robots):
@@ -77,7 +87,7 @@ def init():
 
     glutInit()
     glutInitDisplayMode(GLUT_RGBA)
-    glutInitWindowSize(arena_width, arena_height)
+    glutInitWindowSize(gl_width, gl_height)
     glutCreateWindow("Swarmnet Simulation")
     # glutHideWindow()
 
@@ -119,6 +129,8 @@ def createFrames():
     global robot_list
     global arena_width
     global arena_height
+    global gl_width
+    global gl_height
     global RADIUS
 
     pathlib.Path(frame_folder).mkdir(parents=True, exist_ok=True)
@@ -128,10 +140,10 @@ def createFrames():
     while (sim_time < max_time):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glLoadIdentity()
-        glViewport(0, 0, arena_width, arena_height)
+        glViewport(0, 0, gl_width, gl_height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        glOrtho(0.0, arena_width, 0.0, arena_height, 0.0, 1.0)
+        glOrtho(0.0, gl_width, 0.0, gl_height, 0.0, 1.0)
         glMatrixMode (GL_MODELVIEW)
         glLoadIdentity()
         glColor3f(1.0, 0.0, 3.0)
@@ -172,8 +184,8 @@ def createFrames():
         # glFlush()
         glut_print(10, 10, GLUT_BITMAP_9_BY_15, format(sim_time, '.2f'), 1.0, 1.0, 1.0, 1.0)
         glPixelStorei(GL_PACK_ALIGNMENT, 1)
-        data = glReadPixels(0, 0, arena_width, arena_height, GL_RGBA, GL_UNSIGNED_BYTE)
-        image = Image.frombytes("RGBA", (arena_width, arena_height), data)
+        data = glReadPixels(0, 0, gl_width, gl_height, GL_RGBA, GL_UNSIGNED_BYTE)
+        image = Image.frombytes("RGBA", (gl_width, gl_height), data)
         image = ImageOps.flip(image) # in my case image is flipped top-bottom for some reason
         image.save(frame_folder + "img{}.png".format(counter), 'PNG')
         sim_time += speed / fps
@@ -200,7 +212,9 @@ def renderer(in_log_file="./motion_log/default_log.txt", in_speed=1, in_outfile=
         init()
         createFrames()
         makeVideo(in_outfile)
-    except:
+    except Exception as e:
+        traceback.print_tb(e.__traceback__)
+        print(e)
         return -1
     
     return 0

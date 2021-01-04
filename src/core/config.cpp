@@ -3,15 +3,15 @@
 namespace swarmnet_sim {
 int Sim_config::get_num_robots() const { return num_robots; }
 
-int Sim_config::get_arena_max_x() const { return arena_max_x; }
+double Sim_config::get_arena_max_x() const { return arena_max_x; }
 
-int Sim_config::get_arena_max_y() const { return arena_max_y; }
+double Sim_config::get_arena_max_y() const { return arena_max_y; }
 
 int Sim_config::get_rand_seed() const { return rand_seed; }
 
 // int Sim_config::get_ticks_per_second() const { return ticks_per_second; }
 
-int Sim_config::get_duration() const { return duration; }
+double Sim_config::get_duration() const { return duration; }
 
 int Sim_config::get_log_buf_size() const { return log_buf_size; }
 
@@ -33,15 +33,15 @@ std::string Sim_config::get_motion_log_name() const { return motion_log_name; }
 
 void Sim_config::set_num_robots(int val) { num_robots = val; }
 
-void Sim_config::set_arena_max_x(int val) { arena_max_x = val; }
+void Sim_config::set_arena_max_x(double val) { arena_max_x = val; }
 
-void Sim_config::set_arena_max_y(int val) { arena_max_y = val; }
+void Sim_config::set_arena_max_y(double val) { arena_max_y = val; }
 
 void Sim_config::set_rand_seed(int val) { rand_seed = val; }
 
 // void Sim_config::set_ticks_per_second(int val) { ticks_per_second = val; }
 
-void Sim_config::set_duration(int val) { duration = val; }
+void Sim_config::set_duration(double val) { duration = val; }
 
 void Sim_config::set_log_buf_size(int val) { log_buf_size = val; }
 

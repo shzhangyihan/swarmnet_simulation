@@ -26,6 +26,30 @@ double calculate_dist(position2d_t pos1, position2d_t pos2) {
     return dist;
 }
 
+bool if_collision(position2d_t pos_1, position2d_t pos_2, double radius) {
+    double dist = calculate_dist(pos_1, pos_2);
+    if (dist > radius * 2) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+bool if_out_of_bound(position2d_t pos, double radius, double x_max,
+                     double y_max) {
+    double x = pos.x;
+    double y = pos.y;
+
+    if (x - radius < 0 || x + radius > x_max) {
+        return true;
+    }
+    if (y - radius < 0 || y + radius > y_max) {
+        return true;
+    }
+
+    return false;
+}
+
 bool operator==(const position2d_t& lhs, const position2d_t& rhs) {
     if (lhs.x == rhs.x && lhs.y == rhs.y && lhs.theta == rhs.theta)
         return true;

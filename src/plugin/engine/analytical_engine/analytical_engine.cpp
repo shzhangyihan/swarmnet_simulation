@@ -25,8 +25,8 @@ double Analytical_engine::check_collision(double future_time) {
     if (double_are_same(future_time, 0)) return -1;
 
     Sim_config config = arena_ptr->get_config();
-    int max_x = config.get_arena_max_x();
-    int max_y = config.get_arena_max_y();
+    double max_x = config.get_arena_max_x();
+    double max_y = config.get_arena_max_y();
     int num_robots = config.get_num_robots();
     std::set<int> collided_node;
     double min_collision_time = future_time;
@@ -96,8 +96,8 @@ double Analytical_engine::check_collision(double future_time) {
 }
 
 double Analytical_engine::time_to_out_of_bound(position2d_t pos, double v,
-                                               int radius, int x_max,
-                                               int y_max) {
+                                               double radius, double x_max,
+                                               double y_max) {
     double v_x = cos(((double)pos.theta) / 180 * M_PI) * v;
     double v_y = sin(((double)pos.theta) / 180 * M_PI) * v;
     double min_time = DBL_MAX;
@@ -126,7 +126,8 @@ double Analytical_engine::time_to_out_of_bound(position2d_t pos, double v,
 }
 
 bool Analytical_engine::check_robot_collision(position2d_t pos_1,
-                                              position2d_t pos_2, int radius) {
+                                              position2d_t pos_2,
+                                              double radius) {
     double dist = calculate_dist(pos_1, pos_2);
     std::cout << dist << std::endl;
     if (dist >= radius * 2) {
@@ -140,7 +141,7 @@ bool Analytical_engine::check_robot_collision(position2d_t pos_1,
 
 double Analytical_engine::time_to_collide(position2d_t pos_1, double v_1,
                                           position2d_t pos_2, double v_2,
-                                          int radius) {
+                                          double radius) {
     double v_1_x = cos(((double)pos_1.theta) / 180 * M_PI) * v_1;
     double v_1_y = sin(((double)pos_1.theta) / 180 * M_PI) * v_1;
     double v_2_x = cos(((double)pos_2.theta) / 180 * M_PI) * v_2;
