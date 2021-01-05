@@ -24,6 +24,10 @@ RADIUS = 7
 fps = 24
 frame_folder = "./tmp_frames/"
 
+gl_margin_bot = 30
+gl_margin_others = 10
+arena_margin_size = 3
+
 class Robot:
     def set_last_updated_time(self, time):
         self.last_updated_time = time
@@ -50,6 +54,8 @@ def init():
     global gl_width
     global gl_height
     global max_time
+    global gl_margin_bot
+    global gl_margin_others
 
     metadata = np.loadtxt(log_file, delimiter=' ', max_rows=1, dtype=np.float)
     # arena_width = math.ceil(metadata[0])
@@ -58,8 +64,8 @@ def init():
     arena_height = metadata[1]
     num_robots = int(metadata[2])
     max_time = metadata[3]
-    gl_width = int((math.ceil(arena_width) + 1) / 2) * 2
-    gl_height = int((math.ceil(arena_height) + 1) / 2) * 2
+    gl_width = int((math.ceil(arena_width) + 1) / 2) * 2 + gl_margin_others * 2
+    gl_height = int((math.ceil(arena_height) + 1) / 2) * 2 + gl_margin_bot + gl_margin_others
 
     robot_list = []
     for i in range(num_robots):
@@ -91,6 +97,15 @@ def init():
     glutCreateWindow("Swarmnet Simulation")
     # glutHideWindow()
 
+def draw_rect(x, y, width, height, R, G, B):
+    glBegin(GL_QUADS)                                  # start drawing a rectangle
+    glColor3f(R,G,B)
+    glVertex2f(x, y)                                   # bottom left point
+    glVertex2f(x + width, y)                           # bottom right point
+    glVertex2f(x + width, y + height)                  # top right point
+    glVertex2f(x, y + height)                          # top left point
+    glEnd()   
+
 def drawSingleRobot(x, y, R, G, B, radius):
     glBegin(GL_POLYGON)
     glColor3f(R,G,B)
@@ -99,7 +114,6 @@ def drawSingleRobot(x, y, R, G, B, radius):
         angle  = float(vertex) * 2.0 * np.pi / 8
         glVertex2f(x + np.cos(angle) * radius, y + np.sin(angle) * radius)
     glEnd()
-
 
 def calcUnitMovement(theta, v):
     xmov = v * np.cos(np.deg2rad(theta))
@@ -132,6 +146,9 @@ def createFrames():
     global gl_width
     global gl_height
     global RADIUS
+    global gl_margin_bot
+    global gl_margin_others
+    global arena_margin_size
 
     pathlib.Path(frame_folder).mkdir(parents=True, exist_ok=True)
 
@@ -149,6 +166,12 @@ def createFrames():
         glColor3f(1.0, 0.0, 3.0)
         glEnable(GL_LINE_SMOOTH)
 
+        draw_rect(gl_margin_others - arena_margin_size, gl_margin_bot - arena_margin_size,
+                  arena_width + 2 * arena_margin_size, arena_height + 2 * arena_margin_size,
+                  255, 255, 255)
+        draw_rect(gl_margin_others, gl_margin_bot,
+                  arena_width, arena_height, 0, 0, 0)
+        
         while len(events) > 0:
             next_event_time = min(events.keys())
             if sim_time >= next_event_time:
@@ -177,8 +200,10 @@ def createFrames():
             elif robot.y > arena_height:
                 robot.y = arena_height
             
-            drawSingleRobot(robot.x, robot.y, robot.r, robot.g, robot.b, RADIUS)
-            glut_print(robot.x - RADIUS / 2, robot.y - RADIUS / 2, GLUT_BITMAP_8_BY_13, str(robot.id), 1.0, 1.0, 1.0, 1.0)
+            draw_x = robot.x + gl_margin_others
+            draw_y = robot.y + gl_margin_bot
+            drawSingleRobot(draw_x, draw_y, robot.r, robot.g, robot.b, RADIUS)
+            glut_print(draw_x - len(str(robot.id)) * 8 / 2, draw_y - RADIUS / 2, GLUT_BITMAP_8_BY_13, str(robot.id), 1.0, 1.0, 1.0, 1.0)
             robot.set_last_updated_time(sim_time)
         
         # glFlush()

@@ -2,7 +2,7 @@
     "robots": 49,
     "arena_max_x": 125,
     "arena_max_y": 125,
-    "experiment_duration": 30000,
+    "experiment_duration": 500,
     "motion_log": "./motion_log/default_log.txt",
     "robot_placement": "./build/src/experiment/comm_test/libcomm_test_placement.so",
     "robot_program": "./build/src/experiment/id_test/libid_test.so",
