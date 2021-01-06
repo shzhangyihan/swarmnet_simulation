@@ -16,9 +16,10 @@ std::vector<position2d_t>* robot_placement(int arena_max_x, int arena_max_y,
     // The caller will free the memory.
     std::vector<position2d_t>* pos_vector = new std::vector<position2d_t>;
 
-    int maxsize = int(sqrt(num_nodes));
+    int maxsize = ceil(sqrt(num_nodes));
     int robot_spacing_x = arena_max_x / (maxsize + 1);
     int robot_spacing_y = arena_max_y / (maxsize + 1);
+
     int counter = 0;
     int xpos = robot_spacing_x;
     int ypos = robot_spacing_y;
