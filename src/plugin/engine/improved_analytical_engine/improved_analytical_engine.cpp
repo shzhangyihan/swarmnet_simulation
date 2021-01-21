@@ -22,13 +22,16 @@ bool double_are_same(double a, double b) { return a - b < EPSILON; }
 double Analytical_engine::check_collision(double future_time) {
     std::cout.precision(10);
     Arena *arena_ptr = (Arena *)this->arena;
-    if (double_are_same(future_time, 0)) return -1;
+    // if (double_are_same(future_time, 0)) return -1;
 
     Sim_config config = arena_ptr->get_config();
+    double cur_time = arena_ptr->get_sim_time();
     double max_x = config.get_arena_max_x();
     double max_y = config.get_arena_max_y();
     int num_robots = config.get_num_robots();
-    // std::cout << "engine start" << std::endl;
+
+    if (cur_time == 0) return -1;
+
     for (int i = 0; i < num_robots; i++) {
         Node *node = arena_ptr->get_node(i);
         std::pair<double, double> state =
@@ -37,7 +40,6 @@ double Analytical_engine::check_collision(double future_time) {
         motion_state[i] = state;
     }
 
-    double cur_time = arena_ptr->get_sim_time();
     long long min_collision_time = future_time * SCALE;
     for (int i = 0; i < num_robots; i++) {
         if (need_update[i]) {
@@ -45,14 +47,14 @@ double Analytical_engine::check_collision(double future_time) {
             double t =
                 time_to_out_of_bound(node->get_position(), node->get_velocity(),
                                      node->get_radius(), max_x, max_y);
-            // std::cout << cur_time << " | " << t << std::endl;
 
             if (t == -1) {
                 out_of_bound_time[i] = -1;
-                std::cout << "GG " << i << " at " << std::fixed << cur_time
+                std::cout << "Error " << i << " at " << std::fixed << cur_time
                           << std::endl;
                 std::cout << node->get_position().x << ", "
-                          << node->get_position().y << std::endl;
+                          << node->get_position().y << ", "
+                          << node->get_position().theta << std::endl;
                 std::cout << max_x << " " << max_y << " " << node->get_radius()
                           << std::endl;
                 exit(-1);
@@ -97,7 +99,6 @@ double Analytical_engine::check_collision(double future_time) {
     std::set<int> collided_node;
     long long llong_cur_time = cur_time * SCALE;
     long long allowed_error = SCALE * EPSILON;
-
     for (int i = 0; i < num_robots; i++) {
         if (out_of_bound_time[i] == -1) continue;
         long long cur_oob_time = out_of_bound_time[i] - llong_cur_time;
@@ -135,14 +136,6 @@ double Analytical_engine::check_collision(double future_time) {
         arena_ptr->add_event(new_event);
     }
     need_update = std::vector<bool>(num_robots, false);
-    // if (cur_time > 138.1) {
-    //     std::cout << "next diff " << std::fixed << cur_time << " "
-    //               << forward_time << std::endl;
-    //     for (int i : collided_node) {
-    //         std::cout << i << " ";
-    //     }
-    //     std::cout << std::endl;
-    // }
     if (collided_node.size() == 0) {
         return -1;
     } else {

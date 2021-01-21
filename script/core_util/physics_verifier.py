@@ -48,11 +48,17 @@ def init():
     global arena_height
     global max_time
 
-    metadata = np.loadtxt(log_file, delimiter=' ', max_rows=1, dtype=np.int)
-    arena_width = metadata[0]
-    arena_height = metadata[1]
-    num_robots = metadata[2]
+    metadata = np.loadtxt(log_file, delimiter=' ', max_rows=1, dtype=np.float)
+    arena_width = int(metadata[0])
+    arena_height = int(metadata[1])
+    num_robots = int(metadata[2])
     max_time = metadata[3]
+
+    # metadata = np.loadtxt(log_file, delimiter=' ', max_rows=1, dtype=np.int)
+    # arena_width = metadata[0]
+    # arena_height = metadata[1]
+    # num_robots = metadata[2]
+    # max_time = metadata[3]
 
     robot_list = []
     for i in range(num_robots):
@@ -227,7 +233,7 @@ def checkFrames():
         sim_time += speed / fps
 
 
-def verifier(in_log_file="./motion_log/default_log.txt", in_speed=1, out_folder="./error_frames/"):
+def verifier(in_log_file="./motion_log/default_log.txt", in_speed=10, out_folder="./error_frames/"):
     global speed
     global log_file
     global frame_folder
@@ -240,4 +246,7 @@ def verifier(in_log_file="./motion_log/default_log.txt", in_speed=1, out_folder=
     checkFrames()
 
 if __name__ == "__main__":
-    verifier(sys.argv[1], float(sys.argv[2]), sys.argv[3])
+    if(len(sys.argv) == 3):
+        verifier(sys.argv[1], float(sys.argv[2]), sys.argv[3])
+    else:
+        verifier()

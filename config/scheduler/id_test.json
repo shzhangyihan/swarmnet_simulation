@@ -1,10 +1,10 @@
 [
     {
-        "experiment_config": "./config/experiment/short_test/config_49_125.json",
+        "experiment_config": "./config/experiment/short_test/config_196_300.json",
         "end_checking_program": "script.usr.id_test_end_check",
-        "repetitions": 60,
-        "output_file": "./log_dump/125_",
+        "repetitions": 40,
+        "output_file": "./log_dump/196_300/",
         "check_interval_seconds": 60,
-        "num_robots": 49
+        "num_robots": 196
     }
 ]

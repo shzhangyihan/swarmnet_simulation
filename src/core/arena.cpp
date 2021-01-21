@@ -94,33 +94,10 @@ void Arena::run() {
         Event* next_event = this->event_queue.top();
         double next_event_time = next_event->get_exec_time();
         // std::cout << "current time " << sim_time << " next event time "
-        //   << next_event_time << std::endl;
-
-        auto start = std::chrono::high_resolution_clock::now();
-        double collision_time =
-            this->physics_engine->check_collision(next_event_time - sim_time);
-        auto end = std::chrono::high_resolution_clock::now();
-        physics_checking_time +=
-            std::chrono::duration_cast<std::chrono::microseconds>(end - start)
-                .count();
-        // std::cout << sim_time << " check " << collision_time << std::endl;
-        if (this->sim_time < 0) {
-            std::cout << "Sim time going to negative. Abort!" << std::endl
-                      << std::flush;
-            exit(-1);
-        }
-        if (collision_time != -1) {
-            // collision happened, loop again
-            // update tick
-            sim_time = sim_time + collision_time;
-            // counter++;
-            // if (counter == 10) break;
-            continue;
-        } else {
-            // no collision, execuate current event
+        // << next_event_time << std::endl;
+        if (next_event_time - sim_time == 0) {
+            // don't need to check physics
             this->event_queue.pop();
-            // update_simulation(next_event_tick - current_tick);
-            sim_time = next_event_time;
             auto start = std::chrono::high_resolution_clock::now();
             next_event->exec();
             auto end = std::chrono::high_resolution_clock::now();
@@ -128,9 +105,46 @@ void Arena::run() {
                 std::chrono::duration_cast<std::chrono::microseconds>(end -
                                                                       start)
                     .count();
-            event_counter++;
-            // int exec_node_id = next_event->get_to_id();
             delete next_event;
+        } else {
+            auto start = std::chrono::high_resolution_clock::now();
+            double collision_time = this->physics_engine->check_collision(
+                next_event_time - sim_time);
+            auto end = std::chrono::high_resolution_clock::now();
+            physics_checking_time +=
+                std::chrono::duration_cast<std::chrono::microseconds>(end -
+                                                                      start)
+                    .count();
+            // std::cout << sim_time << " check " << collision_time <<
+            // std::endl;
+            if (this->sim_time < 0) {
+                std::cout << "Sim time going to negative. Abort!" << std::endl
+                          << std::flush;
+                exit(-1);
+            }
+            if (collision_time != -1) {
+                // collision happened, loop again
+                // update tick
+                sim_time = sim_time + collision_time;
+                // counter++;
+                // if (counter == 10) break;
+                continue;
+            } else {
+                // no collision, execuate current event
+                this->event_queue.pop();
+                // update_simulation(next_event_tick - current_tick);
+                sim_time = next_event_time;
+                auto start = std::chrono::high_resolution_clock::now();
+                next_event->exec();
+                auto end = std::chrono::high_resolution_clock::now();
+                event_exec_time +=
+                    std::chrono::duration_cast<std::chrono::microseconds>(end -
+                                                                          start)
+                        .count();
+                event_counter++;
+                // int exec_node_id = next_event->get_to_id();
+                delete next_event;
+            }
         }
         // std::cout << current_tick << std::endl;
         // counter++;
