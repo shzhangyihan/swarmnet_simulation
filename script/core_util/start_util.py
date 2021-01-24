@@ -23,7 +23,7 @@ def cmake_and_build(target_name = ""):
         prYellow("Start building target " + target_name + " ...")
     os.system("mkdir build")
     os.chdir("./build")
-    if os.system("cmake ..") != 0: error_flag = 1
+    if os.system("cmake -DCMAKE_BUILD_TYPE=Release ..") != 0: error_flag = 1
     if target_name == "":
         if os.system("make") != 0: error_flag = 1
     else:
