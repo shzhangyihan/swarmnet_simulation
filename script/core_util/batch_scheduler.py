@@ -43,7 +43,8 @@ class Job(Process):
             if self.checker.check():
                 # experiment finished, kill program
                 print(self.job_name, "needs to stop")
-                self.proc.kill()
+                # self.proc.kill()
+                self.proc.send_signal(2)
                 self.proc.wait()
                 print(self.job_name, "process killed")
                 break

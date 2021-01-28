@@ -10,8 +10,6 @@
 
 namespace swarmnet_sim {
 
-#define MAX_TX_BUF_SIZE 5
-
 #define MSG_BYTES 30
 #define BYTE_SIZE 8
 #define ID_SIZE_MAX_LEN 1
@@ -28,10 +26,7 @@ class Default_program : public Kilobot {
     // packet_t msg;
     int id_size;  // in terms of bits
     int id;
-    int collide_checker;
-    int tx_buf_size;
-    int tx_buf_index;
-    packet_t tx_buf[MAX_TX_BUF_SIZE];
+    // int collide_checker;
     float last_collide_time;
 
    public:
@@ -43,7 +38,7 @@ class Default_program : public Kilobot {
     void message_rx(packet_t packet, situated_sensing_t sensing) {
         int src_id = read_id(packet, src);
         int src_id_size = packet.payload[ID_SRC_SIZE_OFFSET];
-        int in_checker = read_id(packet, rnd_c);
+        // int in_checker = read_id(packet, rnd_c);
 
         if (src_id == 0 && src_id_size == 0) {
             // std::cout << "empty" << std::endl;
@@ -58,13 +53,13 @@ class Default_program : public Kilobot {
         // src_id
         //           << "|" << src_id_size << std::endl;
         if (id_size != 0 && src_id == id && src_id_size == id_size) {
-            if (in_checker != collide_checker) {
-                // std::cout << " collide";
-                id_collided();
-            } else {
-                // from self, do nothing and return to prevent change self id
-                return;
-            }
+            // if (in_checker != collide_checker) {
+            // std::cout << " collide";
+            id_collided();
+            // } else {
+            //     // from self, do nothing and return to prevent change self id
+            //     return;
+            // }
         }
         // std::cout << std::endl;
 
@@ -78,7 +73,7 @@ class Default_program : public Kilobot {
     bool message_tx(packet_t* packet) {
         if (id_size > 0) {
             set_id(packet, id, src);
-            set_id(packet, collide_checker, rnd_c);
+            // set_id(packet, collide_checker, rnd_c);
             packet->payload[ID_SRC_SIZE_OFFSET] = id_size % 256;
             // std::cout << "OUT " << robot_id << " "
             //           << ((Arena*)arena)->get_sim_tick() << " (" << id << ",
@@ -116,7 +111,7 @@ class Default_program : public Kilobot {
             // reserve 0
             new_id = (rand()) % (uint64_t)pow(2, id_size);
         }
-        collide_checker = (rand()) % (int)pow(2, 32);
+        // collide_checker = (rand()) % (int)pow(2, 32);
 
         // std::cout << get_global_time() << "|" << node_id << ": " << new_id
         //           << " - " << id_size << " - " << collide_checker <<

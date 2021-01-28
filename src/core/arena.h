@@ -1,6 +1,7 @@
 #ifndef __SIM_ARENA_H__
 #define __SIM_ARENA_H__
 
+#include <chrono>
 #include <vector>
 
 #include "../util/motion_log.h"
@@ -13,6 +14,7 @@ namespace swarmnet_sim {
 class Arena {
    public:
     void run();
+    void stop();
     Sim_config get_config() const;
     Node* get_node(int id) const;
     Medium* get_medium() const;
@@ -39,6 +41,7 @@ class Arena {
     Motion_log* motion_log;
     Medium* comm_medium;
     Physics_engine* physics_engine;
+    std::chrono::time_point<std::chrono::high_resolution_clock> sim_start_time;
     long physics_checking_time;
     long event_exec_time;
     long event_counter;

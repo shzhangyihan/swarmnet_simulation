@@ -1,0 +1,10 @@
+[
+    {
+        "experiment_config": "./config/experiment/short_test/config_25_125.json",
+        "end_checking_program": "script.usr.id_test_end_check",
+        "repetitions": 1,
+        "output_file": "./log_dump/tmp/",
+        "check_interval_seconds": 5,
+        "num_robots": 25
+    }
+]

@@ -2,7 +2,6 @@
 
 #include <dlfcn.h>
 
-#include <chrono>
 #include <iostream>
 
 namespace swarmnet_sim {
@@ -83,7 +82,7 @@ void Arena::log_node(double time, int id) {
 void Arena::run() {
     // start the sim
     // int counter = 0;
-    auto sim_start_time = std::chrono::high_resolution_clock::now();
+    sim_start_time = std::chrono::high_resolution_clock::now();
     double max_time = this->conf.get_duration();
     // std::cout << "start run" << std::endl;
     Event* end_event = new Event(this, max_time, -1, -1);
@@ -151,12 +150,15 @@ void Arena::run() {
         // if (counter > 10) break;
     }
     // std::cout << "finished" << std::endl;
+    this->stop();
+}
+
+void Arena::stop() {
     auto sim_end_time = std::chrono::high_resolution_clock::now();
-    std::cout << "Simulation runs for: "
-              << std::chrono::duration_cast<std::chrono::microseconds>(
-                     sim_end_time - sim_start_time)
-                     .count()
-              << " μs" << std::endl;
+    long sim_run_time = std::chrono::duration_cast<std::chrono::microseconds>(
+                            sim_end_time - sim_start_time)
+                            .count();
+    std::cout << "Simulation runs for: " << sim_run_time << " μs" << std::endl;
     std::cout << "Time spent in physics checking: " << physics_checking_time
               << " μs" << std::endl;
     std::cout << "Time spent in event execution: " << event_exec_time << " μs"
