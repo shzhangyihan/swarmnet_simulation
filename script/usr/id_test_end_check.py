@@ -53,15 +53,15 @@ class Checker:
         self.processed_data = ProcessedData(self.num_robots)
     
     def check(self):
-        with open(self.log_file) as f:
-            for line in f.readlines():
-                parsed = parse.parse(log_format, line)
-                if parsed == None:
-                    continue
-                time = float(parsed[0])
-                robot_id = int(parsed[1])
-                gen_id = int(parsed[2])
-                gen_id_len = int(parsed[3])
-                self.processed_data.add_id_change(time, robot_id, gen_id, gen_id_len)
-        
+        f = open(self.log_file)
+        for line in f.readlines():
+            parsed = parse.parse(log_format, line)
+            if parsed == None:
+                continue
+            time = float(parsed[0])
+            robot_id = int(parsed[1])
+            gen_id = int(parsed[2])
+            gen_id_len = int(parsed[3])
+            self.processed_data.add_id_change(time, robot_id, gen_id, gen_id_len)
+        f.close()
         return self.processed_data.if_end()

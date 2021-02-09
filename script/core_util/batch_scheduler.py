@@ -1,6 +1,7 @@
 import subprocess
 import time
 import os
+import errno
 import json
 from multiprocessing import Process, Value
 
@@ -20,6 +21,12 @@ class Job(Process):
         self.job_name = job_name
         self.config_file = config_file
         # create file if not exist
+        if not os.path.exists(os.path.dirname(output_file)):
+            try:
+                os.makedirs(os.path.dirname(output_file))
+            except OSError as exc: # Guard against race condition
+                if exc.errno != errno.EEXIST:
+                    raise
         self.output_file = open(output_file, "w+")
         self.checker = Checker(output_file, batch_config)
         self.check_interval_seconds = check_interval_seconds
@@ -55,8 +62,9 @@ class Job(Process):
 class Scheduler:
     def __init__(self, config_file):
         # load config
-        with open(config_file) as f:
-            self.config = json.load(f)
+        f = open(config_file)
+        self.config = json.load(f)
+        f.close()
         
         # set worker pool counter
         self.counter = Value('i', 0)
@@ -66,6 +74,11 @@ class Scheduler:
         global pool_wait_time
         global wait_interval
         jobs = []
+        print("Processing input config ...")
+        for batch in self.config:
+            print("Experiment", batch["experiment_config"], "for", batch["repetitions"],"times")
+        print("Config parsing finished ...")
+        
         for batch in self.config:
             print("Run experiment", batch["experiment_config"], "for", batch["repetitions"],"times")
             Checker = import_from(batch["end_checking_program"], "Checker")
