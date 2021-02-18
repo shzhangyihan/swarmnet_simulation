@@ -14,3 +14,19 @@ add_library(id_test_store_bloom_no_wait SHARED id_test_store_bloom_no_wait.cpp)
 
 target_link_libraries(id_test_store_bloom_no_wait kilobot)
 
+add_library(id_test_store_bloom_no_wait_32_8 SHARED id_test_store_bloom_no_wait_32_8.cpp)
+
+target_link_libraries(id_test_store_bloom_no_wait_32_8 kilobot)
+
+add_library(id_test_store_bloom_no_wait_64_4 SHARED id_test_store_bloom_no_wait_64_4.cpp)
+
+target_link_libraries(id_test_store_bloom_no_wait_64_4 kilobot)
+
+add_library(id_test_store_bloom_no_wait_64_8 SHARED id_test_store_bloom_no_wait_64_8.cpp)
+
+target_link_libraries(id_test_store_bloom_no_wait_64_8 kilobot)
+
+add_library(id_test SHARED id_test.cpp)
+
+target_link_libraries(id_test kilobot)
+

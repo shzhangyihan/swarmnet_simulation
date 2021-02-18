@@ -1,6 +1,6 @@
 #include <algorithm>
 #include <iostream>
-#include <vector>
+#include <set>
 
 #include "../../plugin/robot/kilobot.h"
 #include "math.h"
@@ -11,15 +11,14 @@
 
 namespace swarmnet_sim {
 
-#define MAX_TX_BUF_SIZE 5
-
 #define MSG_BYTES 30
 #define BYTE_SIZE 8
 #define ID_SIZE_MAX_LEN 1
-#define ID_MAX_LEN 4
+#define ID_MAX_LEN 2
 #define ID_SRC_SIZE_OFFSET 0
 #define ID_SRC_OFFSET (ID_SRC_SIZE_OFFSET + ID_SIZE_MAX_LEN)
-#define RND_CHECK_OFFSET (ID_SRC_OFFSET + ID_MAX_LEN)
+#define PACKET_LENGTH (ID_SRC_OFFSET + ID_MAX_LEN)
+// #define RND_CHECK_OFFSET (ID_SRC_OFFSET + ID_MAX_LEN)
 
 enum ID_field { src, rnd_c };
 
@@ -29,68 +28,42 @@ class Default_program : public Kilobot {
     // packet_t msg;
     int id_size;  // in terms of bits
     int id;
-    int collide_checker;
-    int tx_buf_size;
-    int tx_buf_index;
-    packet_t tx_buf[MAX_TX_BUF_SIZE];
-    std::vector<int> seen_ids;
+    std::set<int> seen_ids;
 
    public:
     void collision() { turn(rand() % 360 - 180); }
 
     void message_rx(packet_t packet, situated_sensing_t sensing) {
+        // std::cout << "rx - " << node_id << " " << PACKET_LENGTH << std::endl;
+
         int src_id = read_id(packet, src);
         int src_id_size = packet.payload[ID_SRC_SIZE_OFFSET];
-        int in_checker = read_id(packet, rnd_c);
 
-        if (src_id == 0 && src_id_size == 0) {
-            // std::cout << "empty" << std::endl;
-            return;
+        int old_set_size = seen_ids.size();
+        seen_ids.insert(src_id);
+        if (old_set_size != seen_ids.size()) {
+            std::cout << "mem - " << get_local_time() << " " << node_id << " "
+                      << sizeof(int) * (seen_ids.size() + 2) << std::endl;
         }
-
-        // std::cout << ((Arena*)arena)->get_sim_tick() << " - " << robot_id <<
-        // ": id "
-        //           << id << "(" << collide_checker << ")"
-        //           << " src_id: " << src_id << "(" << in_checker << ")";
-        // std::cout << robot_id << ": " << id << "|" << id_size << " ~ " <<
-        // src_id
-        //           << "|" << src_id_size << std::endl;
-        seen_ids.push_back(src_id);
         if (id_size != 0 && src_id == id && src_id_size == id_size) {
-            if (in_checker != collide_checker) {
-                // std::cout << " collide";
-                id_collided();
-            } else {
-                // from self, do nothing and return to prevent change self id
-                return;
-            }
+            id_collided();
         }
-        // std::cout << std::endl;
 
         if (id_size < src_id_size) {
             id_size = src_id_size;
             LOG_ID();
-            // seen_ids.clear();
-            // id = this->new_sample_id(id_size);
         }
     }
 
     bool message_tx(packet_t* packet) {
-        if (id_size > 0) {
-            set_id(packet, id, src);
-            set_id(packet, collide_checker, rnd_c);
-            packet->payload[ID_SRC_SIZE_OFFSET] = id_size % 256;
-            // std::cout << "OUT " << robot_id << " "
-            //           << ((Arena*)arena)->get_sim_tick() << " (" << id << ",
-            //           "
-            //           << id_size << ")" << std::endl;
-            return true;
-        } else {
-            return false;
-        }
+        set_id(packet, id, src);
+        packet->payload[ID_SRC_SIZE_OFFSET] = id_size % 256;
+        return true;
     }
 
-    void message_tx_success() {}
+    void message_tx_success() {
+        std::cout << "tx - " << node_id << " " << PACKET_LENGTH << std::endl;
+    }
 
     void id_collided() {
         if (diminish_function(id_size)) {
@@ -115,18 +88,13 @@ class Default_program : public Kilobot {
 
         int available_id_size = (uint64_t)pow(2, id_size);
         if (seen_ids.size() >= available_id_size) {
-            new_id = (rand()) % (uint64_t)pow(2, id_size);
+            new_id = (rand()) % available_id_size;
         } else {
-            while (new_id == 0) {
+            while (true) {
                 // reserve 0
-                new_id = (rand()) % (uint64_t)pow(2, id_size);
-                std::vector<int>::iterator it;
-                it = find(seen_ids.begin(), seen_ids.end(), new_id);
-                if (it != seen_ids.end()) {
+                new_id = (rand()) % available_id_size;
+                if (seen_ids.find(new_id) != seen_ids.end()) {
                     // conflict, random new
-                    // std::cout << node_id << " conflict new id " << new_id
-                    //           << " from " << seen_ids.size() << std::endl
-                    //           << std::flush;
                     continue;
                 } else {
                     // no conflict
@@ -134,17 +102,6 @@ class Default_program : public Kilobot {
                 }
             }
         }
-        collide_checker = (rand()) % (int)pow(2, 32);
-
-        // std::cout << get_global_time() << "|" << node_id << ": " << new_id
-        //           << " - " << id_size << " - " << collide_checker <<
-        //           std::endl;
-
-        // clear_msg();
-        // set_id(&msg, new_id, src);
-        // set_id(&msg, collide_checker, rnd_c);
-        // msg.payload[ID_SRC_SIZE_OFFSET] = id_size % 256;
-
         return new_id;
     }
 
@@ -154,7 +111,7 @@ class Default_program : public Kilobot {
         int offset;
 
         if (field == src) offset = ID_SRC_OFFSET;
-        if (field == rnd_c) offset = RND_CHECK_OFFSET;
+        // if (field == rnd_c) offset = RND_CHECK_OFFSET;
         // if (field == dst) offset = ID_DST_OFFSET;
 
         while (remain != 0) {
@@ -175,10 +132,10 @@ class Default_program : public Kilobot {
             offset = ID_SRC_OFFSET;
             out_id_size = in_msg.payload[ID_SRC_SIZE_OFFSET];
         }
-        if (field == rnd_c) {
-            offset = RND_CHECK_OFFSET;
-            out_id_size = ID_MAX_LEN * BYTE_SIZE;
-        }
+        // if (field == rnd_c) {
+        //     offset = RND_CHECK_OFFSET;
+        //     out_id_size = ID_MAX_LEN * BYTE_SIZE;
+        // }
         // if (field == dst) {
         //     offset = ID_DST_OFFSET;
         //     out_id_size = in_msg.payload[ID_DST_SIZE_OFFSET];

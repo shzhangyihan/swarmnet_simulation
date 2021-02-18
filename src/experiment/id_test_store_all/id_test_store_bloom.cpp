@@ -17,7 +17,7 @@ namespace swarmnet_sim {
 
 #define BYTE_SIZE 8
 #define ID_SIZE_MAX_LEN 1
-#define ID_MAX_LEN 4
+#define ID_MAX_LEN 2
 #define ID_SRC_SIZE_OFFSET 0
 #define ID_SRC_OFFSET (ID_SRC_SIZE_OFFSET + ID_SIZE_MAX_LEN)
 #define TTL_OFFSET (ID_SRC_OFFSET + ID_MAX_LEN)
@@ -45,8 +45,8 @@ typedef struct {
     int index;
 } Bloom_filter_buf_t;
 
-#define MAX_TX_BUF_SIZE 5
-#define MAX_CACHE_SIZE 10
+#define MAX_TX_BUF_SIZE 10
+#define MAX_CACHE_SIZE 20
 
 typedef struct {
     packet_t cache[MAX_CACHE_SIZE];
@@ -73,8 +73,17 @@ class Default_program : public Kilobot {
     forward_buf_t f_buf;
     int tx_timeout;
     int tx_count;
+    int cur_mem_size;
 
    public:
+    int mem_size() {
+        int mem_per_packet = PACKET_LENGTH;
+        int mem_per_bloom = sizeof(float) + BLOOM_FILTER_SIZE / BYTE_SIZE;
+        int mem_default = 8 * sizeof(int);
+        return mem_default + mem_per_bloom * (1 + rx_bloom_buf.size) +
+               mem_per_packet * (f_cache.size + f_buf.size);
+    }
+
     void clear_bloom_filter() {
         // std::cout << node_id << " cleared self bloom filter" << std::endl
         //           << std::flush;
@@ -226,6 +235,8 @@ class Default_program : public Kilobot {
     }
 
     void message_rx(packet_t packet, situated_sensing_t sensing) {
+        // std::cout << "rx - " << node_id << " " << PACKET_LENGTH << std::endl;
+
         int src_id = read_id(packet);
         int src_id_size = packet.payload[ID_SRC_SIZE_OFFSET];
         int ttl = packet.payload[TTL_OFFSET];
@@ -247,9 +258,6 @@ class Default_program : public Kilobot {
         // first hop
         if (ttl == MAX_TTL) {
             // check id collision
-            if (src_id_size == 0) {
-                return;
-            }
             add_my_bloom_filter(src_id);
             if (id_size != 0 && src_id == id && src_id_size == id_size) {
                 id_collided();
@@ -259,6 +267,15 @@ class Default_program : public Kilobot {
                 id_size = src_id_size;
                 LOG_ID();
             }
+        }
+
+        int new_mem_size = mem_size();
+        if (cur_mem_size != new_mem_size) {
+            cur_mem_size = new_mem_size;
+            std::cout << "mem - " << get_local_time() << " " << node_id << " "
+                      << cur_mem_size << std::endl;
+            // std::cout << "sup? " << rx_bloom_buf.size << " " << f_cache.size
+            //           << " " << f_buf.size << std::endl;
         }
     }
 
@@ -303,7 +320,7 @@ class Default_program : public Kilobot {
     }
 
     void message_tx_success() {
-        // std::cout << node_id << "txs" << std::endl;
+        std::cout << "tx - " << node_id << " " << PACKET_LENGTH << std::endl;
     }
 
     void id_collided() {
@@ -419,7 +436,9 @@ class Default_program : public Kilobot {
         clear_cache();
         f_buf.index = 0;
         f_buf.size = 0;
-
+        cur_mem_size = mem_size();
+        std::cout << "mem - " << get_local_time() << " " << node_id << " "
+                  << cur_mem_size << std::endl;
         id_size = 1;
         id = this->new_sample_id(id_size);
         color_t c;

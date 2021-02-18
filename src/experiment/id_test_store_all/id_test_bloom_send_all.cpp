@@ -49,8 +49,8 @@ typedef struct {
     int index;
 } Bloom_filter_buf_t;
 
-#define MAX_TX_BUF_SIZE 100
-#define MAX_CACHE_SIZE 100
+#define MAX_TX_BUF_SIZE 10
+#define MAX_CACHE_SIZE 20
 
 typedef struct {
     packet_t cache[MAX_CACHE_SIZE];
@@ -77,8 +77,18 @@ class Default_program : public Kilobot {
     forward_buf_t f_buf;
     int tx_timeout;
     int tx_count;
+    int cur_mem_size;
+    int prev_tx_size;
 
    public:
+    int mem_size() {
+        int mem_per_packet = PACKET_LENGTH;
+        int mem_per_bloom = sizeof(float) + BLOOM_FILTER_SIZE / BYTE_SIZE;
+        int mem_default = 8 * sizeof(int);
+        return mem_default + mem_per_bloom * (1 + rx_bloom_buf.size) +
+               mem_per_packet * (f_cache.size + f_buf.size);
+    }
+
     void clear_bloom_filter() {
         // std::cout << node_id << " cleared self bloom filter" << std::endl
         //           << std::flush;
@@ -241,6 +251,9 @@ class Default_program : public Kilobot {
         int num_pkt = packet.payload[0];
         // std::cout << node_id << " recv " << num_pkt << std::endl <<
         // std::flush;
+        // std::cout << "rx - " << node_id << " " << 1 + num_pkt * PACKET_LENGTH
+        //           << std::endl;
+
         for (int i = 0; i < num_pkt; i++) {
             int pkt_offset = 1 + i * PACKET_LENGTH;
             packet_t cur_packet;
@@ -278,6 +291,13 @@ class Default_program : public Kilobot {
                 }
             }
         }
+
+        int new_mem_size = mem_size();
+        if (cur_mem_size != new_mem_size) {
+            cur_mem_size = new_mem_size;
+            std::cout << "mem - " << get_local_time() << " " << node_id << " "
+                      << cur_mem_size << std::endl;
+        }
     }
 
     void remove_and_reorder_tx_buf(int index) {
@@ -290,9 +310,9 @@ class Default_program : public Kilobot {
     }
 
     bool message_tx(packet_t* packet) {
-        std::cout << node_id << " send buf size: " << f_buf.size
-                  << " cache size: " << f_cache.size << std::endl
-                  << std::flush;
+        // std::cout << node_id << " send buf size: " << f_buf.size
+        //           << " cache size: " << f_cache.size << std::endl
+        //           << std::flush;
         int buf_size = f_buf.size;
         packet->payload[0] = 1 + f_buf.size;
         int pkt_offset = 1;
@@ -339,11 +359,12 @@ class Default_program : public Kilobot {
         //               << std::endl
         //               << std::flush;
         // }
+        prev_tx_size = packet->payload[0] * PACKET_LENGTH + 1;
         return true;
     }
 
     void message_tx_success() {
-        // std::cout << node_id << "txs" << std::endl;
+        std::cout << "tx - " << node_id << " " << prev_tx_size << std::endl;
     }
 
     void id_collided() {
@@ -461,7 +482,9 @@ class Default_program : public Kilobot {
         clear_cache();
         f_buf.index = 0;
         f_buf.size = 0;
-
+        cur_mem_size = mem_size();
+        std::cout << "mem - " << get_local_time() << " " << node_id << " "
+                  << cur_mem_size << std::endl;
         id_size = 1;
         id = this->new_sample_id(id_size);
         color_t c;
