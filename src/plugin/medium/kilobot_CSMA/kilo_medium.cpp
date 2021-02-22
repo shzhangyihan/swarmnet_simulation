@@ -43,6 +43,7 @@ void Kilo_medium::start_tx(int tx_node_id) {
             new TX_end_event(arena_ptr, arena_ptr->get_sim_time(), tx_node_id);
         tx_end_event->set_success(false);
         arena_ptr->add_event(tx_end_event);
+        tx_failed_count++;
         return;
     }
 
@@ -156,6 +157,10 @@ void Kilo_medium::end_rx(int rx_node_id) {
 
 void Kilo_medium::init() {}
 
+std::string Kilo_medium::status_report() {
+    return "Medium tx_failed_count " + std::to_string(tx_failed_count) + "\n";
+}
+
 Kilo_medium::Kilo_medium(void* arena) {
     // std::cout << "MEDIUM" << std::endl;
     this->arena = arena;
@@ -165,6 +170,7 @@ Kilo_medium::Kilo_medium(void* arena) {
         this->rx_counter_vector.push_back(0);
         this->rx_buffer.push_back(empty_entry);
     }
+    this->tx_failed_count = 0;
 }
 
 extern "C" {

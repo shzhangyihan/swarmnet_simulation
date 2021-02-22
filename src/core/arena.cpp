@@ -82,6 +82,10 @@ void Arena::log_node(double time, int id) {
 void Arena::run() {
     // start the sim
     // int counter = 0;
+    double prev_status_log_time = 0;
+    std::cout << physics_engine->status_report();
+    std::cout << comm_medium->status_report();
+
     sim_start_time = std::chrono::high_resolution_clock::now();
     double max_time = this->conf.get_duration();
     // std::cout << "start run" << std::endl;
@@ -90,6 +94,13 @@ void Arena::run() {
         if (this->event_queue.empty()) {
             this->event_queue.push(end_event);
         }
+
+        if (this->sim_time - prev_status_log_time >= LOG_STATUS_INTERVAL) {
+            std::cout << physics_engine->status_report();
+            std::cout << comm_medium->status_report();
+            prev_status_log_time = this->sim_time;
+        }
+
         Event* next_event = this->event_queue.top();
         double next_event_time = next_event->get_exec_time();
         // std::cout << "current time " << sim_time << " next event time "
@@ -166,7 +177,8 @@ void Arena::stop() {
     std::cout << "Time spent in queue operation: "
               << event_queue.get_queue_operation_time() << " μs" << std::endl;
     std::cout << "Event count: " << event_counter << std::endl;
-
+    std::cout << physics_engine->status_report();
+    std::cout << comm_medium->status_report();
     motion_log->flush();
 }
 

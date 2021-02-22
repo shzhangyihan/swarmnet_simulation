@@ -3,11 +3,11 @@
 #include "../../plugin/robot/kilobot.h"
 #include "math.h"
 
-#define ID_SIZE 7
+#define ID_SIZE 10
 
 #define LOG_ID()                                                            \
     std::cout << get_global_time() << "|" << node_id << ": " << id << " - " \
-              << id_size << " - " << 0 << std::endl;
+              << id_size << " - " << 0 << "\n";
 // #define LOG_ID()
 
 namespace swarmnet_sim {
@@ -36,7 +36,7 @@ class Default_program : public Kilobot {
     }
 
     void message_rx(packet_t packet, situated_sensing_t sensing) {
-        // std::cout << "rx - " << node_id << " " << PACKET_LENGTH << std::endl;
+        // std::cout << "rx - " << node_id << " " << PACKET_LENGTH << "\n";
         int src_id = read_id(packet, src);
         int src_id_size = packet.payload[ID_SRC_SIZE_OFFSET];
 
@@ -64,7 +64,7 @@ class Default_program : public Kilobot {
     }
 
     void message_tx_success() {
-        std::cout << "tx - " << node_id << " " << PACKET_LENGTH << std::endl;
+        std::cout << "tx - " << node_id << " " << PACKET_LENGTH << "\n";
     }
 
     void id_collided() {
@@ -143,7 +143,7 @@ class Default_program : public Kilobot {
         turn(rand() % 360 - 180);
         go_forward();
         std::cout << "mem - " << get_global_time() << " " << node_id << " "
-                  << sizeof(int) * 2 << std::endl;
+                  << sizeof(int) * 2 << "\n";
         LOG_ID();
     }
 };

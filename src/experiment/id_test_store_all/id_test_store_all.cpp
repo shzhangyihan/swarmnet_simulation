@@ -7,7 +7,7 @@
 
 #define LOG_ID()                                                            \
     std::cout << get_global_time() << "|" << node_id << ": " << id << " - " \
-              << id_size << " - " << 0 << std::endl;
+              << id_size << " - " << 0 << "\n";
 
 namespace swarmnet_sim {
 
@@ -34,7 +34,7 @@ class Default_program : public Kilobot {
     void collision() { turn(rand() % 360 - 180); }
 
     void message_rx(packet_t packet, situated_sensing_t sensing) {
-        // std::cout << "rx - " << node_id << " " << PACKET_LENGTH << std::endl;
+        // std::cout << "rx - " << node_id << " " << PACKET_LENGTH << "\n";
 
         int src_id = read_id(packet, src);
         int src_id_size = packet.payload[ID_SRC_SIZE_OFFSET];
@@ -43,7 +43,7 @@ class Default_program : public Kilobot {
         seen_ids.insert(src_id);
         if (old_set_size != seen_ids.size()) {
             std::cout << "mem - " << get_local_time() << " " << node_id << " "
-                      << sizeof(int) * (seen_ids.size() + 2) << std::endl;
+                      << sizeof(int) * (seen_ids.size() + 2) << "\n";
         }
         if (id_size != 0 && src_id == id && src_id_size == id_size) {
             id_collided();
@@ -62,7 +62,7 @@ class Default_program : public Kilobot {
     }
 
     void message_tx_success() {
-        std::cout << "tx - " << node_id << " " << PACKET_LENGTH << std::endl;
+        std::cout << "tx - " << node_id << " " << PACKET_LENGTH << "\n";
     }
 
     void id_collided() {
@@ -156,7 +156,7 @@ class Default_program : public Kilobot {
 
     void init() {
         // std::cout << "init " << node_id << " at " << pos.x << ", " << pos.y
-        //           << std::endl;
+        //           << "\n";
         // if (node_id == 0) {
         //     // seed
         id_size = 1;

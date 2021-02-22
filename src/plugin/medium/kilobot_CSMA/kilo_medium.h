@@ -31,12 +31,14 @@ class Kilo_medium : public Medium {
                   situated_sensing_t sensing);
     void end_rx(int rx_node_id);
     void init();
+    std::string status_report();
     Kilo_medium(void* arena);
 
    protected:
     void* arena;
     std::vector<int> rx_counter_vector;
     std::vector<rx_buffer_t> rx_buffer;
+    long tx_failed_count;
 };
 
 extern "C" {

@@ -6,11 +6,11 @@
 #include "../../plugin/robot/kilobot.h"
 #include "math.h"
 
-#define ID_SIZE 7
+#define ID_SIZE 10
 
 #define LOG_ID()                                                            \
     std::cout << get_global_time() << "|" << node_id << ": " << id << " - " \
-              << id_size << " - " << 0 << std::endl;
+              << id_size << " - " << 0 << "\n";
 
 namespace swarmnet_sim {
 
@@ -88,7 +88,7 @@ class Default_program : public Kilobot {
     }
 
     void clear_bloom_filter() {
-        // std::cout << node_id << " cleared self bloom filter" << std::endl
+        // std::cout << node_id << " cleared self bloom filter" << "\n"
         //           << std::flush;
         for (int i = 0; i < BLOOM_FILTER_SIZE; i++) {
             my_bloom_filter.filter[i] = false;
@@ -171,7 +171,7 @@ class Default_program : public Kilobot {
     }
 
     void add_to_cache(packet_t pkt) {
-        // std::cout << robot_id << "add to cache" << std::endl;
+        // std::cout << robot_id << "add to cache" << "\n";
         int index = check_cache(pkt);
         if (index != -1) {
             remove_and_reorder_cache(index);
@@ -246,13 +246,13 @@ class Default_program : public Kilobot {
 
         // with only id, no bloom filter, no need to forward
         if (ttl == MAX_TTL + 1) {
-            // std::cout << "worked!!!" << std::endl;
-            // std::cout << "rx - " << node_id << " " << 3 << std::endl;
+            // std::cout << "worked!!!" << "\n";
+            // std::cout << "rx - " << node_id << " " << 3 << "\n";
             react_to_rx_id(src_id, src_id_size);
             return;
         }
 
-        // std::cout << "rx - " << node_id << " " << PACKET_LENGTH << std::endl;
+        // std::cout << "rx - " << node_id << " " << PACKET_LENGTH << "\n";
 
         // last hop
         if (ttl == 0) {
@@ -260,7 +260,7 @@ class Default_program : public Kilobot {
             // std::cout << node_id << " add bloom from "
             //           << (int)packet.payload[PACKET_LENGTH] << " - " <<
             //           src_id
-            //           << std::endl
+            //           << "\n"
             //           << std::flush;
             // check if bloom filter is empty
 
@@ -278,9 +278,9 @@ class Default_program : public Kilobot {
         if (cur_mem_size != new_mem_size) {
             cur_mem_size = new_mem_size;
             std::cout << "mem - " << get_global_time() << " " << node_id << " "
-                      << cur_mem_size << std::endl;
+                      << cur_mem_size << "\n";
             // std::cout << "sup? " << rx_bloom_buf.size << " " << f_cache.size
-            //           << " " << f_buf.size << std::endl;
+            //           << " " << f_buf.size << "\n";
         }
     }
 
@@ -339,7 +339,7 @@ class Default_program : public Kilobot {
         } else {
             tx_count++;
 
-            // std::cout << "send STUFF!" << std::endl;
+            // std::cout << "send STUFF!" << "\n";
             set_id(packet, id);
             packet->payload[ID_SRC_SIZE_OFFSET] = id_size % 256;
             packet->payload[TTL_OFFSET] = MAX_TTL + 1;
@@ -351,10 +351,9 @@ class Default_program : public Kilobot {
 
     void message_tx_success() {
         if (prev_tx_long) {
-            std::cout << "tx - " << node_id << " " << PACKET_LENGTH
-                      << std::endl;
+            std::cout << "tx - " << node_id << " " << PACKET_LENGTH << "\n";
         } else {
-            std::cout << "tx - " << node_id << " " << 3 << std::endl;
+            std::cout << "tx - " << node_id << " " << 3 << "\n";
         }
     }
 
@@ -411,10 +410,10 @@ class Default_program : public Kilobot {
             }
         }
         // std::cout << get_global_time() << "|" << node_id << ": " << new_id
-        //           << " - " << id_size << " - " << 0 << std::endl
+        //           << " - " << id_size << " - " << 0 << "\n"
         //           << std::flush;
         // std::cout << get_global_time() << "|" << node_id << " true count "
-        //           << filter_true_count << std::endl
+        //           << filter_true_count << "\n"
         //           << std::flush;
         return new_id;
     }
@@ -473,7 +472,7 @@ class Default_program : public Kilobot {
         f_buf.size = 0;
         cur_mem_size = mem_size();
         std::cout << "mem - " << get_global_time() << " " << node_id << " "
-                  << cur_mem_size << std::endl;
+                  << cur_mem_size << "\n";
         id_size = ID_SIZE;
         id = this->new_sample_id(id_size);
         color_t c;

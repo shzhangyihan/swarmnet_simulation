@@ -13,6 +13,7 @@ class Medium {
                           situated_sensing_t sensing) = 0;
     virtual void end_rx(int rx_node_id) = 0;
     virtual void init() = 0;
+    virtual std::string status_report() { return ""; };
     Medium(void* arena) { this->arena = arena; };
     Medium(){};
 

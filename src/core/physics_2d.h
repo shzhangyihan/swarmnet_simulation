@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include <string>
+
 namespace swarmnet_sim {
 
 typedef struct position {
@@ -30,6 +32,7 @@ class Physics_engine {
    public:
     virtual double check_collision(double future_time) = 0;
     virtual void init() = 0;
+    virtual std::string status_report() { return ""; };
     Physics_engine(void* arena) { this->arena = arena; };
     Physics_engine(){};
 

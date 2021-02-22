@@ -10,6 +10,8 @@
 #include "medium.h"
 #include "node.h"
 
+#define LOG_STATUS_INTERVAL 100
+
 namespace swarmnet_sim {
 class Arena {
    public:
