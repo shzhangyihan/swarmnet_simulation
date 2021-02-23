@@ -14,3 +14,5 @@ add_library(fixed_id_test_store_bloom_no_wait_64_8 SHARED id_test_store_bloom_no
 target_link_libraries(fixed_id_test_store_bloom_no_wait_64_8 kilobot)
 add_library(fixed_id_test SHARED id_test.cpp)
 target_link_libraries(fixed_id_test kilobot)
+add_library(fixed_id_test_store_bloom_no_wait_128_4 SHARED id_test_store_bloom_no_wait_128_4.cpp)
+target_link_libraries(fixed_id_test_store_bloom_no_wait_128_4 kilobot)

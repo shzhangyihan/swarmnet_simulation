@@ -5,7 +5,7 @@
 #include "../../plugin/robot/kilobot.h"
 #include "math.h"
 
-#define ID_SIZE 10
+#define ID_SIZE 9
 
 #define LOG_ID()                                                            \
     std::cout << get_global_time() << "|" << node_id << ": " << id << " - " \
@@ -31,6 +31,8 @@ class Default_program : public Kilobot {
     int id_size;  // in terms of bits
     int id;
     std::set<int> seen_ids;
+    uint64_t tx_total;
+    int tx_log_counter;
 
    public:
     void collision() { turn(rand() % 360 - 180); }
@@ -64,7 +66,14 @@ class Default_program : public Kilobot {
     }
 
     void message_tx_success() {
-        std::cout << "tx - " << node_id << " " << PACKET_LENGTH << "\n";
+        if (tx_log_counter < 15) {
+            tx_log_counter++;
+            tx_total += PACKET_LENGTH;
+
+        } else {
+            std::cout << "tx - " << node_id << " " << tx_total << "\n";
+            tx_log_counter = 0;
+        }
     }
 
     void id_collided() {
@@ -177,6 +186,8 @@ class Default_program : public Kilobot {
         turn(rand() % 360 - 180);
         go_forward();
         LOG_ID();
+        tx_log_counter = 0;
+        tx_total = 0;
     }
 };
 

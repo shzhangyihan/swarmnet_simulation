@@ -1,0 +1,42 @@
+[
+    {
+        "experiment_config": "./config/experiment/cmp_test_fixed_size/no_wait_128_4/config_100_500.json",
+        "end_checking_program": "script.usr.id_test_end_check",
+        "repetitions": 20,
+        "output_file": "./log_dump/no_wait_128_4/100/",
+        "check_interval_seconds": 30,
+        "num_robots": 100
+    },
+    {
+        "experiment_config": "./config/experiment/cmp_test_fixed_size/no_wait_128_4/config_200_500.json",
+        "end_checking_program": "script.usr.id_test_end_check",
+        "repetitions": 20,
+        "output_file": "./log_dump/no_wait_128_4/200/",
+        "check_interval_seconds": 30,
+        "num_robots": 200
+    },	
+    {
+        "experiment_config": "./config/experiment/cmp_test_fixed_size/no_wait_128_4/config_300_500.json",
+        "end_checking_program": "script.usr.id_test_end_check",
+        "repetitions": 20,  
+        "output_file": "./log_dump/no_wait_128_4/300/",
+        "check_interval_seconds": 30,
+        "num_robots": 300
+    },
+    {
+        "experiment_config": "./config/experiment/cmp_test_fixed_size/no_wait_128_4/config_400_500.json",
+        "end_checking_program": "script.usr.id_test_end_check",
+        "repetitions": 20,
+        "output_file": "./log_dump/no_wait_128_4/400/",
+        "check_interval_seconds": 30,
+        "num_robots": 400
+    },
+    {
+        "experiment_config": "./config/experiment/cmp_test_fixed_size/no_wait_128_4/config_500_500.json",
+        "end_checking_program": "script.usr.id_test_end_check",
+        "repetitions": 20,
+        "output_file": "./log_dump/no_wait_128_4/500/",
+        "check_interval_seconds": 30,
+        "num_robots": 500
+    }
+]

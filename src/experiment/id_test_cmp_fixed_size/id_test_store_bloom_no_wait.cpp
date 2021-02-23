@@ -6,7 +6,7 @@
 #include "../../plugin/robot/kilobot.h"
 #include "math.h"
 
-#define ID_SIZE 10
+#define ID_SIZE 9
 
 #define LOG_ID()                                                            \
     std::cout << get_global_time() << "|" << node_id << ": " << id << " - " \
@@ -28,7 +28,7 @@ namespace swarmnet_sim {
 
 #define PACKET_LENGTH (BLOOM_FILTER_OFFSET + BLOOM_FILTER_SIZE / BYTE_SIZE)
 
-#define MAX_TTL 2
+#define MAX_TTL 1
 // #define BLOOM_FILTER_MAX_SIZE_BYTE 6
 
 #define BLOOM_FILTER_TIME_OUT 300
@@ -77,6 +77,8 @@ class Default_program : public Kilobot {
     int tx_count;
     bool prev_tx_long;
     int cur_mem_size;
+    uint64_t tx_total;
+    int tx_log_counter;
 
    public:
     int mem_size() {
@@ -350,11 +352,23 @@ class Default_program : public Kilobot {
     }
 
     void message_tx_success() {
-        if (prev_tx_long) {
-            std::cout << "tx - " << node_id << " " << PACKET_LENGTH << "\n";
+        if (tx_log_counter < 15) {
+            tx_log_counter++;
+            if (prev_tx_long) {
+                tx_total += PACKET_LENGTH;
+            } else {
+                tx_total += 3;
+            }
         } else {
-            std::cout << "tx - " << node_id << " " << 3 << "\n";
+            std::cout << "tx - " << node_id << " " << tx_total << "\n";
+            tx_log_counter = 0;
         }
+
+        // if (prev_tx_long) {
+        //     std::cout << "tx - " << node_id << " " << PACKET_LENGTH << "\n";
+        // } else {
+        //     std::cout << "tx - " << node_id << " " << 3 << "\n";
+        // }
     }
 
     void id_collided() {
@@ -387,7 +401,7 @@ class Default_program : public Kilobot {
             if (my_bloom_filter.filter[j]) combined_filter.filter[j] = true;
             if (combined_filter.filter[j]) filter_true_count++;
         }
-
+        std::cout << "filter size " << filter_true_count << std::endl;
         return combined_filter;
     }
 
@@ -399,6 +413,7 @@ class Default_program : public Kilobot {
             if (filter_true_count == BLOOM_FILTER_SIZE ||
                 filter_true_count >= (int)pow(2, id_size)) {
                 // filter full
+                std::cout << "filter full" << std::endl;
                 break;
             }
             int hash_val = get_hash(new_id);
@@ -483,6 +498,8 @@ class Default_program : public Kilobot {
         turn(rand() % 360 - 180);
         go_forward();
         LOG_ID();
+        tx_log_counter = 0;
+        tx_total = 0;
     }
 };  // namespace swarmnet_sim
 

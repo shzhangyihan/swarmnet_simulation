@@ -6,7 +6,7 @@
 #include "../../plugin/robot/kilobot.h"
 #include "math.h"
 
-#define ID_SIZE 10
+#define ID_SIZE 9
 
 #define LOG_ID()                                                            \
     std::cout << get_global_time() << "|" << node_id << ": " << id << " - " \
@@ -28,7 +28,7 @@ namespace swarmnet_sim {
 
 #define PACKET_LENGTH (BLOOM_FILTER_OFFSET + BLOOM_FILTER_SIZE / BYTE_SIZE)
 
-#define MAX_TTL 2
+#define MAX_TTL 1
 // #define BLOOM_FILTER_MAX_SIZE_BYTE 6
 
 #define BLOOM_FILTER_TIME_OUT 300
@@ -387,6 +387,7 @@ class Default_program : public Kilobot {
             if (my_bloom_filter.filter[j]) combined_filter.filter[j] = true;
             if (combined_filter.filter[j]) filter_true_count++;
         }
+        std::cout << "filter size " << filter_true_count << std::endl;
 
         return combined_filter;
     }
@@ -399,6 +400,7 @@ class Default_program : public Kilobot {
             if (filter_true_count == BLOOM_FILTER_SIZE ||
                 filter_true_count >= (int)pow(2, id_size)) {
                 // filter full
+                std::cout << "filter full" << std::endl;
                 break;
             }
             int hash_val = get_hash(new_id);

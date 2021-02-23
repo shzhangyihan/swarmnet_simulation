@@ -6,7 +6,7 @@
 #include "../../plugin/robot/kilobot.h"
 #include "math.h"
 
-#define ID_SIZE 10
+#define ID_SIZE 9
 
 #define LOG_ID()                                                            \
     std::cout << get_global_time() << "|" << node_id << ": " << id << " - " \
@@ -77,6 +77,8 @@ class Default_program : public Kilobot {
     int tx_count;
     bool prev_tx_long;
     int cur_mem_size;
+    long tx_total;
+    int tx_log_counter;
 
    public:
     int mem_size() {
@@ -350,10 +352,16 @@ class Default_program : public Kilobot {
     }
 
     void message_tx_success() {
-        if (prev_tx_long) {
-            std::cout << "tx - " << node_id << " " << PACKET_LENGTH << "\n";
+        if (tx_log_counter < 15) {
+            tx_log_counter++;
+            if (prev_tx_long) {
+                tx_total += PACKET_LENGTH;
+            } else {
+                tx_total += 3;
+            }
         } else {
-            std::cout << "tx - " << node_id << " " << 3 << "\n";
+            std::cout << "tx - " << node_id << " " << tx_total << "\n";
+            tx_log_counter = 0;
         }
     }
 
@@ -483,6 +491,8 @@ class Default_program : public Kilobot {
         turn(rand() % 360 - 180);
         go_forward();
         LOG_ID();
+        tx_log_counter = 0;
+        tx_total = 0;
     }
 };  // namespace swarmnet_sim
 

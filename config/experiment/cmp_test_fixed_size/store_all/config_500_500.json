@@ -1,0 +1,11 @@
+{
+    "robots": 500,
+    "arena_max_x": 500,
+    "arena_max_y": 500,
+    "experiment_duration": 900000000,
+    "motion_log": "./motion_log/default_log.txt",
+    "robot_placement": "./build/src/experiment/comm_test/libcomm_test_placement.so",
+    "robot_program": "./build/src/experiment/id_test_cmp_fixed_size/libfixed_id_test_store_all.so",
+    "physics_engine": "./build/src/plugin/engine/improved_analytical_engine/libimproved_analytical_engine.so",
+    "comm_medium": "./build/src/plugin/medium/kilobot_CSMA/libkilobot_medium.so"
+}

@@ -1,0 +1,2 @@
+add_library(IROS_2021_not_fixed_default SHARED default.cpp)
+target_link_libraries(IROS_2021_not_fixed_default kilobot)

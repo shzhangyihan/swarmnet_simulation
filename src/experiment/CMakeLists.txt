@@ -12,3 +12,4 @@ add_subdirectory(fixed_id_size)
 
 add_subdirectory(id_test_cmp_fixed_size)
 
+add_subdirectory(IROS_2021_experiments)

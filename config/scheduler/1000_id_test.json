@@ -1,0 +1,10 @@
+[
+    {
+        "experiment_config": "./config/experiment/cmp_test_fixed_size/default/config_1000_650.json",
+        "end_checking_program": "script.usr.id_test_end_check",
+        "repetitions": 10,
+        "output_file": "./log_dump/default/1000/",
+        "check_interval_seconds": 30,
+        "num_robots": 1000
+    }
+]
