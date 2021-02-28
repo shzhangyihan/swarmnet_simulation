@@ -407,20 +407,26 @@ class Default_program : public Kilobot {
     // }
 
     int combine_filters(std::vector<int>& combined_filter) {
-        int filter_total_count = 0;
         for (int i = 0; i < rx_bloom_buf.size; i++) {
             for (int j = 0; j < BLOOM_FILTER_SIZE; j++) {
                 if (rx_bloom_buf.buf[i].filter[j]) {
                     combined_filter[j]++;
-                    filter_total_count++;
+                    // filter_total_count++;
                 }
             }
         }
         for (int j = 0; j < BLOOM_FILTER_SIZE; j++) {
             if (my_bloom_filter.filter[j]) {
                 combined_filter[j]++;
-                filter_total_count++;
+                // filter_total_count++;
             }
+        }
+
+        // reverse the filter
+        int filter_total_count = 0;
+        for (int j = 0; j < BLOOM_FILTER_SIZE; j++) {
+            combined_filter[j] = rx_bloom_buf.size + 1 - combined_filter[j];
+            filter_total_count += combined_filter[j];
         }
 
         return filter_total_count;
