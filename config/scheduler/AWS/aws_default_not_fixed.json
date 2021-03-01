@@ -3,23 +3,15 @@
         "experiment_config": "./config/experiment/IROS_2021/not_fixed/default/config_400.json",
         "end_checking_program": "script.usr.id_test_end_check",
         "repetitions": 10,
-        "output_file": "./log_dump/bloom_32_8/400/",
-        "check_interval_seconds": 1800,
-        "num_robots": 400
-    },
-    {
-        "experiment_config": "./config/experiment/IROS_2021/not_fixed/default/config_400.json",
-        "end_checking_program": "script.usr.id_test_end_check",
-        "repetitions": 1,
-        "output_file": "./log_dump/default/400/",
+        "output_file": "./log_dump/default_not_fix/400/",
         "check_interval_seconds": 1800,
         "num_robots": 400
     },
     {
         "experiment_config": "./config/experiment/IROS_2021/not_fixed/default/config_300.json",
         "end_checking_program": "script.usr.id_test_end_check",
-        "repetitions": 10,
-        "output_file": "./log_dump/bloom_32_8/300/",
+        "repetitions": 15,
+        "output_file": "./log_dump/default_not_fix/300/",
         "check_interval_seconds": 1200,
         "num_robots": 300
     },
@@ -27,7 +19,7 @@
         "experiment_config": "./config/experiment/IROS_2021/not_fixed/default/config_200.json",
         "end_checking_program": "script.usr.id_test_end_check",
         "repetitions": 10,
-        "output_file": "./log_dump/bloom_32_8/200/",
+        "output_file": "./log_dump/default_not_fix/200/",
         "check_interval_seconds": 600,
         "num_robots": 200
     },
@@ -35,7 +27,7 @@
         "experiment_config": "./config/experiment/IROS_2021/not_fixed/default/config_100.json",
         "end_checking_program": "script.usr.id_test_end_check",
         "repetitions": 10,
-        "output_file": "./log_dump/bloom_32_8/100/",
+        "output_file": "./log_dump/default_not_fix/100/",
         "check_interval_seconds": 300,
         "num_robots": 100
     }
