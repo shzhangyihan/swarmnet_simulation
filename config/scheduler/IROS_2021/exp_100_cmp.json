@@ -1,0 +1,18 @@
+[
+    {
+        "experiment_config": "./config/experiment/IROS_2021/fixed/bloom_128_12/config_100.json",
+        "end_checking_program": "script.usr.id_test_end_check",
+        "repetitions": 50,
+        "output_file": "./log_dump/bloom_128_12/100/",
+        "check_interval_seconds": 120,
+        "num_robots": 100
+    },
+    {
+        "experiment_config": "./config/experiment/IROS_2021/fixed/bloom_64_24/config_100.json",
+        "end_checking_program": "script.usr.id_test_end_check",
+        "repetitions": 50,
+        "output_file": "./log_dump/bloom_64_24/100/",
+        "check_interval_seconds": 120,
+        "num_robots": 100
+    }
+]

@@ -1,0 +1,10 @@
+[
+    {
+        "experiment_config": "./config/experiment/IROS_2021/fixed/bloom_64_4/config_100.json",
+        "end_checking_program": "script.usr.id_test_end_check",
+        "repetitions": 1,
+        "output_file": "./log_dump/bloom_64_4/100/",
+        "check_interval_seconds": 100,
+        "num_robots": 100
+    }
+]
