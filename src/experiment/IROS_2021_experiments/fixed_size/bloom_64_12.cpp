@@ -82,6 +82,16 @@ class Default_program : public Kilobot {
     int tx_log_counter;
 
    public:
+    void stop() {
+        std::vector<int> combined_filter(BLOOM_FILTER_SIZE, 0);
+        int total_filter_count = combine_filters(combined_filter);
+        std::cout << node_id << " stop " << id << " bloom ";
+        for (int i = 0; i < BLOOM_FILTER_SIZE; i++) {
+            std::cout << combined_filter[i] << " ";
+        }
+        std::cout << std::endl;
+    }
+
     int mem_size() {
         int mem_per_packet = PACKET_LENGTH;
         int mem_per_bloom = sizeof(float) + BLOOM_FILTER_SIZE / BYTE_SIZE;
@@ -429,11 +439,11 @@ class Default_program : public Kilobot {
             filter_total_count += combined_filter[j];
         }
 
-        std::cout << "Filter ";
-        for (int i = 0; i < BLOOM_FILTER_SIZE; i++) {
-            std::cout << combined_filter[i] << " ";
-        }
-        std::cout << std::endl;
+        // std::cout << "Filter ";
+        // for (int i = 0; i < BLOOM_FILTER_SIZE; i++) {
+        //     std::cout << combined_filter[i] << " ";
+        // }
+        // std::cout << std::endl;
         return filter_total_count;
     }
 
