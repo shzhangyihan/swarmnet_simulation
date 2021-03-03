@@ -169,6 +169,9 @@ void Arena::stop() {
     long sim_run_time = std::chrono::duration_cast<std::chrono::microseconds>(
                             sim_end_time - sim_start_time)
                             .count();
+    for (Node* n : node_vector) {
+        n->stop();
+    }
     std::cout << "Simulation runs for: " << sim_run_time << " μs" << std::endl;
     std::cout << "Time spent in physics checking: " << physics_checking_time
               << " μs" << std::endl;

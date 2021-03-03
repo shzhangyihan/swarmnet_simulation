@@ -5,7 +5,7 @@
 #include "../../../plugin/robot/kilobot.h"
 #include "math.h"
 
-#define ID_SIZE 10
+#define ID_SIZE 8
 
 #define LOG_ID()                                                            \
     std::cout << get_global_time() << "|" << node_id << ": " << id << " - " \
@@ -35,14 +35,6 @@ class Default_program : public Kilobot {
     int tx_log_counter;
 
    public:
-    void stop() {
-        std::cout << node_id << " stop " << id << " seen ";
-        for (int seen : seen_ids) {
-            std::cout << seen << " ";
-        }
-        std::cout << std::endl;
-    }
-
     void collision() { turn(rand() % 360 - 180); }
 
     void message_rx(packet_t packet, situated_sensing_t sensing) {

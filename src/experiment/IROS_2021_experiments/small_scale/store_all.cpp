@@ -5,7 +5,7 @@
 #include "../../../plugin/robot/kilobot.h"
 #include "math.h"
 
-#define ID_SIZE 10
+#define ID_SIZE 8
 
 #define LOG_ID()                                                            \
     std::cout << get_global_time() << "|" << node_id << ": " << id << " - " \

@@ -82,7 +82,10 @@ class Scheduler:
         for batch in self.config:
             print("Run experiment", batch["experiment_config"], "for", batch["repetitions"],"times")
             Checker = import_from(batch["end_checking_program"], "Checker")
-            for counter in range(batch["repetitions"]):
+            start_index = 0
+            if "start_index" in batch:
+                start_index = batch["start_index"]
+            for counter in range(start_index, start_index + batch["repetitions"]):
                 new_job = Job(self.counter, batch["experiment_config"] + " run " + str(counter), batch["experiment_config"],
                               batch["output_file"] + str(counter), Checker, int(batch["check_interval_seconds"]), batch)
                 new_job.start()

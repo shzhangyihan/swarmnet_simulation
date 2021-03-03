@@ -1,0 +1,29 @@
+[
+    {
+        "experiment_config": "./config/experiment/IROS_2021/small/store_all.json",
+        "end_checking_program": "script.usr.id_test_end_check",
+        "repetitions": 30,
+        "start_index": 20,
+        "output_file": "./log_dump/small/store_all/",
+        "check_interval_seconds": 60,
+        "num_robots": 100
+    },
+    {
+        "experiment_config": "./config/experiment/IROS_2021/small/default.json",
+        "end_checking_program": "script.usr.id_test_end_check",
+        "repetitions": 30,
+        "start_index": 20,
+        "output_file": "./log_dump/small/default/",
+        "check_interval_seconds": 60,
+        "num_robots": 100
+    },
+    {
+        "experiment_config": "./config/experiment/IROS_2021/small/store_all_new.json",
+        "end_checking_program": "script.usr.id_test_end_check",
+        "repetitions": 30,
+        "start_index": 20,
+        "output_file": "./log_dump/small/store_all_new/",
+        "check_interval_seconds": 60,
+        "num_robots": 100
+    }
+]

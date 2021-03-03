@@ -1,15 +1,14 @@
-#include <algorithm>
 #include <iostream>
-#include <set>
 
 #include "../../../plugin/robot/kilobot.h"
 #include "math.h"
 
-#define ID_SIZE 10
+#define ID_SIZE 8
 
 #define LOG_ID()                                                            \
     std::cout << get_global_time() << "|" << node_id << ": " << id << " - " \
               << id_size << " - " << 0 << "\n";
+// #define LOG_ID()
 
 namespace swarmnet_sim {
 
@@ -19,43 +18,32 @@ namespace swarmnet_sim {
 #define ID_MAX_LEN 2
 #define ID_SRC_SIZE_OFFSET 0
 #define ID_SRC_OFFSET (ID_SRC_SIZE_OFFSET + ID_SIZE_MAX_LEN)
+#define RND_CHECK_OFFSET (ID_SRC_OFFSET + ID_MAX_LEN)
 #define PACKET_LENGTH (ID_SRC_OFFSET + ID_MAX_LEN)
-// #define RND_CHECK_OFFSET (ID_SRC_OFFSET + ID_MAX_LEN)
 
 enum ID_field { src, rnd_c };
 
 class Default_program : public Kilobot {
     // Inherit the base constructures, make sure to include.
     using Kilobot::Kilobot;
-    // packet_t msg;
     int id_size;  // in terms of bits
     int id;
-    std::set<int> seen_ids;
     uint64_t tx_total;
     int tx_log_counter;
 
    public:
-    void stop() {
-        std::cout << node_id << " stop " << id << " seen ";
-        for (int seen : seen_ids) {
-            std::cout << seen << " ";
-        }
-        std::cout << std::endl;
+    void collision() {
+        float new_theta = rand() % 360 - 180;
+        turn(new_theta);
     }
-
-    void collision() { turn(rand() % 360 - 180); }
 
     void message_rx(packet_t packet, situated_sensing_t sensing) {
         // std::cout << "rx - " << node_id << " " << PACKET_LENGTH << "\n";
-
         int src_id = read_id(packet, src);
         int src_id_size = packet.payload[ID_SRC_SIZE_OFFSET];
 
-        int old_set_size = seen_ids.size();
-        seen_ids.insert(src_id);
-        if (old_set_size != seen_ids.size()) {
-            std::cout << "mem - " << get_global_time() << " " << node_id << " "
-                      << sizeof(int) * (seen_ids.size() + 2) << "\n";
+        if (src_id == 0 && src_id_size == 0) {
+            return;
         }
         if (id_size != 0 && src_id == id && src_id_size == id_size) {
             id_collided();
@@ -68,16 +56,19 @@ class Default_program : public Kilobot {
     }
 
     bool message_tx(packet_t* packet) {
-        set_id(packet, id, src);
-        packet->payload[ID_SRC_SIZE_OFFSET] = id_size % 256;
-        return true;
+        if (id_size > 0) {
+            set_id(packet, id, src);
+            packet->payload[ID_SRC_SIZE_OFFSET] = id_size % 256;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     void message_tx_success() {
         if (tx_log_counter < 15) {
             tx_log_counter++;
             tx_total += PACKET_LENGTH;
-
         } else {
             std::cout << "tx - " << node_id << " " << tx_total << "\n";
             tx_log_counter = 0;
@@ -103,25 +94,7 @@ class Default_program : public Kilobot {
     }
 
     int new_sample_id(int id_size) {
-        int new_id = 0;
-
-        int available_id_size = (uint64_t)pow(2, id_size);
-        if (seen_ids.size() >= available_id_size) {
-            new_id = (rand()) % available_id_size;
-        } else {
-            while (true) {
-                // reserve 0
-                new_id = (rand()) % available_id_size;
-                if (seen_ids.find(new_id) != seen_ids.end()) {
-                    // conflict, random new
-                    continue;
-                } else {
-                    // no conflict
-                    break;
-                }
-            }
-        }
-        return new_id;
+        return (rand()) % (uint64_t)pow(2, id_size);
     }
 
     void set_id(packet_t* in_msg, int in_id, ID_field field) {
@@ -130,8 +103,7 @@ class Default_program : public Kilobot {
         int offset;
 
         if (field == src) offset = ID_SRC_OFFSET;
-        // if (field == rnd_c) offset = RND_CHECK_OFFSET;
-        // if (field == dst) offset = ID_DST_OFFSET;
+        if (field == rnd_c) offset = RND_CHECK_OFFSET;
 
         while (remain != 0) {
             in_msg->payload[offset + index] = remain % 256;
@@ -151,15 +123,10 @@ class Default_program : public Kilobot {
             offset = ID_SRC_OFFSET;
             out_id_size = in_msg.payload[ID_SRC_SIZE_OFFSET];
         }
-        // if (field == rnd_c) {
-        //     offset = RND_CHECK_OFFSET;
-        //     out_id_size = ID_MAX_LEN * BYTE_SIZE;
-        // }
-        // if (field == dst) {
-        //     offset = ID_DST_OFFSET;
-        //     out_id_size = in_msg.payload[ID_DST_SIZE_OFFSET];
-        // }
-
+        if (field == rnd_c) {
+            offset = RND_CHECK_OFFSET;
+            out_id_size = ID_MAX_LEN * BYTE_SIZE;
+        }
         if (out_id_size == 0) {
             // no id assigned, treat as tmp id with full length
             out_id_size = ID_MAX_LEN * BYTE_SIZE;
@@ -174,18 +141,8 @@ class Default_program : public Kilobot {
     }
 
     void init() {
-        // std::cout << "init " << node_id << " at " << pos.x << ", " << pos.y
-        //           << "\n";
-        // if (node_id == 0) {
-        //     // seed
         id_size = ID_SIZE;
         id = this->new_sample_id(id_size);
-        std::cout << "mem - " << get_global_time() << " " << node_id << " "
-                  << sizeof(int) * (seen_ids.size() + 2) << "\n";
-        // } else {
-        //     id_size = 0;
-        //     id = 0;
-        // }
         color_t c;
         c.blue = 0;
         c.red = 255;
@@ -193,9 +150,11 @@ class Default_program : public Kilobot {
         change_color(c);
         turn(rand() % 360 - 180);
         go_forward();
-        LOG_ID();
-        tx_log_counter = 0;
+        std::cout << "mem - " << get_global_time() << " " << node_id << " "
+                  << sizeof(int) * 2 << "\n";
         tx_total = 0;
+        tx_log_counter = 0;
+        LOG_ID();
     }
 };
 

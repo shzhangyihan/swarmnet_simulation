@@ -1,11 +1,11 @@
 #include <algorithm>
 #include <iostream>
-#include <set>
+#include <map>
 
 #include "../../../plugin/robot/kilobot.h"
 #include "math.h"
 
-#define ID_SIZE 10
+#define ID_SIZE 8
 
 #define LOG_ID()                                                            \
     std::cout << get_global_time() << "|" << node_id << ": " << id << " - " \
@@ -22,6 +22,8 @@ namespace swarmnet_sim {
 #define PACKET_LENGTH (ID_SRC_OFFSET + ID_MAX_LEN)
 // #define RND_CHECK_OFFSET (ID_SRC_OFFSET + ID_MAX_LEN)
 
+#define ID_STORE_TIME 1200
+
 enum ID_field { src, rnd_c };
 
 class Default_program : public Kilobot {
@@ -30,19 +32,11 @@ class Default_program : public Kilobot {
     // packet_t msg;
     int id_size;  // in terms of bits
     int id;
-    std::set<int> seen_ids;
+    std::map<int, double> seen_ids;
     uint64_t tx_total;
     int tx_log_counter;
 
    public:
-    void stop() {
-        std::cout << node_id << " stop " << id << " seen ";
-        for (int seen : seen_ids) {
-            std::cout << seen << " ";
-        }
-        std::cout << std::endl;
-    }
-
     void collision() { turn(rand() % 360 - 180); }
 
     void message_rx(packet_t packet, situated_sensing_t sensing) {
@@ -52,10 +46,20 @@ class Default_program : public Kilobot {
         int src_id_size = packet.payload[ID_SRC_SIZE_OFFSET];
 
         int old_set_size = seen_ids.size();
-        seen_ids.insert(src_id);
+        double cur_time = get_local_time();
+        seen_ids[src_id] = cur_time;
+        for (auto it = seen_ids.cbegin(); it != seen_ids.cend();) {
+            if (cur_time - it->second > ID_STORE_TIME) {
+                seen_ids.erase(it++);
+            } else {
+                ++it;
+            }
+        }
         if (old_set_size != seen_ids.size()) {
             std::cout << "mem - " << get_global_time() << " " << node_id << " "
-                      << sizeof(int) * (seen_ids.size() + 2) << "\n";
+                      << (sizeof(int) + sizeof(double)) * (seen_ids.size()) +
+                             2 * sizeof(int)
+                      << "\n";
         }
         if (id_size != 0 && src_id == id && src_id_size == id_size) {
             id_collided();
