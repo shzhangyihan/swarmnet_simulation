@@ -1,3 +1,4 @@
 add_subdirectory(fixed_size)
 add_subdirectory(not_fixed)
 add_subdirectory(small_scale)
+add_subdirectory(small_scale_forward)

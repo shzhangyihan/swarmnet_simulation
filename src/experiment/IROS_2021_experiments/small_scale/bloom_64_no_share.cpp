@@ -1,7 +1,8 @@
-#include <stdlib.h>
+#include <string.h>
 
+#include <algorithm>
+#include <functional>
 #include <iostream>
-#include <random>
 
 #include "../../../plugin/robot/kilobot.h"
 #include "math.h"
@@ -11,7 +12,6 @@
 #define LOG_ID()                                                            \
     std::cout << get_global_time() << "|" << node_id << ": " << id << " - " \
               << id_size << " - " << 0 << "\n";
-// #define LOG_ID()
 
 #define RAND_FN() rand_r(&seed)
 #define TX_LOG_MAX 200
@@ -24,35 +24,57 @@ namespace swarmnet_sim {
 #define ID_MAX_LEN 2
 #define ID_SRC_SIZE_OFFSET 0
 #define ID_SRC_OFFSET (ID_SRC_SIZE_OFFSET + ID_SIZE_MAX_LEN)
-#define RND_CHECK_OFFSET (ID_SRC_OFFSET + ID_MAX_LEN)
 #define PACKET_LENGTH (ID_SRC_OFFSET + ID_MAX_LEN)
+// #define RND_CHECK_OFFSET (ID_SRC_OFFSET + ID_MAX_LEN)
+
+#define BLOOM_FILTER_SIZE 64
+typedef struct {
+    bool filter[BLOOM_FILTER_SIZE];
+    float timer;
+} Bloom_filter_t;
 
 enum ID_field { src, rnd_c };
 
 class Default_program : public Kilobot {
     // Inherit the base constructures, make sure to include.
     using Kilobot::Kilobot;
+    // packet_t msg;
     int id_size;  // in terms of bits
     int id;
+    Bloom_filter_t my_bloom_filter;
     uint64_t tx_total;
     int tx_log_counter;
-    // std::default_random_engine random_engine;
+    std::hash<int> hash_func;
     unsigned int seed;
 
    public:
-    void collision() {
-        float new_theta = RAND_FN() % 360 - 180;
-        turn(new_theta);
+    void stop() {
+        std::cout << node_id << " stop " << id << " bloom ";
+        for (int i = 0; i < BLOOM_FILTER_SIZE; i++) {
+            std::cout << my_bloom_filter.filter[i] << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    void collision() { turn(RAND_FN() % 360 - 180); }
+
+    int get_hash(int val) { return hash_func(val) % BLOOM_FILTER_SIZE; }
+
+    void add_my_bloom_filter(int src_id) {
+        int hash_val = get_hash(src_id);
+        if (my_bloom_filter.filter[hash_val] == false) {
+            my_bloom_filter.filter[hash_val] = true;
+            my_bloom_filter.timer = get_local_time();
+        }
     }
 
     void message_rx(packet_t packet, situated_sensing_t sensing) {
         // std::cout << "rx - " << node_id << " " << PACKET_LENGTH << "\n";
+
         int src_id = read_id(packet, src);
         int src_id_size = packet.payload[ID_SRC_SIZE_OFFSET];
+        add_my_bloom_filter(src_id);
 
-        if (src_id == 0 && src_id_size == 0) {
-            return;
-        }
         if (id_size != 0 && src_id == id && src_id_size == id_size) {
             id_collided();
         }
@@ -64,19 +86,16 @@ class Default_program : public Kilobot {
     }
 
     bool message_tx(packet_t* packet) {
-        if (id_size > 0) {
-            set_id(packet, id, src);
-            packet->payload[ID_SRC_SIZE_OFFSET] = id_size % 256;
-            return true;
-        } else {
-            return false;
-        }
+        set_id(packet, id, src);
+        packet->payload[ID_SRC_SIZE_OFFSET] = id_size % 256;
+        return true;
     }
 
     void message_tx_success() {
         if (tx_log_counter < TX_LOG_MAX) {
             tx_log_counter++;
             tx_total += PACKET_LENGTH;
+
         } else {
             std::cout << "tx - " << node_id << " " << tx_total << "\n";
             tx_log_counter = 0;
@@ -102,7 +121,30 @@ class Default_program : public Kilobot {
     }
 
     int new_sample_id(int id_size) {
-        return (rand()) % (uint64_t)pow(2, id_size);
+        int new_id = 0;
+        int available_id_size = (uint64_t)pow(2, id_size);
+        bool bloom_full = true;
+        for (int i = 0; i < BLOOM_FILTER_SIZE; i++) {
+            if (!my_bloom_filter.filter[i]) {
+                bloom_full = false;
+                break;
+            }
+        }
+        if (bloom_full) {
+            new_id = (rand()) % available_id_size;
+        } else {
+            while (true) {
+                // reserve 0
+                new_id = (rand()) % available_id_size;
+                int hash_val = get_hash(new_id);
+                if (my_bloom_filter.filter[hash_val]) {
+                    continue;
+                } else {
+                    break;
+                }
+            }
+        }
+        return new_id;
     }
 
     void set_id(packet_t* in_msg, int in_id, ID_field field) {
@@ -111,7 +153,8 @@ class Default_program : public Kilobot {
         int offset;
 
         if (field == src) offset = ID_SRC_OFFSET;
-        if (field == rnd_c) offset = RND_CHECK_OFFSET;
+        // if (field == rnd_c) offset = RND_CHECK_OFFSET;
+        // if (field == dst) offset = ID_DST_OFFSET;
 
         while (remain != 0) {
             in_msg->payload[offset + index] = remain % 256;
@@ -131,10 +174,15 @@ class Default_program : public Kilobot {
             offset = ID_SRC_OFFSET;
             out_id_size = in_msg.payload[ID_SRC_SIZE_OFFSET];
         }
-        if (field == rnd_c) {
-            offset = RND_CHECK_OFFSET;
-            out_id_size = ID_MAX_LEN * BYTE_SIZE;
-        }
+        // if (field == rnd_c) {
+        //     offset = RND_CHECK_OFFSET;
+        //     out_id_size = ID_MAX_LEN * BYTE_SIZE;
+        // }
+        // if (field == dst) {
+        //     offset = ID_DST_OFFSET;
+        //     out_id_size = in_msg.payload[ID_DST_SIZE_OFFSET];
+        // }
+
         if (out_id_size == 0) {
             // no id assigned, treat as tmp id with full length
             out_id_size = ID_MAX_LEN * BYTE_SIZE;
@@ -149,12 +197,23 @@ class Default_program : public Kilobot {
     }
 
     void init() {
-        // random_engine = std::default_random_engine(node_id);
-        // // offset the random seed
-        // for (int i = 0; i < node_id; i++) random_engine();
+        // std::cout << "init " << node_id << " at " << pos.x << ", " << pos.y
+        //           << "\n";
+        // if (node_id == 0) {
+        //     // seed
         seed = node_id;
         id_size = ID_SIZE;
         id = this->new_sample_id(id_size);
+        for (int i = 0; i < BLOOM_FILTER_SIZE; i++) {
+            my_bloom_filter.filter[i] = false;
+        }
+        int mem_per_bloom = sizeof(float) + BLOOM_FILTER_SIZE / BYTE_SIZE;
+        std::cout << "mem - " << get_global_time() << " " << node_id << " "
+                  << sizeof(int) * 2 + mem_per_bloom << "\n";
+        // } else {
+        //     id_size = 0;
+        //     id = 0;
+        // }
         color_t c;
         c.blue = 0;
         c.red = 255;
@@ -162,11 +221,9 @@ class Default_program : public Kilobot {
         change_color(c);
         turn(RAND_FN() % 360 - 180);
         go_forward();
-        std::cout << "mem - " << get_global_time() << " " << node_id << " "
-                  << sizeof(int) * 2 << "\n";
-        tx_total = 0;
-        tx_log_counter = 0;
         LOG_ID();
+        tx_log_counter = 0;
+        tx_total = 0;
     }
 };
 

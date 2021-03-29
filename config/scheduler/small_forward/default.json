@@ -1,0 +1,11 @@
+[
+    {
+        "experiment_config": "./config/experiment/IROS_2021/small_forward/default.json",
+        "end_checking_program": "script.usr.id_test_end_check",
+        "repetitions": 50,
+        "start_index": 0,
+        "output_file": "./log_dump/small/default_forward/",
+        "check_interval_seconds": 60,
+        "num_robots": 100
+    }
+]

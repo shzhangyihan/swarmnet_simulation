@@ -5,7 +5,7 @@
     "experiment_duration": 900000000,
     "motion_log": "./motion_log/default_log.txt",
     "robot_placement": "./build/src/experiment/comm_test/libcomm_test_placement.so",
-    "robot_program": "./build/src/experiment/IROS_2021_experiments/small_scale/libsmall_store_all.so",
+    "robot_program": "./build/src/experiment/IROS_2021_experiments/small_scale_forward/libsmall_bloom_64_no_share_forward.so",
     "physics_engine": "./build/src/plugin/engine/improved_analytical_engine/libimproved_analytical_engine.so",
     "comm_medium": "./build/src/plugin/medium/kilobot_CSMA/libkilobot_medium.so"
 }

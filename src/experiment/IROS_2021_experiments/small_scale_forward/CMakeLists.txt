@@ -1,0 +1,8 @@
+add_library(small_default_forward SHARED default.cpp)
+target_link_libraries(small_default_forward kilobot)
+add_library(small_bloom_64_12_forward SHARED bloom_64_12.cpp)
+target_link_libraries(small_bloom_64_12_forward kilobot)
+add_library(small_store_all_forward SHARED store_all.cpp)
+target_link_libraries(small_store_all_forward kilobot)
+add_library(small_bloom_64_no_share_forward SHARED bloom_64_no_share.cpp)
+target_link_libraries(small_bloom_64_no_share_forward kilobot)

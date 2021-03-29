@@ -26,7 +26,8 @@ namespace swarmnet_sim {
 #define ID_MAX_LEN 2
 #define ID_SRC_SIZE_OFFSET 0
 #define ID_SRC_OFFSET (ID_SRC_SIZE_OFFSET + ID_SIZE_MAX_LEN)
-#define TTL_OFFSET (ID_SRC_OFFSET + ID_MAX_LEN)
+#define RND_CHECK_OFFSET (ID_SRC_OFFSET + ID_MAX_LEN)
+#define TTL_OFFSET (RND_CHECK_OFFSET + ID_MAX_LEN)
 #define TTL_SIZE 1
 #define BLOOM_FILTER_OFFSET (TTL_OFFSET + TTL_SIZE)
 
@@ -38,7 +39,7 @@ namespace swarmnet_sim {
 #define BLOOM_FILTER_TIME_OUT 300
 #define TX_TIMEOUT_MAX 30
 
-// enum ID_field { src, rnd_c };
+enum ID_field { src, rnd_c };
 
 typedef struct {
     bool filter[BLOOM_FILTER_SIZE];
@@ -71,6 +72,7 @@ class Default_program : public Kilobot {
     using Kilobot::Kilobot;
     int id_size;  // in terms of bits
     int id;
+    int rnd_checker;
     Bloom_filter_buf_t rx_bloom_buf;
     Bloom_filter_t my_bloom_filter;
     int filter_true_count;
@@ -260,41 +262,50 @@ class Default_program : public Kilobot {
     }
 
     void message_rx(packet_t packet, situated_sensing_t sensing) {
-        int src_id = read_id(packet);
+        int src_id = read_id(packet, src);
         int src_id_size = packet.payload[ID_SRC_SIZE_OFFSET];
         int ttl = packet.payload[TTL_OFFSET];
+        int in_checker = read_id(packet, rnd_c);
 
         check_filter_time_out();
 
-        // with only id, no bloom filter, no need to forward
-        if (ttl == MAX_TTL + 1) {
-            // std::cout << "worked!!!" << "\n";
-            // std::cout << "rx - " << node_id << " " << 3 << "\n";
-            react_to_rx_id(src_id, src_id_size);
+        if (in_checker == rnd_checker) {
+            // from self, do nothing
             return;
         }
-
-        // std::cout << "rx - " << node_id << " " << PACKET_LENGTH << "\n";
-
-        // last hop
-        if (ttl == 0) {
-            // add to filter buffer
-            // std::cout << node_id << " add bloom from "
-            //           << (int)packet.payload[PACKET_LENGTH] << " - " <<
-            //           src_id
-            //           << "\n"
-            //           << std::flush;
-            // check if bloom filter is empty
-
-            add_bloom_buffer(packet);
-        }
         add_to_forward(packet);
+        add_bloom_buffer(packet);
+        react_to_rx_id(src_id, src_id_size);
 
-        // first hop
-        if (ttl == MAX_TTL) {
-            // check id collision
-            react_to_rx_id(src_id, src_id_size);
-        }
+        // // with only id, no bloom filter, no need to forward
+        // if (ttl == MAX_TTL + 1) {
+        //     // std::cout << "worked!!!" << "\n";
+        //     // std::cout << "rx - " << node_id << " " << 3 << "\n";
+        //     react_to_rx_id(src_id, src_id_size);
+        //     return;
+        // }
+
+        // // std::cout << "rx - " << node_id << " " << PACKET_LENGTH << "\n";
+
+        // // last hop
+        // if (ttl == 0) {
+        //     // add to filter buffer
+        //     // std::cout << node_id << " add bloom from "
+        //     //           << (int)packet.payload[PACKET_LENGTH] << " - " <<
+        //     //           src_id
+        //     //           << "\n"
+        //     //           << std::flush;
+        //     // check if bloom filter is empty
+
+        //     add_bloom_buffer(packet);
+        // }
+        // add_to_forward(packet);
+
+        // // first hop
+        // if (ttl == MAX_TTL) {
+        //     // check id collision
+        //     react_to_rx_id(src_id, src_id_size);
+        // }
 
         int new_mem_size = mem_size();
         if (cur_mem_size != new_mem_size) {
@@ -339,10 +350,10 @@ class Default_program : public Kilobot {
             prev_tx_long = true;
             return true;
         } else if (tx_count >= tx_timeout) {
-            set_id(packet, id);
+            set_id(packet, id, src);
+            set_id(packet, rnd_checker, rnd_c);
             packet->payload[ID_SRC_SIZE_OFFSET] = id_size % 256;
             packet->payload[TTL_OFFSET] = MAX_TTL;
-            packet->payload[PACKET_LENGTH] = node_id;  // HACK for debug
             unsigned char filter_byte = 0;
             for (int i = 0; i < BLOOM_FILTER_SIZE; i++) {
                 int offset = i / BYTE_SIZE;
@@ -360,19 +371,28 @@ class Default_program : public Kilobot {
             return true;
         } else {
             tx_count++;
-
-            // std::cout << "send STUFF!" << "\n";
-            set_id(packet, id);
+            set_id(packet, id, src);
+            set_id(packet, rnd_checker, rnd_c);
             packet->payload[ID_SRC_SIZE_OFFSET] = id_size % 256;
-            packet->payload[TTL_OFFSET] = MAX_TTL + 1;
-            packet->payload[PACKET_LENGTH] = node_id;  // HACK for debug
-            prev_tx_long = false;
+            packet->payload[TTL_OFFSET] = 0;
+            unsigned char filter_byte = 0;
+            for (int i = 0; i < BLOOM_FILTER_SIZE; i++) {
+                int offset = i / BYTE_SIZE;
+                int index = i % BYTE_SIZE;
+                filter_byte = filter_byte << 1;
+                if (my_bloom_filter.filter[i]) filter_byte += 1;
+                if (index == BYTE_SIZE - 1) {
+                    packet->payload[BLOOM_FILTER_OFFSET + offset] = filter_byte;
+                    filter_byte = 0;
+                }
+            }
+            prev_tx_long = true;
             return true;
         }
     }
 
     void message_tx_success() {
-        if (tx_log_counter < BLOOM_FILTER_TIME_OUT) {
+        if (tx_log_counter < TX_LOG_MAX) {
             tx_log_counter++;
             if (prev_tx_long) {
                 tx_total += PACKET_LENGTH;
@@ -457,6 +477,8 @@ class Default_program : public Kilobot {
     }
 
     int new_sample_id(int id_size) {
+        rnd_checker = rand() % (uint64_t)pow(2, ID_MAX_LEN * BYTE_SIZE);
+
         int new_id = 0;
         // Bloom_filter_t combined_filter = combine_filters();
         std::vector<int> combined_filter(BLOOM_FILTER_SIZE, 0);
@@ -498,12 +520,14 @@ class Default_program : public Kilobot {
         //           << std::flush;
     }
 
-    void set_id(packet_t* in_msg, int in_id) {
+    void set_id(packet_t* in_msg, int in_id, ID_field field) {
         int remain = in_id;
         int index = 0;
         int offset;
 
-        offset = ID_SRC_OFFSET;
+        if (field == src) offset = ID_SRC_OFFSET;
+        if (field == rnd_c) offset = RND_CHECK_OFFSET;
+        // if (field == dst) offset = ID_DST_OFFSET;
 
         while (remain != 0) {
             in_msg->payload[offset + index] = remain % 256;
@@ -512,15 +536,25 @@ class Default_program : public Kilobot {
         }
     }
 
-    int read_id(packet_t in_msg) {
+    int read_id(packet_t in_msg, ID_field field) {
         int out_id = 0;
         int index = 0;
         int offset;
         int out_id_size;
         int out_id_byte_size;
 
-        offset = ID_SRC_OFFSET;
-        out_id_size = in_msg.payload[ID_SRC_SIZE_OFFSET];
+        if (field == src) {
+            offset = ID_SRC_OFFSET;
+            out_id_size = in_msg.payload[ID_SRC_SIZE_OFFSET];
+        }
+        if (field == rnd_c) {
+            offset = RND_CHECK_OFFSET;
+            out_id_size = ID_MAX_LEN * BYTE_SIZE;
+        }
+        // if (field == dst) {
+        //     offset = ID_DST_OFFSET;
+        //     out_id_size = in_msg.payload[ID_DST_SIZE_OFFSET];
+        // }
 
         if (out_id_size == 0) {
             // no id assigned, treat as tmp id with full length

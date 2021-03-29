@@ -11,6 +11,9 @@
     std::cout << get_global_time() << "|" << node_id << ": " << id << " - " \
               << id_size << " - " << 0 << "\n";
 
+#define RAND_FN() rand_r(&seed)
+#define TX_LOG_MAX 200
+
 namespace swarmnet_sim {
 
 #define MSG_BYTES 30
@@ -33,6 +36,7 @@ class Default_program : public Kilobot {
     std::set<int> seen_ids;
     uint64_t tx_total;
     int tx_log_counter;
+    unsigned int seed;
 
    public:
     void stop() {
@@ -43,7 +47,7 @@ class Default_program : public Kilobot {
         std::cout << std::endl;
     }
 
-    void collision() { turn(rand() % 360 - 180); }
+    void collision() { turn(RAND_FN() % 360 - 180); }
 
     void message_rx(packet_t packet, situated_sensing_t sensing) {
         // std::cout << "rx - " << node_id << " " << PACKET_LENGTH << "\n";
@@ -74,7 +78,7 @@ class Default_program : public Kilobot {
     }
 
     void message_tx_success() {
-        if (tx_log_counter < 15) {
+        if (tx_log_counter < TX_LOG_MAX) {
             tx_log_counter++;
             tx_total += PACKET_LENGTH;
 
@@ -178,6 +182,7 @@ class Default_program : public Kilobot {
         //           << "\n";
         // if (node_id == 0) {
         //     // seed
+        seed = node_id;
         id_size = ID_SIZE;
         id = this->new_sample_id(id_size);
         std::cout << "mem - " << get_global_time() << " " << node_id << " "
@@ -191,7 +196,7 @@ class Default_program : public Kilobot {
         c.red = 255;
         c.green = 0;
         change_color(c);
-        turn(rand() % 360 - 180);
+        turn(RAND_FN() % 360 - 180);
         go_forward();
         LOG_ID();
         tx_log_counter = 0;

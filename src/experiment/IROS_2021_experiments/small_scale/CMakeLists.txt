@@ -6,3 +6,6 @@ add_library(small_store_all SHARED store_all.cpp)
 target_link_libraries(small_store_all kilobot)
 add_library(small_store_all_new SHARED store_all_new.cpp)
 target_link_libraries(small_store_all_new kilobot)
+
+add_library(small_bloom_64_no_share SHARED bloom_64_no_share.cpp)
+target_link_libraries(small_bloom_64_no_share kilobot)

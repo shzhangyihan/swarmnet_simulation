@@ -6,7 +6,7 @@ import json
 from multiprocessing import Process, Value
 
 exec_path = "./build/src/core/simulation"
-max_process_pool = 10
+max_process_pool = 8
 pool_wait_time = 30
 # wait between starts, for different random seeds
 wait_interval = 1
