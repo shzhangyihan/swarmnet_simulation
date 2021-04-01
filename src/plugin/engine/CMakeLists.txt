@@ -2,5 +2,4 @@ add_subdirectory(default_engine)
 add_subdirectory(null_engine)
 add_subdirectory(pass_through_engine)
 add_subdirectory(analytical_engine)
-add_subdirectory(improved_analytical_engine)
 

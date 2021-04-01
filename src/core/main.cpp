@@ -23,6 +23,5 @@ int main(int argc, char *argv[]) {
     swarmnet_sim::Arena arena(conf);
     arena_ptr = &arena;
     signal(SIGINT, signalHandler);
-
     arena.run();
 }

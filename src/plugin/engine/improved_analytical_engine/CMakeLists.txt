@@ -1,2 +1,0 @@
-add_library(improved_analytical_engine SHARED improved_analytical_engine.cpp)
-target_link_libraries(improved_analytical_engine collision_event node config arena event_queue physics_2d)

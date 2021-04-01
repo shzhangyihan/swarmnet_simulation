@@ -1,4 +1,0 @@
-add_library(moving_comm_test SHARED moving_comm_test.cpp)
-add_library(moving_comm_test_placement SHARED moving_comm_test_placement.cpp)
-
-target_link_libraries(moving_comm_test kilobot)

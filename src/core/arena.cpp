@@ -81,7 +81,6 @@ void Arena::log_node(double time, int id) {
 
 void Arena::run() {
     // start the sim
-    // int counter = 0;
     double prev_status_log_time = 0;
     std::cout << physics_engine->status_report();
     std::cout << comm_medium->status_report();
@@ -104,7 +103,7 @@ void Arena::run() {
         Event* next_event = this->event_queue.top();
         double next_event_time = next_event->get_exec_time();
         // std::cout << "current time " << sim_time << " next event time "
-        // << next_event_time << std::endl;
+        //           << next_event_time << std::endl;
         if (next_event_time - sim_time == 0) {
             // don't need to check physics
             this->event_queue.pop();
@@ -235,7 +234,7 @@ void Arena::init_nodes() {
         log_node(i);
     }
     delete placement;
-    std::cout << "Init finished" << std::endl << std::flush;
+    std::cout << "Robot init finished" << std::endl << std::flush;
 }
 
 void Arena::add_event(Event* event) { this->event_queue.push(event); }

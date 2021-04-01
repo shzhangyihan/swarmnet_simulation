@@ -155,10 +155,8 @@ void Kilo_medium::end_rx(int rx_node_id) {
     }
 }
 
-void Kilo_medium::init() {}
-
-std::string Kilo_medium::status_report() {
-    return "Medium tx_failed_count " + std::to_string(tx_failed_count) + "\n";
+void Kilo_medium::init() {
+    std::cout << "Kilo_medium init finished" << std::endl;
 }
 
 Kilo_medium::Kilo_medium(void* arena) {

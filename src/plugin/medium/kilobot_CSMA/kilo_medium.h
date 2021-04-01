@@ -31,7 +31,6 @@ class Kilo_medium : public Medium {
                   situated_sensing_t sensing);
     void end_rx(int rx_node_id);
     void init();
-    std::string status_report();
     Kilo_medium(void* arena);
 
    protected:
