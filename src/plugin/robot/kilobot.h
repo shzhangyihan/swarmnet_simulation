@@ -15,6 +15,7 @@ namespace swarmnet_sim {
 #define MIN_CLOCK_SKEW (-0.1)
 // #define MAX_PACKET_BYTE 9
 #define MAX_PACKET_BYTE 100
+#define LOOP_PERIOD_SECOND 0.1
 
 typedef struct packet {
     unsigned char payload[MAX_PACKET_BYTE];
@@ -39,12 +40,14 @@ class Kilobot : public Node {
     bool message_tx_wrapper(packet_t* packet);
     void message_tx_success_wrapper();
     void init_wrapper();
+    void loop_wrapper();
 
     virtual void collision();
     virtual void message_rx(packet_t packet, situated_sensing_t sensing);
     virtual bool message_tx(packet_t* packet);
     virtual void message_tx_success();
     virtual void init();
+    virtual void loop();
 
     void stop();
     void go_forward();

@@ -13,6 +13,11 @@ class Default_program : public Kilobot {
    public:
     void collision() { turn(rand_r(&rand_seed) % 360 - 180); }
 
+    void loop() {
+        std::cout << "Robot " << node_id << " loop at time "
+                  << get_global_time() << std::endl;
+    }
+
     void message_rx(packet_t packet, situated_sensing_t sensing) {
         int rx_counter = packet.payload[1] * 255 + packet.payload[2];
         std::cout << "Robot " << node_id << " rx at time " << get_global_time()

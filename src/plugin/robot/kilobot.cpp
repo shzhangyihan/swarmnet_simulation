@@ -7,6 +7,7 @@
 
 #include "../../core/arena.h"
 #include "../../util/lib_loader.h"
+#include "../event/kilobot/loop_event.h"
 #include "../event/kilobot/rx_event.h"
 #include "../event/kilobot/tx_event.h"
 #include "../event/kilobot/update_state_event.h"
@@ -17,11 +18,6 @@ void Kilobot::collision_wrapper() {
     update_physical_state();
     this->collision();
     if (this->physical_state.changed) {
-        // if (node_id == 17 && get_global_time() > 12 && get_global_time() <
-        // 17)
-        //     std::cout << get_global_time() << " user state update" <<
-        //     std::endl
-        //               << std::flush;
         this->add_state_change_event();
     }
 }
@@ -63,6 +59,27 @@ void Kilobot::init_wrapper() {
     TX_start_event* tx_start_event = new TX_start_event(
         arena_ptr, arena_ptr->get_sim_time() + tx_delay, node_id);
     this->add_event(tx_start_event);
+    double loop_start_delay =
+        (double)std::rand() / RAND_MAX * LOOP_PERIOD_SECOND;
+    Loop_event* loop_event =
+        new Loop_event(arena_ptr, loop_start_delay, node_id);
+    this->add_event(loop_event);
+}
+
+void Kilobot::loop_wrapper() {
+    update_physical_state();
+    this->loop();
+    if (this->physical_state.changed) {
+        this->add_state_change_event();
+    }
+    if (this->with_control_loop) {
+        Arena* arena_ptr = (Arena*)arena;
+        double next_loop_time =
+            this->local_time_to_global_time(LOOP_PERIOD_SECOND);
+        Loop_event* loop_event = new Loop_event(
+            arena_ptr, arena_ptr->get_sim_time() + next_loop_time, node_id);
+        arena_ptr->add_event(loop_event);
+    }
 }
 
 void Kilobot::update_physical_state() {
@@ -125,10 +142,6 @@ Kilobot::Kilobot(void* arena, int node_id, position2d_t pos)
     this->local_clock_skew = (double)std::rand() / (double)RAND_MAX *
                                  (MAX_CLOCK_SKEW - MIN_CLOCK_SKEW) +
                              MIN_CLOCK_SKEW;
-    // std::cout << "offset " << local_clock_offset << " skew " <<
-    // local_clock_skew
-    //           << std::endl
-    //           << std::flush;
 }
 
 void Kilobot::collision() {}
@@ -140,5 +153,7 @@ bool Kilobot::message_tx(packet_t* packet) { return false; }
 void Kilobot::message_tx_success() {}
 
 void Kilobot::init() {}
+
+void Kilobot::loop() { this->with_control_loop = false; }
 
 }  // namespace swarmnet_sim
