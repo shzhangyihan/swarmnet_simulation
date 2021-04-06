@@ -35,7 +35,7 @@ class Node {
     void set_skip_logging_flag(bool skip_logging_flag);
     void change_theta(double theta_delta);
     void add_event(Event* event);
-    virtual void stop();
+    virtual void end();
     virtual void init_wrapper();
     virtual void collision_wrapper();
 
