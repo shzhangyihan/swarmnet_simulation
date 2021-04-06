@@ -53,8 +53,8 @@ void Node::change_theta(double theta_delta) {
 
 void Node::add_event(Event* event) { ((Arena*)this->arena)->add_event(event); }
 
-void Node::stop() {
-    std::cout << node_id << " stop" << std::endl << std::flush;
+void Node::end() {
+    std::cout << node_id << " end" << std::endl << std::flush;
     this->velocity = 0;
 }
 

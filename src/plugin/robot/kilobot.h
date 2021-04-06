@@ -46,6 +46,7 @@ class Kilobot : public Node {
     virtual void message_tx_success();
     virtual void init();
 
+    void stop();
     void go_forward();
     void go_forward(double seconds);
     void change_color(color_t color);

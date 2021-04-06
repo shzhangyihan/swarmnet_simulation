@@ -169,7 +169,7 @@ void Arena::stop() {
                             sim_end_time - sim_start_time)
                             .count();
     for (Node* n : node_vector) {
-        n->stop();
+        n->end();
     }
     std::cout << "Simulation runs for: " << sim_run_time << " μs" << std::endl;
     std::cout << "Time spent in physics checking: " << physics_checking_time

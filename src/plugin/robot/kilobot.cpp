@@ -82,6 +82,11 @@ void Kilobot::add_state_change_event() {
     this->add_event(event);
 }
 
+void Kilobot::stop() {
+    this->physical_state.changed = true;
+    this->physical_state.velocity = 0;
+}
+
 void Kilobot::go_forward() {
     this->physical_state.changed = true;
     this->physical_state.velocity = VELOCITY_PER_SECOND;
