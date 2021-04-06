@@ -38,6 +38,7 @@ class Node {
     virtual void end();
     virtual void init_wrapper();
     virtual void collision_wrapper();
+    virtual void loop_wrapper();
 
     Node(void* arena, int node_id, position2d_t pos);
 
@@ -50,6 +51,7 @@ class Node {
     bool collision_flag;
     bool skip_logging_flag;
     void* arena;
+    bool with_control_loop;
 };
 
 }  // namespace swarmnet_sim

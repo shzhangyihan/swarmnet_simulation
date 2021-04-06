@@ -13,6 +13,7 @@ Node::Node(void* arena, int node_id, position2d_t pos) {
     this->color = {.red = 255, .green = 255, .blue = 255};
     this->collision_flag = false;
     this->skip_logging_flag = false;
+    this->with_control_loop = true;
 }
 
 position2d_t Node::get_position() const { return this->pos; }
@@ -61,5 +62,7 @@ void Node::end() {
 void Node::collision_wrapper() {}
 
 void Node::init_wrapper() {}
+
+void Node::loop_wrapper() { this->with_control_loop = false; }
 
 }  // namespace swarmnet_sim
