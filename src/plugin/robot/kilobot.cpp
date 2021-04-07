@@ -17,7 +17,7 @@ namespace swarmnet_sim {
 void Kilobot::collision_wrapper() {
     update_physical_state();
     this->collision();
-    if (this->physical_state.changed) {
+    if (if_physical_state_changed()) {
         this->add_state_change_event();
     }
 }
@@ -25,7 +25,7 @@ void Kilobot::collision_wrapper() {
 void Kilobot::message_rx_wrapper(packet_t packet, situated_sensing_t sensing) {
     update_physical_state();
     this->message_rx(packet, sensing);
-    if (this->physical_state.changed) {
+    if (if_physical_state_changed()) {
         this->add_state_change_event();
     }
 }
@@ -33,7 +33,7 @@ void Kilobot::message_rx_wrapper(packet_t packet, situated_sensing_t sensing) {
 bool Kilobot::message_tx_wrapper(packet_t* packet) {
     update_physical_state();
     bool ret = this->message_tx(packet);
-    if (this->physical_state.changed) {
+    if (if_physical_state_changed()) {
         this->add_state_change_event();
     }
     return ret;
@@ -42,7 +42,7 @@ bool Kilobot::message_tx_wrapper(packet_t* packet) {
 void Kilobot::message_tx_success_wrapper() {
     update_physical_state();
     this->message_tx_success();
-    if (this->physical_state.changed) {
+    if (if_physical_state_changed()) {
         this->add_state_change_event();
     }
 }
@@ -50,7 +50,7 @@ void Kilobot::message_tx_success_wrapper() {
 void Kilobot::init_wrapper() {
     update_physical_state();
     this->init();
-    if (this->physical_state.changed) {
+    if (if_physical_state_changed()) {
         this->add_state_change_event();
     }
     Arena* arena_ptr = (Arena*)arena;
@@ -69,7 +69,7 @@ void Kilobot::init_wrapper() {
 void Kilobot::loop_wrapper() {
     update_physical_state();
     this->loop();
-    if (this->physical_state.changed) {
+    if (if_physical_state_changed()) {
         this->add_state_change_event();
     }
     if (this->with_control_loop) {
@@ -87,6 +87,17 @@ void Kilobot::update_physical_state() {
     this->physical_state.color = this->color;
     this->physical_state.velocity = this->velocity;
     this->physical_state.changed = false;
+    this->old_physical_state = this->physical_state;
+}
+
+bool Kilobot::if_physical_state_changed() {
+    if (!(this->physical_state.pos == this->old_physical_state.pos))
+        return true;
+    if (!(this->physical_state.color == this->old_physical_state.color))
+        return true;
+    if (this->physical_state.velocity != this->old_physical_state.velocity)
+        return true;
+    return false;
 }
 
 void Kilobot::add_state_change_event() {
@@ -100,24 +111,24 @@ void Kilobot::add_state_change_event() {
 }
 
 void Kilobot::stop() {
-    this->physical_state.changed = true;
+    // this->physical_state.changed = true;
     this->physical_state.velocity = 0;
 }
 
 void Kilobot::go_forward() {
-    this->physical_state.changed = true;
+    // this->physical_state.changed = true;
     this->physical_state.velocity = VELOCITY_PER_SECOND;
 }
 
 void Kilobot::go_forward(double seconds) {}
 
 void Kilobot::turn(double angle) {
-    this->physical_state.changed = true;
+    // this->physical_state.changed = true;
     this->physical_state.pos.theta = fmod(this->pos.theta + angle + 360, 360);
 }
 
 void Kilobot::change_color(color_t color) {
-    this->physical_state.changed = true;
+    // this->physical_state.changed = true;
     this->physical_state.color = color;
 }
 

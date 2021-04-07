@@ -58,12 +58,14 @@ class Kilobot : public Node {
     double get_local_time();
     double local_time_to_global_time(double local_time);
     void update_physical_state();
+    bool if_physical_state_changed();
     void add_state_change_event();
 
     Kilobot(void* arena, int node_id, position2d_t pos);
 
    private:
     physical_state_t physical_state;
+    physical_state_t old_physical_state;
     double local_clock_offset;
     double local_clock_skew;
 };
