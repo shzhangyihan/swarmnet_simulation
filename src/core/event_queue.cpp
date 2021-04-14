@@ -44,6 +44,8 @@ Event* Event_queue::top() {
 
 bool Event_queue::empty() const { return this->queue.empty(); }
 
+int Event_queue::size() const { return this->queue.size(); }
+
 long Event_queue::get_queue_operation_time() const {
     return this->queue_operation_time;
 }

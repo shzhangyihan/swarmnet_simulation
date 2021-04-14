@@ -1,0 +1,12 @@
+{
+    "robots": 5,
+    "arena_max_x": 100,
+    "arena_max_y": 100,
+    "experiment_duration": 40,
+    "rand_seed": 100,
+    "motion_log": "./motion_log/default_log.txt",
+    "robot_placement": "./build/src/experiment/shapebugs/libshapebugs_placement.so",
+    "robot_program": "./build/src/experiment/shapebugs/libshapebugs_trilateration.so",
+    "physics_engine": "./build/src/plugin/engine/analytical_engine/libanalytical_engine.so",
+    "comm_medium": "./build/src/plugin/medium/kilobot_CSMA/libkilobot_medium.so"
+}
