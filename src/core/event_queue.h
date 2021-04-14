@@ -14,6 +14,8 @@ class Event_queue {
     Event *pop();
     Event *top();
     bool empty() const;
+    int size() const;
+
     long get_queue_operation_time() const;
 
    private:
