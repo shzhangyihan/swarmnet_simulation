@@ -11,6 +11,7 @@
 #include "node.h"
 
 #define LOG_STATUS_INTERVAL 100
+#define MAX_EMPTY_EVENT_COUNT 10
 
 namespace swarmnet_sim {
 class Arena {

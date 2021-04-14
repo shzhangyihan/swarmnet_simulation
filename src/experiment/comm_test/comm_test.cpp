@@ -54,7 +54,6 @@ class Default_program : public Kilobot {
         change_color(c);
         tx_counter = 0;
         rand_seed = node_id;
-        turn(rand_r(&rand_seed) % 360 - 180);
         go_forward();
     }
 };

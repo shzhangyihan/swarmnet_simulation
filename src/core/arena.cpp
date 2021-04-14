@@ -110,12 +110,21 @@ void Arena::run() {
 
     sim_start_time = std::chrono::high_resolution_clock::now();
     double max_time = this->conf.get_duration();
+    int consecutive_empty_event_count = 0;
     // std::cout << "start run" << std::endl;
     Event* end_event = new Event(this, max_time, -1, -1);
     while (this->sim_time < max_time) {
+        // std::cout << "size " << this->event_queue.size() << std::endl;
         if (this->event_queue.empty()) {
+            std::cout << "empty? " << consecutive_empty_event_count
+                      << std::endl;
+            consecutive_empty_event_count++;
+            if (consecutive_empty_event_count > MAX_EMPTY_EVENT_COUNT) break;
             this->event_queue.push(end_event);
+            continue;
         }
+
+        consecutive_empty_event_count = 0;
 
         if (this->sim_time - prev_status_log_time >= LOG_STATUS_INTERVAL) {
             std::cout << physics_engine->status_report();

@@ -1,0 +1,9 @@
+add_library(shapebugs_placement SHARED shapebugs_placement.cpp)
+add_library(shapebugs_trilateration SHARED shapebugs_trilateration.cpp)
+target_link_libraries(shapebugs_trilateration kilobot)
+
+add_library(shapebugs_movement SHARED shapebugs_movement.cpp)
+target_link_libraries(shapebugs_movement kilobot)
+
+add_library(shapebugs_check_shape SHARED shapebugs_check_shape.cpp)
+target_link_libraries(shapebugs_check_shape kilobot)
