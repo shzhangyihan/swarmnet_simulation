@@ -38,17 +38,19 @@ void Arena::log_node(int id) {
     position2d_t pos = node->get_position();
     color_t color = node->get_color();
     // add time
-    log = log + std::to_string(this->sim_time) + " ";
+    log += std::to_string(this->sim_time) + "\t";
     // add id
-    log = log + std::to_string(id) + " ";
+    log += std::to_string(id) + "\t";
     // add position
-    log = log + std::to_string(pos.x) + " " + std::to_string(pos.y) + " " +
-          std::to_string(pos.theta) + " ";
+    log += std::to_string(pos.x) + "\t" + std::to_string(pos.y) + "\t" +
+           std::to_string(pos.theta) + "\t";
     // add speed
-    log = log + std::to_string(node->get_velocity()) + " ";
+    log += std::to_string(node->get_velocity()) + "\t";
     // add color
-    log = log + std::to_string(color.red) + " " + std::to_string(color.green) +
-          " " + std::to_string(color.blue) + "\n";
+    log += std::to_string(color.red) + "\t" + std::to_string(color.green) +
+           "\t" + std::to_string(color.blue) + "\t";
+    // add node log
+    log += "\"" + node->get_internal_log() + "\"\n";
 
     motion_log->log(log);
 }
@@ -62,21 +64,42 @@ void Arena::log_node(double time, int id) {
     if (node->get_skip_logging_flag()) return;
 
     // add time
-    log = log + std::to_string(time) + " ";
+    log += std::to_string(time) + "\t";
     // add id
-    log = log + std::to_string(id) + " ";
+    log += std::to_string(id) + "\t";
     // add position
-    log = log + std::to_string(pos.x) + " " + std::to_string(pos.y) + " " +
-          std::to_string(pos.theta) + " ";
+    log += std::to_string(pos.x) + "\t" + std::to_string(pos.y) + "\t" +
+           std::to_string(pos.theta) + "\t";
     // add speed
     double velocity = node->get_velocity();
     if (node->get_collision_flag()) velocity = 0;
-    log = log + std::to_string(velocity) + " ";
+    log += std::to_string(velocity) + "\t";
     // add color
-    log = log + std::to_string(color.red) + " " + std::to_string(color.green) +
-          " " + std::to_string(color.blue) + "\n";
+    log += std::to_string(color.red) + "\t" + std::to_string(color.green) +
+           "\t" + std::to_string(color.blue) + "\t";
+    // add node log
+    log += "\"" + node->get_internal_log() + "\"\n";
 
     motion_log->log(log);
+}
+
+void Arena::log_metadata() {
+    std::string metadata_title =
+        "arena_max_x\tarena_max_y\tnum_robots\tduration\trand_seed\n";
+    motion_log->log(metadata_title);
+
+    std::string metadata = "";
+    metadata += std::to_string(this->conf.get_arena_max_x()) + "\t";
+    metadata += std::to_string(this->conf.get_arena_max_y()) + "\t";
+    metadata += std::to_string(this->conf.get_num_robots()) + "\t";
+    metadata += std::to_string(this->conf.get_duration()) + "\t";
+    metadata += std::to_string(this->conf.get_rand_seed()) + "\n";
+    motion_log->log(metadata);
+
+    std::string data_title =
+        "time\tnode_id\tpos_x\tpos_y\tpos_theta\tvelocity\tcolor_r\tcolor_"
+        "g\tcolor_b\tlog\n";
+    motion_log->log(data_title);
 }
 
 void Arena::run() {
@@ -238,16 +261,6 @@ void Arena::init_nodes() {
 }
 
 void Arena::add_event(Event* event) { this->event_queue.push(event); }
-
-void Arena::log_metadata() {
-    std::string metadata = "";
-    metadata = metadata + std::to_string(this->conf.get_arena_max_x()) + " ";
-    metadata = metadata + std::to_string(this->conf.get_arena_max_y()) + " ";
-    metadata = metadata + std::to_string(this->conf.get_num_robots()) + " ";
-    metadata = metadata + std::to_string(this->conf.get_duration()) + " ";
-    metadata = metadata + std::to_string(this->conf.get_rand_seed()) + "\n";
-    motion_log->log(metadata);
-}
 
 Arena::Arena(Sim_config conf) {
     this->conf = conf;

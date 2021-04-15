@@ -86,6 +86,7 @@ void Kilobot::update_physical_state() {
     this->physical_state.pos = this->pos;
     this->physical_state.color = this->color;
     this->physical_state.velocity = this->velocity;
+    this->physical_state.internal_log = this->internal_log;
     this->physical_state.changed = false;
     this->old_physical_state = this->physical_state;
 }
@@ -97,6 +98,9 @@ bool Kilobot::if_physical_state_changed() {
         return true;
     if (this->physical_state.velocity != this->old_physical_state.velocity)
         return true;
+    if (this->physical_state.internal_log.compare(
+            this->old_physical_state.internal_log) != 0)
+        return true;
     return false;
 }
 
@@ -107,6 +111,7 @@ void Kilobot::add_state_change_event() {
     event->update_velocity(this->physical_state.velocity);
     event->update_position(this->physical_state.pos);
     event->update_color(this->physical_state.color);
+    event->update_internal_log(this->physical_state.internal_log);
     this->add_event(event);
 }
 
@@ -125,6 +130,10 @@ void Kilobot::go_forward(double seconds) {}
 void Kilobot::turn(double angle) {
     // this->physical_state.changed = true;
     this->physical_state.pos.theta = fmod(this->pos.theta + angle + 360, 360);
+}
+
+void Kilobot::update_log(std::string log) {
+    this->physical_state.internal_log = log;
 }
 
 void Kilobot::change_color(color_t color) {

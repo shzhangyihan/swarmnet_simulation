@@ -14,6 +14,7 @@ Node::Node(void* arena, int node_id, position2d_t pos) {
     this->collision_flag = false;
     this->skip_logging_flag = false;
     this->with_control_loop = true;
+    this->internal_log = "";
 }
 
 position2d_t Node::get_position() const { return this->pos; }
@@ -30,11 +31,15 @@ bool Node::get_collision_flag() const { return this->collision_flag; }
 
 bool Node::get_skip_logging_flag() const { return this->skip_logging_flag; }
 
+std::string Node::get_internal_log() const { return internal_log; }
+
 void Node::set_velocity(double velocity) { this->velocity = velocity; }
 
 void Node::set_position(position2d_t pos) { this->pos = pos; }
 
 void Node::set_color(color_t color) { this->color = color; }
+
+void Node::set_internal_log(std::string log) { this->internal_log = log; }
 
 void Node::set_collision_flag(bool collision_flag) {
     this->collision_flag = collision_flag;

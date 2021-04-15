@@ -30,6 +30,7 @@ typedef struct physical_state {
     position2d_t pos;
     color_t color;
     double velocity;
+    std::string internal_log;
     bool changed;
 } physical_state_t;
 
@@ -54,6 +55,7 @@ class Kilobot : public Node {
     void go_forward(double seconds);
     void change_color(color_t color);
     void turn(double angle);
+    void update_log(std::string log);
     double get_global_time();
     double get_local_time();
     double local_time_to_global_time(double local_time);

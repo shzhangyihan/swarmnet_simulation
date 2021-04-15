@@ -15,6 +15,7 @@ void Update_state_event::exec() {
     target_node->set_color(color);
     target_node->set_velocity(velocity);
     target_node->set_collision_flag(false);
+    target_node->set_internal_log(internal_log);
     target_node->set_skip_logging_flag(false);
 
     this->log_node(to_id);
@@ -26,6 +27,10 @@ void Update_state_event::update_color(color_t color) { this->color = color; }
 
 void Update_state_event::update_velocity(double velocity) {
     this->velocity = velocity;
+}
+
+void Update_state_event::update_internal_log(std::string log) {
+    this->internal_log = log;
 }
 
 Update_state_event::Update_state_event(void* arena, double exec_time,
@@ -40,9 +45,9 @@ Update_state_event::Update_state_event(void* arena, double exec_time,
     Arena* arena_ptr = (Arena*)arena;
     // std::cout << "123 " << to_id << std::endl;
     Node* target_node = arena_ptr->get_node(to_id);
-    this->color = target_node->get_color();
-    this->velocity = target_node->get_velocity();
-    this->pos = target_node->get_position();
+    // this->color = target_node->get_color();
+    // this->velocity = target_node->get_velocity();
+    // this->pos = target_node->get_position();
 }
 
 }  // namespace swarmnet_sim

@@ -2,6 +2,7 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 import numpy as np
+import pandas as pd
 import sys
 import pathlib
 from PIL import Image
@@ -32,7 +33,7 @@ class Robot:
     def set_last_updated_time(self, time):
         self.last_updated_time = time
     
-    def set_attributes(self, x, y, theta, v, r, g, b):
+    def set_attributes(self, x, y, theta, v, r, g, b, log):
         self.x = x
         self.y = y
         self.theta = theta
@@ -40,6 +41,7 @@ class Robot:
         self.r = r
         self.g = g
         self.b = b
+        self.log = log
     
     def __init__(self, id):
         self.id = id
@@ -57,13 +59,12 @@ def init():
     global gl_margin_bot
     global gl_margin_others
 
-    metadata = np.loadtxt(log_file, delimiter=' ', max_rows=1, dtype=np.float)
-    # arena_width = math.ceil(metadata[0])
-    # arena_height = math.ceil(metadata[1])
-    arena_width = metadata[0]
-    arena_height = metadata[1]
-    num_robots = int(metadata[2])
-    max_time = metadata[3]
+    metadata = pd.read_csv(log_file, sep='\t', nrows=1, header=0)
+    arena_width = metadata["arena_max_x"][0]
+    arena_height = metadata["arena_max_y"][0]
+    num_robots = int(metadata["num_robots"][0])
+    max_time = metadata["duration"][0]
+
     gl_width = int((math.ceil(arena_width) + 1) / 2) * 2 + gl_margin_others * 2
     gl_height = int((math.ceil(arena_height) + 1) / 2) * 2 + gl_margin_bot + gl_margin_others
 
@@ -72,8 +73,9 @@ def init():
         robot_list += [Robot(i)]
 
     events = {}
-    logs = np.loadtxt(log_file, delimiter=' ', dtype=np.float, skiprows=1)
-    for log in logs:
+    logs = pd.read_csv(log_file, sep='\t', skiprows=2, header=0, keep_default_na=False)
+    for index, row in logs.iterrows():
+        log = [e for e in row]
         #log_time = int(log[0])
         log_time = round(log[0], 2)
         id = int(log[1])
@@ -86,7 +88,7 @@ def init():
     init_event = events.pop(0)
     for id in init_event:
         log = init_event[id]
-        robot_list[id].set_attributes(log[2], log[3], log[4], log[5], log[6], log[7], log[8])
+        robot_list[id].set_attributes(log[2], log[3], log[4], log[5], log[6], log[7], log[8], log[9])
         robot_list[id].set_last_updated_time(0)
     
     sim_time = 0
@@ -178,7 +180,7 @@ def createFrames():
                 next_event = events.pop(next_event_time)
                 for id in next_event:
                     log = next_event[id]
-                    robot_list[id].set_attributes(log[2], log[3], log[4], log[5], log[6], log[7], log[8])
+                    robot_list[id].set_attributes(log[2], log[3], log[4], log[5], log[6], log[7], log[8], log[9])
                     robot_list[id].set_last_updated_time(log[0])
             else:
                 break
@@ -204,6 +206,13 @@ def createFrames():
             draw_y = robot.y + gl_margin_bot
             drawSingleRobot(draw_x, draw_y, robot.r, robot.g, robot.b, RADIUS)
             glut_print(draw_x - len(str(robot.id)) * 8 / 2, draw_y - RADIUS / 2, GLUT_BITMAP_8_BY_13, str(robot.id), 1.0, 1.0, 1.0, 1.0)
+            log_txt_x = draw_x - len(str(robot.log)) * 8 / 2
+            log_txt_y = draw_y - 2.2 * RADIUS
+            if log_txt_x < 0:
+                log_txt_x = 0
+            if log_txt_y < 0:
+                log_txt_y = 0
+            glut_print(log_txt_x, log_txt_y, GLUT_BITMAP_8_BY_13, str(robot.log), 1.0, 1.0, 1.0, 1.0)
             robot.set_last_updated_time(sim_time)
         
         # glFlush()

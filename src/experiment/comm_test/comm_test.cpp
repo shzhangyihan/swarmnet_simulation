@@ -24,6 +24,8 @@ class Default_program : public Kilobot {
                   << " (global) " << get_local_time() << " (local) from robot "
                   << int(packet.payload[0]) << " with counter " << rx_counter
                   << std::endl;
+        std::string log = "rx from " + std::to_string(int(packet.payload[0]));
+        update_log(log);
     }
 
     bool message_tx(packet_t* packet) {

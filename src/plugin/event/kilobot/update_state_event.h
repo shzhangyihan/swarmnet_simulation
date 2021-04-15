@@ -14,6 +14,7 @@ class Update_state_event : public Event {
     void update_position(position2d_t pos);
     void update_color(color_t color);
     void update_velocity(double velocity);
+    void update_internal_log(std::string log);
     Update_state_event(void* arena, double exec_time, int to_id);
 
    private:
@@ -21,6 +22,7 @@ class Update_state_event : public Event {
     position2d_t pos;
     color_t color;
     double velocity;
+    std::string internal_log;
 };
 
 }  // namespace swarmnet_sim

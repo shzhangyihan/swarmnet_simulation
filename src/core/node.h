@@ -28,11 +28,13 @@ class Node {
     double get_radius() const;
     bool get_collision_flag() const;
     bool get_skip_logging_flag() const;
+    std::string get_internal_log() const;
     void set_velocity(double velocity);
     void set_position(position2d_t pos);
     void set_color(color_t color);
     void set_collision_flag(bool collision_flag);
     void set_skip_logging_flag(bool skip_logging_flag);
+    void set_internal_log(std::string log);
     void change_theta(double theta_delta);
     void add_event(Event* event);
     virtual void end();
@@ -47,6 +49,7 @@ class Node {
     color_t color;
     int node_id;
     double velocity;
+    std::string internal_log;
     double radius;
     bool collision_flag;
     bool skip_logging_flag;
