@@ -2,7 +2,7 @@
     "robots": 4,
     "arena_max_x": 200,
     "arena_max_y": 200,
-    "experiment_duration": 200,
+    "experiment_duration": 50,
     "rand_seed": 100,
     "motion_log": "./motion_log/default_log.txt",
     "robot_placement": "./build/src/experiment/map_swap/libmap_swap_placement.so",

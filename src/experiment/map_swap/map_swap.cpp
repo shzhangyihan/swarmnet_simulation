@@ -13,6 +13,7 @@ using namespace std;
 typedef struct {
     int x;
     int y;
+    int version;
 } map_state_t;
 
 enum handshake_state_t { advertisement, reply, confirm };
@@ -29,33 +30,46 @@ class Default_program : public Kilobot {
    public:
     void collision() {}
 
+    void swap() {
+        handshake_state = advertisement;
+        local_state.x = tmp_state.x;
+        local_state.y = tmp_state.y;
+        std::cout << node_id << " swap with " << exchange_target << std::endl;
+        local_state.version += 1;
+    }
+
     void message_rx(packet_t packet, situated_sensing_t sensing) {
         int rx_id = packet.payload[0];
         int target_id = packet.payload[1];
         handshake_state_t rx_state = (handshake_state_t)packet.payload[2];
-        int rx_map_x = packet.payload[3];
-        int rx_map_y = packet.payload[4];
+        int rx_version = packet.payload[3];
+        int rx_map_x = packet.payload[4];
+        int rx_map_y = packet.payload[5];
         float rx_x, rx_y;
-        memcpy(&rx_x, packet.payload + 5, sizeof(float));
-        memcpy(&rx_y, packet.payload + 5 + sizeof(float), sizeof(float));
+        memcpy(&rx_x, packet.payload + 6, sizeof(float));
+        memcpy(&rx_y, packet.payload + 6 + sizeof(float), sizeof(float));
         // std::cout << node_id << " " << handshake_state << " " << rx_id << " "
         //           << handshake_state << std::endl;
-        if (handshake_state == advertisement && rx_state == advertisement) {
-            std::cout << node_id << " ok" << std::endl;
-        } else if (handshake_state == advertisement && rx_state == reply) {
-            std::cout << node_id << " reply" << std::endl;
-        } else if (handshake_state == reply && rx_state == reply) {
-            std::cout << node_id << " gg" << std::endl;
-        } else if (handshake_state == reply && rx_state == confirm) {
-            std::cout << node_id << " omfg" << std::endl;
-        } else {
-            std::cout << node_id << " what? " << handshake_state << " "
-                      << rx_state << std::endl;
-        }
+        // if (handshake_state == advertisement && rx_state == advertisement) {
+        //     std::cout << node_id << " ok" << std::endl;
+        // } else if (handshake_state == advertisement && rx_state == reply) {
+        //     std::cout << node_id << " reply" << std::endl;
+        // } else if (handshake_state == reply && rx_state == reply) {
+        //     std::cout << node_id << " gg" << std::endl;
+        // } else if (handshake_state == reply && rx_state == confirm) {
+        //     std::cout << node_id << " omfg" << std::endl;
+        // } else {
+        //     std::cout << node_id << " what? " << handshake_state << " "
+        //               << rx_state << std::endl;
+        // }
 
         if (handshake_state == reply &&
             get_local_time() - handshake_timer > HANDSHAKE_TIMEOUT) {
             handshake_state = advertisement;
+        }
+        if (handshake_state == confirm && confirm_count >= MAX_CONFIRM_COUNT) {
+            // std::cout << node_id << "confirm finished" << std::endl;
+            swap();
         }
 
         switch (handshake_state) {
@@ -66,40 +80,52 @@ class Default_program : public Kilobot {
                     //           << rx_y << " | " << local_state.x << ", "
                     //           << local_state.y << " | " << rx_map_x << ", "
                     //           << rx_map_y << std::endl;
+                    // don't need to check version number
                     if ((pos.x > rx_x && local_state.x < rx_map_x) ||
                         (pos.x < rx_x && local_state.x > rx_map_x) ||
                         (pos.y > rx_y && local_state.y < rx_map_y) ||
                         (pos.y < rx_y && local_state.y > rx_map_y)) {
                         // start an exchange
-                        std::cout << "exchange" << std::endl;
+                        // std::cout << "exchange" << std::endl;
+                        std::cout << node_id << " init exchange (reply) with "
+                                  << rx_id << std::endl;
                         handshake_state = reply;
                         exchange_target = rx_id;
                         tmp_state.x = rx_map_x;
                         tmp_state.y = rx_map_y;
+                        tmp_state.version = rx_version;
                         handshake_timer = get_local_time();
                     }
                 }
                 if (rx_state == reply && target_id == node_id) {
-                    handshake_state = confirm;
-                    exchange_target = rx_id;
-                    tmp_state.x = rx_map_x;
-                    tmp_state.y = rx_map_y;
-                    confirm_count = 0;
-                    std::cout << "recv reply " << handshake_state << std::endl;
+                    if (rx_version < local_state.version) {
+                        // reject
+                        std::cout << node_id << " reject exchange with "
+                                  << rx_id << std::endl;
+                    } else {
+                        std::cout << node_id << " confirm exchange with "
+                                  << rx_id << std::endl;
+                        handshake_state = confirm;
+                        exchange_target = rx_id;
+                        tmp_state.x = rx_map_x;
+                        tmp_state.y = rx_map_y;
+                        tmp_state.version = rx_version;
+                        confirm_count = 0;
+                    }
                 }
                 break;
             case reply:
                 if (rx_state == confirm && target_id == node_id) {
-                    std::cout << "recv confirm" << std::endl;
+                    // std::cout << "recv confirm" << std::endl;
                     // confirmed from an exchange
-                    local_state.x = tmp_state.x;
-                    local_state.y = tmp_state.y;
-                    handshake_state = advertisement;
+                    swap();
                 }
                 break;
         }
+
         std::string log = "(" + std::to_string(local_state.x) + "," +
-                          std::to_string(local_state.y) + ")";
+                          std::to_string(local_state.y) + "," +
+                          std::to_string(local_state.version) + ")";
         update_log(log);
     }
 
@@ -110,54 +136,56 @@ class Default_program : public Kilobot {
             handshake_state = advertisement;
         }
         if (handshake_state == confirm && confirm_count >= MAX_CONFIRM_COUNT) {
-            std::cout << node_id << "confirm finished" << std::endl;
-            handshake_state = advertisement;
-            local_state.x = tmp_state.x;
-            local_state.y = tmp_state.y;
+            // std::cout << node_id << "confirm finished" << std::endl;
+            swap();
         }
         float my_x = pos.x, my_y = pos.y;
-        std::cout << node_id << " tx " << handshake_state << std::endl;
+        // std::cout << node_id << " tx " << handshake_state << std::endl;
         switch (handshake_state) {
             case advertisement:
                 packet->payload[0] = node_id;
                 packet->payload[1] = 0;
                 packet->payload[2] = handshake_state;
-                packet->payload[3] = local_state.x;
-                packet->payload[4] = local_state.y;
+                packet->payload[3] = local_state.version;
+                packet->payload[4] = local_state.x;
+                packet->payload[5] = local_state.y;
 
-                memcpy(packet->payload + 5, &my_x, sizeof(float));
-                memcpy(packet->payload + 5 + sizeof(float), &my_y,
+                memcpy(packet->payload + 6, &my_x, sizeof(float));
+                memcpy(packet->payload + 6 + sizeof(float), &my_y,
                        sizeof(float));
                 break;
             case reply:
                 packet->payload[0] = node_id;
                 packet->payload[1] = exchange_target;
                 packet->payload[2] = handshake_state;
-                packet->payload[3] = local_state.x;
-                packet->payload[4] = local_state.y;
+                packet->payload[3] = tmp_state.version;
+                packet->payload[4] = local_state.x;
+                packet->payload[5] = local_state.y;
 
-                memcpy(packet->payload + 5, &my_x, sizeof(float));
-                memcpy(packet->payload + 5 + sizeof(float), &my_y,
+                memcpy(packet->payload + 6, &my_x, sizeof(float));
+                memcpy(packet->payload + 6 + sizeof(float), &my_y,
                        sizeof(float));
                 break;
             case confirm:
                 packet->payload[0] = node_id;
                 packet->payload[1] = exchange_target;
                 packet->payload[2] = handshake_state;
-                packet->payload[3] = local_state.x;
-                packet->payload[4] = local_state.y;
+                packet->payload[3] = tmp_state.version;
+                packet->payload[4] = local_state.x;
+                packet->payload[5] = local_state.y;
 
-                memcpy(packet->payload + 5, &my_x, sizeof(float));
-                memcpy(packet->payload + 5 + sizeof(float), &my_y,
+                memcpy(packet->payload + 6, &my_x, sizeof(float));
+                memcpy(packet->payload + 6 + sizeof(float), &my_y,
                        sizeof(float));
-                std::cout << node_id << " confirm count " << confirm_count
-                          << std::endl;
+                // std::cout << node_id << " confirm count " << confirm_count
+                //           << std::endl;
                 confirm_count++;
                 break;
         }
 
         std::string log = "(" + std::to_string(local_state.x) + "," +
-                          std::to_string(local_state.y) + ")";
+                          std::to_string(local_state.y) + "," +
+                          std::to_string(local_state.version) + ")";
         update_log(log);
         return true;
     }
@@ -168,24 +196,25 @@ class Default_program : public Kilobot {
         handshake_state = advertisement;
         switch (node_id) {
             case 0:
-                local_state = {1, 1};
+                local_state = {1, 1, 0};
                 change_color({0, 0, 255});
                 break;
             case 1:
-                local_state = {1, 0};
+                local_state = {1, 0, 0};
                 change_color({0, 255, 0});
                 break;
             case 2:
-                local_state = {0, 1};
+                local_state = {0, 1, 0};
                 change_color({255, 0, 0});
                 break;
             case 3:
-                local_state = {0, 0};
-                change_color({255, 255, 255});
+                local_state = {0, 0, 0};
+                change_color({0, 255, 255});
                 break;
         }
         std::string log = "(" + std::to_string(local_state.x) + "," +
-                          std::to_string(local_state.y) + ")";
+                          std::to_string(local_state.y) + "," +
+                          std::to_string(local_state.version) + ")";
         update_log(log);
     }
 };
