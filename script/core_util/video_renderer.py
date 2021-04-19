@@ -206,13 +206,13 @@ def createFrames():
             draw_y = robot.y + gl_margin_bot
             drawSingleRobot(draw_x, draw_y, robot.r, robot.g, robot.b, RADIUS)
             glut_print(draw_x - len(str(robot.id)) * 8 / 2, draw_y - RADIUS / 2, GLUT_BITMAP_8_BY_13, str(robot.id), 1.0, 1.0, 1.0, 1.0)
-            log_txt_x = draw_x - len(str(robot.log)) * 8 / 2
+            log_txt_x = draw_x - len(str(robot.log)) * 4 / 2
             log_txt_y = draw_y - 2.2 * RADIUS
             if log_txt_x < 0:
                 log_txt_x = 0
             if log_txt_y < 0:
                 log_txt_y = 0
-            glut_print(log_txt_x, log_txt_y, GLUT_BITMAP_8_BY_13, str(robot.log), 1.0, 1.0, 1.0, 1.0)
+            glut_print(log_txt_x, log_txt_y, GLUT_BITMAP_TIMES_ROMAN_10, str(robot.log), 1.0, 1.0, 1.0, 1.0)
             robot.set_last_updated_time(sim_time)
         
         # glFlush()
